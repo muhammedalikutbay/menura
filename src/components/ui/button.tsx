@@ -6,10 +6,27 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles = {
-  primary: "bg-primary text-on-primary",
-  secondary: "bg-surface border text-body",
-  ghost: "bg-transparent text-body",
+  primary: `
+    bg-primary 
+    text-on-primary 
+    hover:opacity-90 
+    active:scale-[0.98]
+  `,
+  secondary: `
+    bg-surface 
+    border 
+    text-body 
+    hover:bg-muted 
+    active:scale-[0.98]
+  `,
+  ghost: `
+    bg-transparent 
+    text-body 
+    hover:bg-muted 
+    active:scale-[0.98]
+  `,
 };
+
 const sizeStyles = {
   sm: "px-3 py-1.5 text-sm",
   md: "px-4 py-2 text-base",
