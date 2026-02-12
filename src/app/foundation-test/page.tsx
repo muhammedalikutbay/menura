@@ -1,16 +1,13 @@
 export default function FoundationTestPage() {
   return (
     <div className="container-default py-8 space-y-8">
-
       <div className="surface p-6 space-y-4">
         <h1 className="heading-primary">Heading Primary</h1>
         <h2 className="heading-secondary">Heading Secondary</h2>
         <p className="text-body">
           Bu bir body metin örneğidir. Design token sistemi test ediliyor.
         </p>
-        <p className="text-body-muted">
-          Bu muted body metindir.
-        </p>
+        <p className="text-body-muted">Bu muted body metindir.</p>
         <span className="text-caption">Caption text örneği</span>
       </div>
 
@@ -23,7 +20,6 @@ export default function FoundationTestPage() {
           Default Button
         </button>
       </div>
-
     </div>
   );
 }
