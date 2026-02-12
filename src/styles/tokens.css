@@ -1,0 +1,104 @@
+:root {
+  /* =========================
+     COLOR TOKENS
+  ========================== */
+
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F5F5F7;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #FFFFFF;
+
+  --color-text-primary: #1D1D1F;
+  --color-text-secondary: #86868B;
+
+  --color-action: #0066CC;
+  --color-action-hover: #004499;
+  --color-action-active: #003377;
+
+  --color-border: #D2D2D7;
+  --color-divider: #E8E8ED;
+
+  --color-overlay: rgba(0, 0, 0, 0.4);
+
+  --color-success: #34C759;
+  --color-success-bg: rgba(52, 199, 89, 0.1);
+
+  --color-error: #FF3B30;
+  --color-error-bg: rgba(255, 59, 48, 0.1);
+
+  --color-warning: #FF9500;
+  --color-warning-bg: rgba(255, 149, 0, 0.1);
+
+  --color-info: #0071E3;
+  --color-info-bg: rgba(0, 113, 227, 0.1);
+
+  --color-focus-ring: #0066CC;
+
+  /* =========================
+     TYPOGRAPHY TOKENS
+  ========================== */
+
+  --font-primary: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  --font-text: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+
+  --text-hero: 56px;
+  --text-h1: 48px;
+  --text-h2: 40px;
+  --text-h3: 28px;
+  --text-headline: 21px;
+  --text-body: 17px;
+  --text-callout: 14px;
+  --text-caption: 12px;
+
+  /* =========================
+     SPACING TOKENS
+  ========================== */
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
+  --space-8: 64px;
+  --space-9: 80px;
+  --space-10: 120px;
+
+  /* =========================
+     RADIUS TOKENS
+  ========================== */
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 24px;
+  --radius-pill: 9999px;
+
+  /* =========================
+     SHADOW TOKENS
+  ========================== */
+
+  --shadow-sm: 0px 1px 3px rgba(0, 0, 0, 0.1), 0px 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0px 10px 30px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0px 20px 40px rgba(0, 0, 0, 0.12);
+
+  /* =========================
+     Z-INDEX TOKENS
+  ========================== */
+
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 400;
+  --z-modal: 500;
+  --z-toast: 600;
+  --z-tooltip: 700;
+
+  /* =========================
+     MOTION TOKENS
+  ========================== */
+
+  --motion-fast: 150ms ease;
+  --motion-default: 200ms ease;
+  --motion-slow: 250ms ease;
+}
