@@ -5,3 +5,35 @@
 @import "./tokens.css";
 @import "./typography.css";
 @import "./base.css";
+
+@theme {
+  --color-bg-primary: var(--color-bg-primary);
+  --color-bg-secondary: var(--color-bg-secondary);
+
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+
+  --color-action: var(--color-action);
+  --color-action-hover: var(--color-action-hover);
+  --color-action-active: var(--color-action-active);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-pill: var(--radius-pill);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  --space-1: var(--space-1);
+  --space-2: var(--space-2);
+  --space-3: var(--space-3);
+  --space-4: var(--space-4);
+  --space-5: var(--space-5);
+  --space-6: var(--space-6);
+  --space-7: var(--space-7);
+  --space-8: var(--space-8);
+  --space-9: var(--space-9);
+  --space-10: var(--space-10);
+}

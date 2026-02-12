@@ -38,3 +38,25 @@ button {
 ::selection {
   background: var(--color-info-bg);
 }
+
+/* =========================
+   CONTAINER SYSTEM
+========================== */
+
+.container-default {
+  width: 100%;
+  max-width: 980px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+.container-wide {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
