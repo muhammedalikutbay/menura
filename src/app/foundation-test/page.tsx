@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 export default function FoundationTestPage() {
   return (
     <div className="container-default py-8 space-y-8">
@@ -16,9 +18,20 @@ export default function FoundationTestPage() {
           Interactive Surface Button
         </button>
 
-        <button className="interactive px-4 py-2 border rounded-md">
-          Default Button
-        </button>
+        <Button variant="primary">Primary Button</Button>
+        <Button variant="secondary">Secondary Button</Button>
+        <Button variant="ghost">Ghost Button</Button>
+
+        <Button variant="primary" disabled>
+          Disabled Primary Button
+        </Button>
+        <Button variant="secondary" disabled>
+          Disabled Secondary Button
+        </Button>
+        <Button variant="ghost" disabled>
+          Disabled Ghost Button
+        </Button>
+        
       </div>
     </div>
   );
