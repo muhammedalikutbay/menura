@@ -31,7 +31,6 @@ export default function FoundationTestPage() {
         <Button variant="ghost" disabled>
           Disabled Ghost Button
         </Button>
-        
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { ButtonHTMLAttributes } from "react";
+import { cn } from "@/lib/utils";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "ghost";
@@ -41,14 +42,17 @@ export function Button({
   disabled,
   ...props
 }: ButtonProps) {
-  const classes = `
-    interactive
-    rounded-md
-    ${variantStyles[variant]}
-    ${sizeStyles[size]}
-    ${disabled ? disabledStyles : ""}
-    ${className}
-  `;
-
-  return <button disabled={disabled} className={classes} {...props} />;
+  return (
+    <button
+      disabled={disabled}
+      className={cn(
+        "interactive rounded-md",
+        variantStyles[variant],
+        sizeStyles[size],
+        disabled && disabledStyles,
+        className,
+      )}
+      {...props}
+    />
+  );
 }
