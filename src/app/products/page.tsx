@@ -209,6 +209,7 @@ function ProductsContent() {
                     searchQuery={searchQuery}
                     onSearchChange={setSearchQuery}
                     categories={categories}
+                    topCategories={topCategories}
                     selectedCategoryId={selectedCategoryId}
                     onCategoryChange={setSelectedCategoryId}
                     activeTab={activeTab}
