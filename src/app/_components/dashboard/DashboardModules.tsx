@@ -16,7 +16,7 @@ interface QRConfig {
 
 export function RecentActivity() {
   const activities = [
-    { id: 1, type: 'success', label: 'New product added', time: '2 mins ago', icon: <PlusCircle size={14} /> },
+    { id: 1, type: 'success', label: 'New menu item added', time: '2 mins ago', icon: <PlusCircle size={14} /> },
     { id: 2, type: 'info', label: 'QR Code colors updated', time: '1 hour ago', icon: <QrCode size={14} /> },
     { id: 3, type: 'success', label: 'Category "Breakfast" active', time: '4 hours ago', icon: <CheckCircle2 size={14} /> },
     { id: 4, type: 'warning', label: 'Low stock: Burger Bun', time: 'Yesterday', icon: <AlertCircle size={14} /> },

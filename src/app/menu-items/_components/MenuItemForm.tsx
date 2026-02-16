@@ -6,7 +6,7 @@ import { Product, CreateProductInput } from "@/types/product";
 import { cn, formatCurrencyInput, parseCurrencyInput } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-interface ProductFormProps {
+interface MenuItemFormProps {
   formData: CreateProductInput;
   setFormData: (data: CreateProductInput) => void;
   categories: Category[];
@@ -28,7 +28,7 @@ const VALIDATION = {
   NAME_REGEX: /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]*$/ // Only letters and spaces
 };
 
-export function ProductForm({
+export function MenuItemForm({
   formData,
   setFormData,
   categories,
@@ -38,7 +38,7 @@ export function ProductForm({
   onCancel,
   isEditing,
   editingId,
-}: ProductFormProps) {
+}: MenuItemFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState("");
@@ -75,7 +75,7 @@ export function ProductForm({
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    
+
     // Name Validation (Regex + Length)
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
@@ -87,12 +87,12 @@ export function ProductForm({
       newErrors.name = `Max ${VALIDATION.NAME_MAX} characters allowed`;
     } else {
       // Duplicate Name Check
-      const isDuplicate = products.some(p => 
-        p.name.toLowerCase().trim() === formData.name.toLowerCase().trim() && 
+      const isDuplicate = products.some(p =>
+        p.name.toLowerCase().trim() === formData.name.toLowerCase().trim() &&
         (!isEditing || p.id !== editingId)
       );
       if (isDuplicate) {
-        newErrors.name = "This product name already exists";
+        newErrors.name = "This menu item name already exists";
       }
     }
 
@@ -161,13 +161,13 @@ export function ProductForm({
     <div className="bg-white rounded-xl p-8 shadow-sm border border-[#E5E7EB] transition-all duration-300">
       <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-[#1D1D1F]">
         <span className="text-[#0071e3]">
-           {isEditing ? (
-             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-           ) : (
-             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="16"/><line x1="8" x2="16" y1="12" y2="12"/></svg>
-           )}
+          {isEditing ? (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /></svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="16" /><line x1="8" x2="16" y1="12" y2="12" /></svg>
+          )}
         </span>
-        {isEditing ? "Edit Product" : "New Product"}
+        {isEditing ? "Edit Menu Item" : "New Menu Item"}
       </h2>
 
       <div className="space-y-6">
@@ -175,7 +175,7 @@ export function ProductForm({
         <div className="flex flex-col gap-2 relative" ref={dropdownRef}>
           <label className="block text-xs font-semibold uppercase tracking-wider text-[#86868B]">Category</label>
           <div className="relative">
-            <input 
+            <input
               type="text"
               placeholder="Select Category"
               value={searchQuery || selectedCategoryName}
@@ -191,7 +191,7 @@ export function ProductForm({
               )}
             />
           </div>
-          
+
           {isDropdownOpen && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-[#E5E7EB] rounded-xl shadow-xl z-50 py-2 max-h-60 overflow-y-auto">
               <div className="px-3 py-1 mb-1">
@@ -215,7 +215,7 @@ export function ProductForm({
                   >
                     {cat.name}
                     {formData.categoryId === cat.id && (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                     )}
                   </button>
                 ))
@@ -296,8 +296,8 @@ export function ProductForm({
 
         {/* Image Upload */}
         <div className="flex flex-col gap-2">
-          <label className="block text-xs font-semibold uppercase tracking-wider text-[#86868B]">Product Image</label>
-          <div 
+          <label className="block text-xs font-semibold uppercase tracking-wider text-[#86868B]">Menu Item Image</label>
+          <div
             className={cn(
               "relative w-full h-32 rounded-lg border-2 border-dashed transition-colors flex flex-col items-center justify-center cursor-pointer group bg-[#F5F5F7] overflow-hidden",
               errors.image ? "border-red-500 bg-red-50/50" : "border-[#D1D5DB] hover:border-[#0071e3]"
@@ -306,18 +306,18 @@ export function ProductForm({
           >
             {formData.image ? (
               <>
-                 <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
-                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-white text-xs font-medium">Change Image</span>
-                 </div>
+                <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-white text-xs font-medium">Change Image</span>
+                </div>
               </>
             ) : (
-                <>
-                    <span className="text-[#9CA3AF] group-hover:text-[#0071e3] transition-colors mb-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-                    </span>
-                    <span className="text-xs text-[#9CA3AF] group-hover:text-[#0071e3] transition-colors uppercase tracking-tight font-bold">Upload required</span>
-                </>
+              <>
+                <span className="text-[#9CA3AF] group-hover:text-[#0071e3] transition-colors mb-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" /></svg>
+                </span>
+                <span className="text-xs text-[#9CA3AF] group-hover:text-[#0071e3] transition-colors uppercase tracking-tight font-bold">Upload required</span>
+              </>
             )}
             <input ref={fileInputRef} className="hidden" type="file" accept="image/*" onChange={handleFileChange} />
           </div>
@@ -328,11 +328,11 @@ export function ProductForm({
         <div className="flex items-center justify-between py-2 border-t border-[#F5F5F7] pt-4">
           <span className="text-sm font-medium text-[#1D1D1F]">Visible on Menu</span>
           <label className="relative inline-flex items-center cursor-pointer">
-            <input 
-                type="checkbox" 
-                className="sr-only peer" 
-                checked={formData.isAvailable}
-                onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
+            <input
+              type="checkbox"
+              className="sr-only peer"
+              checked={formData.isAvailable}
+              onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
             />
             <div className="w-11 h-6 bg-[#E5E7EB] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0071e3]"></div>
           </label>
@@ -340,22 +340,22 @@ export function ProductForm({
 
         {/* Submit Buttons */}
         <div className="flex flex-col gap-3 mt-4">
+          <Button
+            onClick={handleSubmit}
+            className="w-full h-12 rounded-full font-medium shadow-lg shadow-blue-500/30 !bg-[#0071e3] !hover:bg-[#0077ED] text-white opacity-100 cursor-pointer"
+          >
+            {isEditing ? "Update Menu Item" : "Create Menu Item"}
+          </Button>
+
+          {isEditing && (
             <Button
-              onClick={handleSubmit}
-              className="w-full h-12 rounded-full font-medium shadow-lg shadow-blue-500/30 !bg-[#0071e3] !hover:bg-[#0077ED] text-white opacity-100 cursor-pointer"
+              variant="secondary"
+              onClick={onCancel}
+              className="w-full h-12 rounded-full font-medium bg-white border border-[#E5E7EB] hover:bg-[#F5F5F7] text-[#86868B]"
             >
-               {isEditing ? "Update Product" : "Create Product"}
+              Cancel Edit
             </Button>
-            
-            {isEditing && (
-              <Button
-                variant="secondary"
-                onClick={onCancel}
-                className="w-full h-12 rounded-full font-medium bg-white border border-[#E5E7EB] hover:bg-[#F5F5F7] text-[#86868B]"
-              >
-                 Cancel Edit
-              </Button>
-            )}
+          )}
         </div>
       </div>
     </div>

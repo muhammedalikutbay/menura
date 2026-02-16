@@ -2,11 +2,11 @@
 
 import { MenuStats } from "./_components/dashboard/MenuStats";
 import { MenuQR, QuickActions } from "./_components/dashboard/DashboardModules";
-import { RecentProducts } from "./_components/dashboard/RecentProducts";
+import { RecentMenuItems } from "./_components/dashboard/RecentMenuItems";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { Modal } from "@/components/ui/modal";
 import { CategoryForm } from "./categories/_components/CategoryForm";
-import { ProductForm } from "./products/_components/ProductForm";
+import { MenuItemForm } from "./menu-items/_components/MenuItemForm";
 import { storage } from "@/lib/storage";
 import { Category, CreateCategoryInput } from "@/types/category";
 import { Product, CreateProductInput } from "@/types/product";
@@ -124,7 +124,7 @@ export default function Home() {
         <MenuStats key={refreshKey} />
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <RecentProducts key={`recent-${refreshKey}`} onEditProduct={handleEditProduct} />
+          <RecentMenuItems key={`recent-${refreshKey}`} onEditMenuItem={handleEditProduct} />
           <div className="flex flex-col gap-8">
             <MenuQR />
             <QuickActions
@@ -160,7 +160,7 @@ export default function Home() {
         onClose={closeProdModal}
         className="max-w-2xl !p-0 !rounded-3xl"
       >
-        <ProductForm
+        <MenuItemForm
           formData={prodFormData}
           setFormData={setProdFormData}
           categories={categories}

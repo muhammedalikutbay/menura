@@ -5,6 +5,8 @@ import { storage } from "@/lib/storage";
 import { StatsCard } from "@/components/ui/StatsCard";
 import { cn } from "@/lib/utils";
 import { LayoutGrid, Utensils, QrCode } from "lucide-react";
+import { Category } from "@/types/category";
+import { Product } from "@/types/product";
 
 export function MenuStats() {
   const [stats, setStats] = useState({
@@ -16,17 +18,14 @@ export function MenuStats() {
   });
 
   useEffect(() => {
-    const rawCategories = storage.get<any>("CATEGORIES");
-    const rawProducts = storage.get<any>("PRODUCTS");
-
-    const categories = Array.isArray(rawCategories) ? rawCategories : [];
-    const products = Array.isArray(rawProducts) ? rawProducts : [];
+    const rawCategories = storage.get<Category[]>("CATEGORIES", []);
+    const rawProducts = storage.get<Product[]>("PRODUCTS", []);
 
     // Robust calculation to avoid NaN/Undefined
-    const totalCat = Number(categories.length) || 0;
-    const activeCat = Number(categories.filter((c: any) => c && c.isActive).length) || 0;
-    const totalProd = Number(products.length) || 0;
-    const activeProd = Number(products.filter((p: any) => p && p.isAvailable).length) || 0;
+    const totalCat = rawCategories.length;
+    const activeCat = rawCategories.filter((c: Category) => c.isActive).length;
+    const totalProd = rawProducts.length;
+    const activeProd = rawProducts.filter((p: Product) => p.isAvailable).length;
 
     setStats({
       categories: totalCat,
@@ -67,7 +66,7 @@ export function MenuStats() {
         }
       />
       <StatsCard
-        label="Total Products"
+        label="Total Menu Items"
         value={stats.products}
         icon={<Utensils size={24} />}
         variant="purple"

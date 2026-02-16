@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { ProductGrid } from "./_components/ProductGrid";
-import { ProductForm } from "./_components/ProductForm";
+import { MenuItemGrid } from "./_components/MenuItemGrid";
+import { MenuItemForm } from "./_components/MenuItemForm";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { ProductFilterBar } from "@/components/shared/ProductFilterBar";
 import { Pagination } from "@/components/shared/Pagination";
@@ -14,22 +14,22 @@ import { cn } from "@/lib/utils";
 
 type FilterStatus = "all" | "active" | "draft";
 
-export default function ProductsPage() {
+export default function MenuItemsPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ProductsContent />
+      <MenuItemsContent />
     </Suspense>
   );
 }
 
-function ProductsContent() {
+function MenuItemsContent() {
   const searchParams = useSearchParams();
   const initialCategoryId = searchParams.get("categoryId") || "all";
-  
+
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(initialCategoryId);
   const [activeTab, setActiveTab] = useState<FilterStatus>("all");
@@ -50,21 +50,21 @@ function ProductsContent() {
 
   useEffect(() => {
     // Initial data load
-    const storedProducts = storage.get<Product>("PRODUCTS") || [];
-    const storedCategories = storage.get<Category>("CATEGORIES") || [];
+    const storedProducts = storage.get<Product[]>("PRODUCTS", []);
+    const storedCategories = storage.get<Category[]>("CATEGORIES", []);
     setProducts(storedProducts);
     setCategories(storedCategories);
-    
+
     // Set default category if available and not set by URL
     if (storedCategories.length > 0 && initialCategoryId === "all") {
-      setFormData((prev: CreateProductInput) => ({ 
-        ...prev, 
+      setFormData((prev: CreateProductInput) => ({
+        ...prev,
         categoryId: "",
         order: storedProducts.length + 1
       }));
     } else if (initialCategoryId !== "all") {
-      setFormData((prev: CreateProductInput) => ({ 
-        ...prev, 
+      setFormData((prev: CreateProductInput) => ({
+        ...prev,
         categoryId: initialCategoryId,
         order: storedProducts.length + 1
       }));
@@ -77,13 +77,13 @@ function ProductsContent() {
         const lowerName = p.name.toLowerCase();
         const lowerQuery = searchQuery.toLowerCase();
         const matchesSearch = lowerName.includes(lowerQuery);
-        
+
         const matchesCategory = selectedCategoryId === "all" || p.categoryId === selectedCategoryId;
-        
-        const matchesStatus = 
+
+        const matchesStatus =
           activeTab === "all" ? true :
-          activeTab === "active" ? p.isAvailable : !p.isAvailable;
-          
+            activeTab === "active" ? p.isAvailable : !p.isAvailable;
+
         return matchesSearch && matchesCategory && matchesStatus;
       })
       .sort((a: Product, b: Product) => (a.order || 0) - (b.order || 0));
@@ -163,7 +163,7 @@ function ProductsContent() {
 
   const handleToggleAvailability = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
-    const updated = products.map((p: Product) => 
+    const updated = products.map((p: Product) =>
       p.id === id ? { ...p, isAvailable: !p.isAvailable, updatedAt: Date.now() } : p
     );
     setProducts(updated);
@@ -172,7 +172,7 @@ function ProductsContent() {
 
   const handleDelete = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
-    if (confirm("Are you sure you want to delete this product?")) {
+    if (confirm("Are you sure you want to delete this menu item?")) {
       const updated = products.filter((p: Product) => p.id !== id);
       setProducts(updated);
       storage.set("PRODUCTS", updated);
@@ -183,64 +183,64 @@ function ProductsContent() {
     <div className="bg-[#f5f4f6] min-h-screen">
       <main className="flex-grow w-full max-w-[1440px] mx-auto px-6 py-10 md:py-16">
         {/* Header Section */}
-        <SectionHeader 
-            title={selectedCategoryId === "all" ? "Products" : (categories.find(c => c.id === selectedCategoryId)?.name || "Products")} 
-            description="Manage your culinary creations. Add new items, update prices, and keep your menu fresh for your customers."
+        <SectionHeader
+          title={selectedCategoryId === "all" ? "Menu Items" : (categories.find(c => c.id === selectedCategoryId)?.name || "Menu Items")}
+          description="Manage your culinary creations. Add new items, update prices, and keep your menu fresh for your customers."
         />
 
         <div className="flex flex-col lg:flex-row gap-8 xl:gap-12 items-start">
-            {/* Sidebar Form */}
-            <div className="w-full lg:w-[320px] xl:w-[380px] shrink-0">
-                <ProductForm 
-                 formData={formData}
-                 setFormData={setFormData}
-                 categories={categories}
-                 topCategories={topCategories}
-                 products={products}
-                 onSave={handleSave}
-                 isEditing={!!editingProduct}
-                 editingId={editingProduct?.id}
-                 onCancel={() => handleOpenModal()} 
-               />
-            </div>
+          {/* Sidebar Form */}
+          <div className="w-full lg:w-[320px] xl:w-[380px] shrink-0">
+            <MenuItemForm
+              formData={formData}
+              setFormData={setFormData}
+              categories={categories}
+              topCategories={topCategories}
+              products={products}
+              onSave={handleSave}
+              isEditing={!!editingProduct}
+              editingId={editingProduct?.id}
+              onCancel={() => handleOpenModal()}
+            />
+          </div>
 
-            {/* Main Content */}
-            <div className="flex-1 min-w-0">
-                {/* Unified Filter Bar */}
-                <ProductFilterBar 
-                    searchQuery={searchQuery}
-                    onSearchChange={setSearchQuery}
-                    categories={categories}
-                    topCategories={topCategories}
-                    selectedCategoryId={selectedCategoryId}
-                    onCategoryChange={setSelectedCategoryId}
-                    activeTab={activeTab}
-                    onTabChange={setActiveTab}
-                    className="mb-8"
-                />
+          {/* Main Content */}
+          <div className="flex-1 min-w-0">
+            {/* Unified Filter Bar */}
+            <ProductFilterBar
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              categories={categories}
+              topCategories={topCategories}
+              selectedCategoryId={selectedCategoryId}
+              onCategoryChange={setSelectedCategoryId}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              className="mb-8"
+            />
 
-                {/* Product Grid Area */}
-                <div className="min-h-[500px]">
-                    <ProductGrid 
-                        products={currentItems}
-                        categories={categories}
-                        onToggleAvailability={handleToggleAvailability}
-                        onEdit={handleOpenModal}
-                        onDelete={handleDelete}
-                        onResetFilters={() => { setSearchQuery(""); setSelectedCategoryId("all"); setActiveTab("all"); }}
-                    />
+            {/* Product Grid Area */}
+            <div className="min-h-[500px]">
+              <MenuItemGrid
+                products={currentItems}
+                categories={categories}
+                onToggleAvailability={handleToggleAvailability}
+                onEdit={handleOpenModal}
+                onDelete={handleDelete}
+                onResetFilters={() => { setSearchQuery(""); setSelectedCategoryId("all"); setActiveTab("all"); }}
+              />
 
-                    {totalPages > 1 && (
-                        <div className="mt-12 mb-8">
-                            <Pagination 
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                onPageChange={setCurrentPage}
-                            />
-                        </div>
-                    )}
+              {totalPages > 1 && (
+                <div className="mt-12 mb-8">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
                 </div>
+              )}
             </div>
+          </div>
         </div>
       </main>
     </div>

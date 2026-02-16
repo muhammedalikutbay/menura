@@ -7,19 +7,19 @@ import { Category } from "@/types/category";
 import { cn } from "@/lib/utils";
 import { Edit2, Package } from "lucide-react";
 
-interface RecentProductsProps {
-  onEditProduct?: (product: Product) => void;
+interface RecentMenuItemsProps {
+  onEditMenuItem?: (item: Product) => void;
 }
 
-export function RecentProducts({ onEditProduct }: RecentProductsProps) {
+export function RecentMenuItems({ onEditMenuItem }: RecentMenuItemsProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
   useEffect(() => {
-    const allProducts = storage.get<Product>("PRODUCTS");
-    const allCategories = storage.get<Category>("CATEGORIES");
+    const allProducts = storage.get<Product[]>("PRODUCTS", []);
+    const allCategories = storage.get<Category[]>("CATEGORIES", []);
 
     setCategories(allCategories);
     // Sort by createdAt desc for true "Recent" feel
@@ -39,10 +39,10 @@ export function RecentProducts({ onEditProduct }: RecentProductsProps) {
     <section className="lg:col-span-2 bg-white rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#F2F2F7] p-8 flex flex-col h-full">
       <div className="flex justify-between items-center mb-8">
         <div className="space-y-1">
-          <h2 className="text-[20px] font-bold text-[#1D1D1F] tracking-tight">Recent Products</h2>
+          <h2 className="text-[20px] font-bold text-[#1D1D1F] tracking-tight">Recent Menu Items</h2>
           <p className="text-[14px] text-[#86868B] font-medium">Quick access to latest additions</p>
         </div>
-        <a href="/products" className="text-md text-[#0071E3] hover:underline font-bold tracking-wide transition-colors">
+        <a href="/menu-items" className="text-md text-[#0071E3] hover:underline font-bold tracking-wide transition-colors">
           View All
         </a>
       </div>
@@ -50,7 +50,7 @@ export function RecentProducts({ onEditProduct }: RecentProductsProps) {
       <div className="space-y-3 flex-grow">
         {products.length === 0 ? (
           <div className="py-20 text-center bg-[#F5F5F7] rounded-3xl border border-dashed border-[#D2D2D7]">
-            <p className="text-[15px] text-[#86868B] font-medium">No products found</p>
+            <p className="text-[15px] text-[#86868B] font-medium">No menu items found</p>
           </div>
         ) : (
           currentProducts.map((product) => (
@@ -96,7 +96,7 @@ export function RecentProducts({ onEditProduct }: RecentProductsProps) {
                   className="p-3 text-[#86868B] hover:text-[#0071E3] bg-white rounded-xl border border-[#E8E8ED] shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:scale-110 active:scale-90"
                   onClick={(e) => {
                     e.stopPropagation();
-                    onEditProduct?.(product);
+                    onEditMenuItem?.(product);
                   }}
                 >
                   <Edit2 size={16} />

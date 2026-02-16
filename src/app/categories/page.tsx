@@ -19,11 +19,11 @@ export default function CategoriesPage() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<FilterStatus>("all");
-  
+
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-  
+
   const [formData, setFormData] = useState<CreateCategoryInput>({
     name: "",
     description: "",
@@ -42,10 +42,10 @@ export default function CategoriesPage() {
         const lowerName = c.name.toLowerCase();
         const lowerQuery = searchQuery.toLowerCase();
         const matchesSearch = lowerName.includes(lowerQuery);
-        
-        const matchesStatus = 
+
+        const matchesStatus =
           activeTab === "all" ? true :
-          activeTab === "active" ? c.isActive : !c.isActive;
+            activeTab === "active" ? c.isActive : !c.isActive;
         return matchesSearch && matchesStatus;
       })
       .sort((a, b) => a.order - b.order);
@@ -64,27 +64,27 @@ export default function CategoriesPage() {
   }, [searchQuery, activeTab]);
 
   const handleEditClick = (category: Category) => {
-      setEditingCategory(category);
-      setFormData({
-        name: category.name,
-        description: category.description || "",
-        image: category.image || "",
-        order: category.order,
-        isActive: category.isActive,
-      });
-      // Scroll to top to see form if needed
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    setEditingCategory(category);
+    setFormData({
+      name: category.name,
+      description: category.description || "",
+      image: category.image || "",
+      order: category.order,
+      isActive: category.isActive,
+    });
+    // Scroll to top to see form if needed
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const resetForm = () => {
-      setEditingCategory(null);
-      setFormData({
-        name: "",
-        description: "",
-        image: "",
-        order: categories.length + 1,
-        isActive: true,
-      });
+    setEditingCategory(null);
+    setFormData({
+      name: "",
+      description: "",
+      image: "",
+      order: categories.length + 1,
+      isActive: true,
+    });
   }
 
   const handleSave = () => {
@@ -118,7 +118,7 @@ export default function CategoriesPage() {
       setCategories(updatedCategories);
       storage.set("CATEGORIES", updatedCategories);
       if (editingCategory?.id === id) {
-          resetForm();
+        resetForm();
       }
     }
   };
@@ -127,82 +127,82 @@ export default function CategoriesPage() {
     <div className="bg-[#F5F5F7] min-h-screen">
       <main className="flex-grow w-full max-w-[1440px] mx-auto px-6 py-10 md:py-16">
         {/* Header Section */}
-        <SectionHeader 
-            title="Categories" 
-            description="Organize your menu items efficiently. Create categories like 'Starters', 'Main Course', or 'Beverages' to help customers navigate your menu." 
+        <SectionHeader
+          title="Categories"
+          description="Organize your menu items efficiently. Create categories like 'Starters', 'Main Course', or 'Beverages' to help customers navigate your menu."
         />
 
         <div className="flex flex-col lg:flex-row gap-8 xl:gap-12 items-start">
-            {/* Sidebar Form */}
-            <div className="w-full lg:w-[320px] xl:w-[380px] shrink-0">
-               <CategoryForm 
-                 formData={formData}
-                 setFormData={setFormData}
-                 categories={categories}
-                 onSave={handleSave}
-                 isEditing={!!editingCategory}
-                 editingId={editingCategory?.id}
-                 onCancel={resetForm}
-               />
+          {/* Sidebar Form */}
+          <div className="w-full lg:w-[320px] xl:w-[380px] shrink-0">
+            <CategoryForm
+              formData={formData}
+              setFormData={setFormData}
+              categories={categories}
+              onSave={handleSave}
+              isEditing={!!editingCategory}
+              editingId={editingCategory?.id}
+              onCancel={resetForm}
+            />
+          </div>
+
+          {/* Main Grid Content */}
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+              <TabNav
+                tabs={[
+                  { value: "all", label: "All Categories" },
+                  { value: "active", label: "Active" },
+                  { value: "draft", label: "Drafts" }
+                ]}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                className="w-full sm:w-auto"
+              />
+
+              <div className="w-full sm:w-64">
+                <SearchInput
+                  value={searchQuery}
+                  onChange={setSearchQuery}
+                  placeholder="Search categories..."
+                />
+              </div>
             </div>
 
-            {/* Main Grid Content */}
-            <div className="flex-1 min-w-0">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-                    <TabNav 
-                        tabs={[
-                            { value: "all", label: "All Categories" },
-                            { value: "active", label: "Active" },
-                            { value: "draft", label: "Drafts" }
-                        ]}
-                        activeTab={activeTab}
-                        onTabChange={setActiveTab}
-                        className="w-full sm:w-auto"
-                    />
-                    
-                    <div className="w-full sm:w-64">
-                        <SearchInput
-                            value={searchQuery}
-                            onChange={setSearchQuery}
-                            placeholder="Search categories..."
-                        />
-                    </div>
+            {currentItems.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {currentItems.map((category) => (
+                  <CategoryCard
+                    key={category.id}
+                    category={category}
+                    productCount={products.filter(p => p.categoryId === category.id).length}
+                    onEdit={handleEditClick}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-xl border border-dashed border-[#E5E7EB]">
+                <div className="w-16 h-16 bg-[#F5F5F7] rounded-full flex items-center justify-center mb-4">
+                  <svg className="w-8 h-8 text-[#86868B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                  </svg>
                 </div>
+                <h3 className="text-[#1D1D1F] font-bold text-lg">No Categories Found</h3>
+                <p className="text-[#86868B]">Try adjusting your search or filters.</p>
+              </div>
+            )}
 
-                {currentItems.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {currentItems.map((category) => (
-                            <CategoryCard 
-                                key={category.id} 
-                                category={category} 
-                                productCount={products.filter(p => p.categoryId === category.id).length}
-                                onEdit={handleEditClick}
-                                onDelete={handleDelete}
-                            />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-xl border border-dashed border-[#E5E7EB]">
-                        <div className="w-16 h-16 bg-[#F5F5F7] rounded-full flex items-center justify-center mb-4">
-                            <svg className="w-8 h-8 text-[#86868B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                            </svg>
-                        </div>
-                        <h3 className="text-[#1D1D1F] font-bold text-lg">No Categories Found</h3>
-                        <p className="text-[#86868B]">Try adjusting your search or filters.</p>
-                    </div>
-                )}
-                
-                {totalPages > 1 && (
-                    <div className="mt-10">
-                        <Pagination 
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={setCurrentPage}
-                        />
-                    </div>
-                )}
-            </div>
+            {totalPages > 1 && (
+              <div className="mt-10">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>

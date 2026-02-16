@@ -2,10 +2,10 @@
 
 import { Product } from "@/types/product";
 import { Category } from "@/types/category";
-import { ProductCard } from "./ProductCard";
+import { MenuItemCard } from "./MenuItemCard";
 import { Button } from "@/components/ui/button";
 
-interface ProductGridProps {
+interface MenuItemGridProps {
   products: Product[];
   categories: Category[];
   onToggleAvailability: (id: string, e?: React.MouseEvent) => void;
@@ -14,14 +14,14 @@ interface ProductGridProps {
   onResetFilters: () => void;
 }
 
-export function ProductGrid({
+export function MenuItemGrid({
   products,
   categories,
   onToggleAvailability,
   onEdit,
   onDelete,
   onResetFilters,
-}: ProductGridProps) {
+}: MenuItemGridProps) {
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-xl border border-dashed border-[#E5E7EB]">
@@ -30,12 +30,12 @@ export function ProductGrid({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
           </svg>
         </div>
-        <h3 className="text-[#1D1D1F] font-bold text-lg">No Products Found</h3>
+        <h3 className="text-[#1D1D1F] font-bold text-lg">No Menu Items Found</h3>
         <p className="text-[#86868B] max-w-xs mx-auto mt-1 mb-6">
-          Try adjusting your search criteria, selecting a different category, or adding a new product to your menu.
+          Try adjusting your search criteria, selecting a different category, or adding a new menu item to your list.
         </p>
-        <Button 
-          variant="secondary" 
+        <Button
+          variant="secondary"
           onClick={onResetFilters}
           className="rounded-full bg-[#F5F5F7] text-[#1D1D1F] hover:bg-[#E5E7EB] border-none"
         >
@@ -48,7 +48,7 @@ export function ProductGrid({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       {products.map((product) => (
-        <ProductCard
+        <MenuItemCard
           key={product.id}
           product={product}
           categories={categories}

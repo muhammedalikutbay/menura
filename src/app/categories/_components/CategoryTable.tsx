@@ -34,19 +34,19 @@ export function CategoryTable({
   return (
     <div className="flex flex-col">
       {categories.map((c) => (
-        <div 
-          key={c.id} 
+        <div
+          key={c.id}
           className="group flex items-center gap-6 py-5 border-b border-[#F5F5F7] last:border-0 hover:bg-[#F5F5F7]/30 transition-colors px-4 -mx-4 rounded-xl"
         >
           {/* Drag Handle */}
           <button className="text-[#E5E7EB] hover:text-[#86868B] cursor-grab active:cursor-grabbing transition-colors">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="9" cy="12" r="1"/>
-              <circle cx="9" cy="5" r="1"/>
-              <circle cx="9" cy="19" r="1"/>
-              <circle cx="15" cy="12" r="1"/>
-              <circle cx="15" cy="5" r="1"/>
-              <circle cx="15" cy="19" r="1"/>
+              <circle cx="9" cy="12" r="1" />
+              <circle cx="9" cy="5" r="1" />
+              <circle cx="9" cy="19" r="1" />
+              <circle cx="15" cy="12" r="1" />
+              <circle cx="15" cy="5" r="1" />
+              <circle cx="15" cy="19" r="1" />
             </svg>
           </button>
 
@@ -73,7 +73,7 @@ export function CategoryTable({
               </h3>
               <div className="px-2.5 py-0.5 rounded-full bg-[#F5F5F7] border border-[#E5E7EB]">
                 <span className="text-[11px] font-semibold text-[#86868B] uppercase tracking-wide">
-                  0 Products
+                  0 Menu Items
                 </span>
               </div>
             </div>
@@ -91,7 +91,7 @@ export function CategoryTable({
               )}>
                 {c.isActive ? "Active" : "Passive"}
               </span>
-              <button 
+              <button
                 onClick={() => onToggleStatus(c.id)}
                 className={cn(
                   "w-12 h-7 rounded-full relative transition-colors duration-300 ease-out",
@@ -108,8 +108,8 @@ export function CategoryTable({
             <div className="h-8 w-[1px] bg-[#E5E7EB]" />
 
             <div className="flex items-center gap-2">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 onClick={() => onEdit(c)}
                 className="w-9 h-9 p-0 rounded-full text-[#86868B] hover:text-[#1D1D1F] hover:bg-[#F5F5F7]"
               >
@@ -118,8 +118,8 @@ export function CategoryTable({
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                 </svg>
               </Button>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 onClick={() => onDelete(c.id)}
                 className="w-9 h-9 p-0 rounded-full text-[#86868B] hover:text-[#FF3B30] hover:bg-[#FFF5F5]"
               >
