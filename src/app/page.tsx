@@ -20,6 +20,7 @@ export default function Home() {
   // Modal States
   const [isCatModalOpen, setIsCatModalOpen] = useState(false);
   const [isProdModalOpen, setIsProdModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   // Form States
   const [catFormData, setCatFormData] = useState<CreateCategoryInput>({
@@ -62,20 +63,52 @@ export default function Home() {
     setCatFormData({ name: "", description: "", image: "", order: 0, isActive: true });
   };
 
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setProdFormData({
+      categoryId: product.categoryId,
+      name: product.name,
+      description: product.description || "",
+      image: product.image || "",
+      price: product.price,
+      isAvailable: product.isAvailable,
+      order: product.order,
+    });
+    setIsProdModalOpen(true);
+  };
+
   const handleSaveProduct = () => {
-    const newProduct: Product = {
-      id: crypto.randomUUID(),
-      ...prodFormData,
-      order: products.length + 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-    const updated = [...products, newProduct];
+    let updated: Product[];
+
+    if (editingProduct) {
+      updated = products.map(p =>
+        p.id === editingProduct.id
+          ? { ...p, ...prodFormData, updatedAt: Date.now() }
+          : p
+      );
+    } else {
+      const newProduct: Product = {
+        id: crypto.randomUUID(),
+        ...prodFormData,
+        order: products.length + 1,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      };
+      updated = [...products, newProduct];
+    }
+
     storage.set("PRODUCTS", updated);
     setProducts(updated);
     setIsProdModalOpen(false);
+    setEditingProduct(null);
     setRefreshKey(prev => prev + 1);
     // Reset form
+    setProdFormData({ categoryId: "", name: "", description: "", image: "", price: 0, isAvailable: true, order: 0 });
+  };
+
+  const closeProdModal = () => {
+    setIsProdModalOpen(false);
+    setEditingProduct(null);
     setProdFormData({ categoryId: "", name: "", description: "", image: "", price: 0, isAvailable: true, order: 0 });
   };
 
@@ -91,12 +124,15 @@ export default function Home() {
         <MenuStats key={refreshKey} />
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <RecentProducts />
+          <RecentProducts key={`recent-${refreshKey}`} onEditProduct={handleEditProduct} />
           <div className="flex flex-col gap-8">
             <MenuQR />
             <QuickActions
               onAddCategory={() => setIsCatModalOpen(true)}
-              onAddItem={() => setIsProdModalOpen(true)}
+              onAddItem={() => {
+                setEditingProduct(null);
+                setIsProdModalOpen(true);
+              }}
             />
           </div>
         </div>
@@ -121,7 +157,7 @@ export default function Home() {
       {/* Product Modal */}
       <Modal
         isOpen={isProdModalOpen}
-        onClose={() => setIsProdModalOpen(false)}
+        onClose={closeProdModal}
         className="max-w-2xl !p-0 !rounded-3xl"
       >
         <ProductForm
@@ -131,8 +167,9 @@ export default function Home() {
           topCategories={categories.slice(0, 5)}
           products={products}
           onSave={handleSaveProduct}
-          onCancel={() => setIsProdModalOpen(false)}
-          isEditing={false}
+          onCancel={closeProdModal}
+          isEditing={!!editingProduct}
+          editingId={editingProduct?.id}
         />
       </Modal>
     </div>
