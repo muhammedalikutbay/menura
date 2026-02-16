@@ -30,8 +30,8 @@ export default function Home() {
     <div className="container mx-auto p-6 max-w-6xl space-y-12 pb-20">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-h2 font-bold text-text-primary tracking-tight">Panel Özeti</h1>
-          <p className="text-callout text-text-secondary font-medium">Menura Smart QR Menu operasyonlarınıza hoş geldiniz.</p>
+          <h1 className="heading-secondary text-text-primary tracking-tight">Panel Özeti</h1>
+          <p className="text-body-muted font-medium">Menura Smart QR Menu operasyonlarınıza hoş geldiniz.</p>
         </div>
         <div className="flex items-center gap-2 text-caption font-bold text-text-secondary bg-white px-4 py-2 rounded-full border border-divider shadow-sm">
           <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
@@ -85,7 +85,7 @@ export default function Home() {
       <div className="space-y-6">
         <div className="flex items-center gap-3">
           <div className="h-8 w-1 bg-action rounded-full" />
-          <h2 className="text-h3 font-black text-text-primary tracking-tight uppercase">QR KOD YÖNETİMİ</h2>
+          <h2 className="heading-tertiary text-text-primary tracking-tight uppercase">QR KOD YÖNETİMİ</h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

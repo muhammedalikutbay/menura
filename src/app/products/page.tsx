@@ -8,12 +8,13 @@ import { SearchInput } from "@/components/shared/SearchInput";
 import { TabNav } from "@/components/shared/TabNav";
 import { ProductGrid } from "./_components/ProductGrid";
 import { ProductForm } from "./_components/ProductForm";
+import { Pagination } from "@/components/shared/Pagination";
 import { storage } from "@/lib/storage";
 import { Category } from "@/types/category";
 import { Product, CreateProductInput } from "@/types/product";
 import { cn } from "@/lib/utils";
 
-type FilterStatus = "all" | "available" | "unavailable";
+type FilterStatus = "all" | "active" | "passive";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -24,6 +25,10 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
   const [activeTab, setActiveTab] = useState<FilterStatus>("all");
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8; // 2 rows of 4 on desktop
 
   const [formData, setFormData] = useState<CreateProductInput>({
     name: "",
@@ -61,12 +66,24 @@ export default function ProductsPage() {
         
         const matchesStatus = 
           activeTab === "all" ? true :
-          activeTab === "available" ? p.isAvailable : !p.isAvailable;
+          activeTab === "active" ? p.isAvailable : !p.isAvailable;
           
         return matchesSearch && matchesCategory && matchesStatus;
       })
       .sort((a, b) => a.order - b.order);
   }, [products, searchQuery, selectedCategoryId, activeTab]);
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const currentItems = useMemo(() => {
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    return filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
+  }, [filteredProducts, currentPage]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategoryId, activeTab]);
 
   const handleOpenModal = (product?: Product) => {
     if (product) {
@@ -94,6 +111,7 @@ export default function ProductsPage() {
         description: "",
         calories: undefined,
         allergens: [],
+        preparationTime: "",
       });
     }
     setIsModalOpen(true);
@@ -155,53 +173,70 @@ export default function ProductsPage() {
         }}
       />
 
-      {/* Filter & Search Section */}
-      <Card className="border-none bg-white shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-divider bg-bg-secondary/30 flex flex-col gap-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <SearchInput 
-              value={searchQuery}
-              onChange={setSearchQuery}
-              placeholder="Ürün ara..."
-            />
-
-            {/* Combined Filters */}
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Category Select */}
-              <select 
-                value={selectedCategoryId}
-                onChange={(e) => setSelectedCategoryId(e.target.value)}
-                className="bg-white border border-divider rounded-lg px-3 py-1.5 text-callout shadow-sm outline-none focus:ring-2 focus:ring-action/20 min-w-[160px]"
-              >
-                <option value="all">Tüm Kategoriler</option>
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))}
-              </select>
-
-              <TabNav 
-                tabs={[
-                  { value: "all", label: "Hepsi" },
-                  { value: "available", label: "Mevcut" },
-                  { value: "unavailable", label: "Tükendi" }
-                ]}
-                activeTab={activeTab}
-                onTabChange={setActiveTab}
-              />
-            </div>
-          </div>
+      {/* Sticky Filter Bar */}
+      <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl p-4 rounded-3xl border border-divider/60 shadow-lg shadow-[#0d7ff2]/5 flex flex-col md:flex-row md:items-center justify-between gap-5 transition-all duration-300">
+        <div className="flex items-center gap-4 flex-1">
+          <SearchInput 
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Ürünlerde ara..."
+            className="bg-white"
+          />
+          <span className="hidden lg:block text-[10px] font-black text-text-secondary uppercase tracking-[0.2em] opacity-50 whitespace-nowrap">
+            {filteredProducts.length} ÜRÜN
+          </span>
         </div>
 
-        {/* Product Grid */}
+        {/* Combined Filters */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Category Select */}
+          <div className="relative group">
+            <select 
+              value={selectedCategoryId}
+              onChange={(e) => setSelectedCategoryId(e.target.value)}
+              className="appearance-none bg-white border border-divider rounded-xl pl-4 pr-10 py-2.5 text-[12px] font-black uppercase tracking-widest shadow-sm outline-none focus:ring-2 focus:ring-action/20 min-w-[180px] transition-all cursor-pointer hover:border-action/30"
+            >
+              <option value="all">TÜM KATEGORİLER</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name.toUpperCase()}</option>
+              ))}
+            </select>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-text-secondary opacity-40 group-hover:opacity-100 transition-opacity">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+
+          <TabNav 
+            tabs={[
+              { value: "all", label: "TÜMÜ" },
+              { value: "active", label: "AKTİF" },
+              { value: "passive", label: "PASİF" }
+            ]}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+          />
+        </div>
+      </div>
+
+      {/* Product Grid Area */}
+      <div className="min-h-[500px]">
         <ProductGrid 
-          products={filteredProducts}
+          products={currentItems}
           categories={categories}
           onToggleAvailability={handleToggleAvailability}
           onEdit={handleOpenModal}
           onDelete={handleDelete}
           onResetFilters={() => { setSearchQuery(""); setSelectedCategoryId("all"); setActiveTab("all"); }}
         />
-      </Card>
+
+        <div className="mt-12 mb-8">
+          <Pagination 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
+      </div>
 
       <Modal
         isOpen={isModalOpen}

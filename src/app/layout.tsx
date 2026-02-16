@@ -22,7 +22,6 @@ export const metadata: Metadata = {
   description: "Next-gen QR Menu System",
 };
 
-import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
 
 export default function RootLayout({
@@ -33,11 +32,10 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body className={`${inter.variable} ${geistSans.variable} ${geistMono.variable} antialiased font-inter`}>
-        <div className="flex h-screen bg-bg-primary overflow-hidden">
-          <Sidebar />
-          <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex min-h-screen bg-bg-primary">
+          <div className="flex flex-1 flex-col">
             <Topbar />
-            <main className="flex-1 overflow-y-auto bg-bg-secondary/50">
+            <main className="flex-1 bg-bg-secondary/50">
               {children}
             </main>
           </div>

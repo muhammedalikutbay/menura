@@ -10,11 +10,12 @@ import { TabNav } from "@/components/shared/TabNav";
 import { BulkActionBar } from "@/components/shared/BulkActionBar";
 import { CategoryTable } from "./_components/CategoryTable";
 import { CategoryForm } from "./_components/CategoryForm";
+import { Pagination } from "@/components/shared/Pagination";
 import { storage } from "@/lib/storage";
 import { Category, CreateCategoryInput } from "@/types/category";
 import { cn } from "@/lib/utils";
 
-type FilterStatus = "all" | "active" | "inactive";
+type FilterStatus = "all" | "active" | "passive";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -23,6 +24,10 @@ export default function CategoriesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<FilterStatus>("all");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   
   const [formData, setFormData] = useState<CreateCategoryInput>({
     name: "",
@@ -49,6 +54,18 @@ export default function CategoriesPage() {
       })
       .sort((a, b) => a.order - b.order);
   }, [categories, searchQuery, activeTab]);
+
+  const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
+  const currentItems = useMemo(() => {
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    return filteredCategories.slice(indexOfFirstItem, indexOfLastItem);
+  }, [filteredCategories, currentPage]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, activeTab]);
 
   const handleOpenModal = (category?: Category) => {
     if (category) {
@@ -147,68 +164,92 @@ export default function CategoriesPage() {
   };
 
   return (
-    <div className="p-8 space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+    <div className="p-6 md:p-8 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 max-w-[1600px] mx-auto">
       <PageHeader 
         title="Kategori Yönetimi" 
         description="Menü kategorilerinizi düzenleyin, sıralayın ve yönetin."
-        action={{
-          label: "Yeni Kategori",
-          onClick: () => handleOpenModal(),
-          icon: <span>+</span>
-        }}
       />
 
-      <Card className="border-none bg-white shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-divider bg-bg-secondary/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <SearchInput 
-            value={searchQuery}
-            onChange={setSearchQuery}
-            placeholder="Kategori ara..."
-          />
-
-          <TabNav 
-            tabs={[
-              { value: "all", label: "Hepsi" },
-              { value: "active", label: "Aktif" },
-              { value: "inactive", label: "Pasif" }
-            ]}
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Panel - Sticky Form */}
+        <div className="lg:col-span-4 lg:sticky lg:top-8 z-10">
+          <CategoryForm 
+            formData={formData}
+            setFormData={setFormData}
+            onSave={handleSave}
+            onCancel={() => {
+              setEditingCategory(null);
+              setFormData({
+                name: "",
+                description: "",
+                order: categories.length + 1,
+                isActive: true,
+              });
+            }}
+            isEditing={!!editingCategory}
           />
         </div>
 
-        <CategoryTable 
-          categories={filteredCategories}
-          selectedIds={selectedIds}
-          onSelectAll={handleSelectAll}
-          onSelectItem={handleSelectItem}
-          onEdit={handleOpenModal}
-          onDelete={handleDelete}
-          onToggleStatus={toggleStatus}
-        />
-      </Card>
+        {/* Right Panel - List & Filters */}
+        <div className="lg:col-span-8 space-y-6">
+          {/* Filters Bar */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-2 rounded-2xl border border-divider/60 shadow-sm">
+            <div className="flex items-center gap-3 w-full sm:w-auto px-2">
+              <SearchInput 
+                value={searchQuery}
+                onChange={setSearchQuery}
+                placeholder="Kategori ara..."
+              />
+              <span className="text-[10px] font-black text-text-secondary uppercase tracking-widest opacity-50 whitespace-nowrap">
+                {filteredCategories.length} KAYIT
+              </span>
+            </div>
+            
+            <div className="w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+               <TabNav 
+                tabs={[
+                  { value: "all", label: "Tümü" },
+                  { value: "active", label: "Aktif" },
+                  { value: "passive", label: "Pasif" }
+                ]}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+              />
+            </div>
+          </div>
 
-      <BulkActionBar 
-        selectedCount={selectedIds.length}
-        onClearSelection={() => setSelectedIds([])}
-        onToggleStatus={bulkToggleStatus}
-        onDelete={bulkDelete}
-      />
+          {/* Category List */}
+          <div className="bg-white rounded-3xl border border-divider/60 shadow-sm overflow-hidden min-h-[400px]">
+            <div className="p-6">
+              <CategoryTable 
+                categories={currentItems}
+                selectedIds={selectedIds}
+                onSelectAll={handleSelectAll}
+                onSelectItem={handleSelectItem}
+                onEdit={handleOpenModal}
+                onDelete={handleDelete}
+                onToggleStatus={toggleStatus}
+              />
+            </div>
+            
+            <div className="border-t border-divider/50 p-4 bg-bg-secondary/10">
+              <Pagination 
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          </div>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={editingCategory ? "Kategoriyi Düzenle" : "Yeni Kategori"}
-        description="Kategori bilgilerini girerek menünüzü düzenleyin."
-      >
-        <CategoryForm 
-          formData={formData}
-          setFormData={setFormData}
-          onSave={handleSave}
-          onCancel={() => setIsModalOpen(false)}
-          isEditing={!!editingCategory}
-        />
-      </Modal>
+          {/* Bulk Actions */}
+          <BulkActionBar 
+            selectedCount={selectedIds.length}
+            onClearSelection={() => setSelectedIds([])}
+            onToggleStatus={bulkToggleStatus}
+            onDelete={bulkDelete}
+          />
+        </div>
+      </div>
     </div>
   );
 }

@@ -105,14 +105,35 @@ export function ProductForm({
           />
         </FormField>
 
-        <div className="flex items-center h-10 gap-2 border border-divider rounded-lg px-3 bg-bg-secondary/10">
-          <Checkbox 
-            checked={formData.isAvailable}
-            onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
-            id="isAvailable"
+        <FormField label="Hazırlık Süresi">
+          <Input
+            value={formData.preparationTime || ""}
+            onChange={(e) => setFormData({ ...formData, preparationTime: e.target.value })}
+            placeholder="Örn: 15-20 dk"
+            className="w-full"
           />
-          <label htmlFor="isAvailable" className="text-caption font-bold text-text-primary cursor-pointer select-none">SATIŞA SUNULSUN</label>
-        </div>
+        </FormField>
+      </div>
+
+      <FormField label="Alerjenler (Virgülle ayırın)">
+        <Input
+          value={formData.allergens?.join(", ") || ""}
+          onChange={(e) => setFormData({ 
+            ...formData, 
+            allergens: e.target.value.split(",").map(s => s.trim()).filter(Boolean) 
+          })}
+          placeholder="Örn: Gluten, Laktoz, Kuruyemiş"
+          className="w-full"
+        />
+      </FormField>
+
+      <div className="flex items-center h-10 gap-2 border border-divider rounded-lg px-3 bg-bg-secondary/10">
+        <Checkbox 
+          checked={formData.isAvailable}
+          onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
+          id="isAvailable"
+        />
+        <label htmlFor="isAvailable" className="text-caption font-bold text-text-primary cursor-pointer select-none uppercase tracking-widest">Aktif</label>
       </div>
 
       <div className="flex gap-2 justify-end pt-4 border-t border-divider mt-6">

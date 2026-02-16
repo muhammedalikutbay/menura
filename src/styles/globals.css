@@ -42,6 +42,15 @@
   --animate-default: var(--motion-default);
   --animate-slow: var(--motion-slow);
 
+  --font-size-hero: var(--text-hero);
+  --font-size-h1: var(--text-h1);
+  --font-size-h2: var(--text-h2);
+  --font-size-h3: var(--text-h3);
+  --font-size-headline: var(--text-headline);
+  --font-size-body: var(--text-body);
+  --font-size-callout: var(--text-callout);
+  --font-size-caption: var(--text-caption);
+
   /* Glassmorphism utility */
   --backdrop-blur-default: 12px;
 }
