@@ -54,7 +54,7 @@ export function QRGenerator({
 
       <div className="flex gap-2 w-full max-w-[320px]">
         <Button onClick={downloadQR} className="flex-1 shadow-md">
-          PNG İndir
+          Download PNG
         </Button>
       </div>
     </div>

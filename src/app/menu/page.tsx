@@ -29,7 +29,7 @@ export default function CustomerMenuView() {
 
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
-      const matchesSearch = p.name.toLocaleLowerCase("tr-TR").includes(searchQuery.toLocaleLowerCase("tr-TR"));
+      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = p.categoryId === activeCategoryId;
       return matchesSearch && matchesCategory;
     });
@@ -42,7 +42,7 @@ export default function CustomerMenuView() {
         <div className="relative group">
           <input 
             type="text" 
-            placeholder="Lezzet ara..."
+            placeholder="Search flavors..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full h-12 bg-bg-secondary/50 border border-divider rounded-2xl px-12 text-body-muted font-medium outline-none focus:ring-2 focus:ring-action/20 transition-all placeholder:text-text-secondary/50"
@@ -148,8 +148,8 @@ export default function CustomerMenuView() {
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary opacity-30"><path d="m21 8-9-5-9 5v8l9 5 9-5V8z"/><path d="M12 22V12"/><path d="m21 8-9 5-9-5"/></svg>
               </div>
               <div>
-                <h4 className="text-body font-black text-text-primary uppercase tracking-widest">Lezzet Bulunamadı</h4>
-                <p className="text-caption text-text-secondary font-medium">Bu kategoride şu an servis edilmiyor.</p>
+                <h4 className="text-body font-black text-text-primary uppercase tracking-widest">No Flavors Found</h4>
+                <p className="text-caption text-text-secondary font-medium">Not currently serving in this category.</p>
               </div>
             </div>
           )}

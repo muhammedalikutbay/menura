@@ -34,22 +34,22 @@ export function ProductForm({
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormField label="Ürün Adı" error={!formData.name ? "Zorunludur" : ""}>
+        <FormField label="Product Name" error={!formData.name ? "Required" : ""}>
           <Input
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="Örn: Kebap"
+            placeholder="e.g. Kebab"
             autoFocus
           />
         </FormField>
 
-        <FormField label="Kategori" error={!formData.categoryId ? "Zorunludur" : ""}>
+        <FormField label="Category" error={!formData.categoryId ? "Required" : ""}>
           <select 
             value={formData.categoryId}
             onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
             className="w-full bg-white border border-divider rounded-lg px-3 py-2 text-callout shadow-sm outline-none focus:ring-2 focus:ring-action/20"
           >
-            <option value="" disabled>Seçiniz...</option>
+            <option value="" disabled>Select...</option>
             {categories.map(cat => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
@@ -57,17 +57,17 @@ export function ProductForm({
         </FormField>
       </div>
 
-      <FormField label="Açıklama">
+      <FormField label="Description">
         <Textarea
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          placeholder="Ürün içeriği, malzemeler vb."
+          placeholder="Product content, ingredients, etc."
           rows={2}
         />
       </FormField>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <FormField label="Fiyat (₺)">
+        <FormField label="Price (₺)">
           <Input
             type="number"
             value={formData.price}
@@ -76,7 +76,7 @@ export function ProductForm({
           />
         </FormField>
         
-        <FormField label="İndirimli Fiyat (₺)">
+        <FormField label="Discount Price (₺)">
           <Input
             type="number"
             value={formData.discountPrice || ""}
@@ -85,7 +85,7 @@ export function ProductForm({
           />
         </FormField>
 
-        <FormField label="Kalori (kcal)">
+        <FormField label="Calories (kcal)">
           <Input
             type="number"
             value={formData.calories || ""}
@@ -96,7 +96,7 @@ export function ProductForm({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-        <FormField label="Sıralama">
+        <FormField label="Order">
           <Input
             type="number"
             value={formData.order}
@@ -105,24 +105,24 @@ export function ProductForm({
           />
         </FormField>
 
-        <FormField label="Hazırlık Süresi">
+        <FormField label="Preparation Time">
           <Input
             value={formData.preparationTime || ""}
             onChange={(e) => setFormData({ ...formData, preparationTime: e.target.value })}
-            placeholder="Örn: 15-20 dk"
+            placeholder="e.g. 15-20 min"
             className="w-full"
           />
         </FormField>
       </div>
 
-      <FormField label="Alerjenler (Virgülle ayırın)">
+      <FormField label="Allergens (Separate with commas)">
         <Input
           value={formData.allergens?.join(", ") || ""}
           onChange={(e) => setFormData({ 
             ...formData, 
             allergens: e.target.value.split(",").map(s => s.trim()).filter(Boolean) 
           })}
-          placeholder="Örn: Gluten, Laktoz, Kuruyemiş"
+          placeholder="e.g. Gluten, Lactose, Nuts"
           className="w-full"
         />
       </FormField>
@@ -133,13 +133,13 @@ export function ProductForm({
           onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
           id="isAvailable"
         />
-        <label htmlFor="isAvailable" className="text-caption font-bold text-text-primary cursor-pointer select-none uppercase tracking-widest">Aktif</label>
+        <label htmlFor="isAvailable" className="text-caption font-bold text-text-primary cursor-pointer select-none uppercase tracking-widest">Active</label>
       </div>
 
       <div className="flex gap-2 justify-end pt-4 border-t border-divider mt-6">
-        <Button variant="secondary" onClick={onCancel}>İptal</Button>
+        <Button variant="secondary" onClick={onCancel}>Cancel</Button>
         <Button onClick={onSave} disabled={!formData.name || !formData.categoryId} className="shadow-sm">
-          {isEditing ? "Değişiklikleri Kaydet" : "Ürünü Ekle"}
+          {isEditing ? "Save Changes" : "Add Product"}
         </Button>
       </div>
     </div>

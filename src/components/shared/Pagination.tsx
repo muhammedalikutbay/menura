@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 interface PaginationProps {
   currentPage: number;
@@ -18,59 +17,85 @@ export function Pagination({
 }: PaginationProps) {
   if (totalPages <= 1) return null;
 
+  const renderPageNumbers = () => {
+    const pages = [];
+    // Always show first, last, current, and neighbors.
+    // For simplicity in this iteration, if totalPages <= 7, show all.
+    // If > 7, show 1, ..., current-1, current, current+1, ..., last.
+    
+    if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) {
+            pages.push(i);
+        }
+    } else {
+        if (currentPage <= 4) {
+            // Start items
+            for(let i = 1; i <= 5; i++) pages.push(i);
+            pages.push('...');
+            pages.push(totalPages);
+        } else if (currentPage >= totalPages - 3) {
+            // End items
+            pages.push(1);
+            pages.push('...');
+            for(let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+        } else {
+            // Middle items
+            pages.push(1);
+            pages.push('...');
+            pages.push(currentPage - 1);
+            pages.push(currentPage);
+            pages.push(currentPage + 1);
+            pages.push('...');
+            pages.push(totalPages);
+        }
+    }
+
+    return pages.map((page, index) => {
+        if (page === '...') {
+            return (
+                <span key={`ellipsis-${index}`} className="text-[#86868B] px-1">...</span>
+            );
+        }
+        
+        const pageNum = page as number;
+        const isActive = pageNum === currentPage;
+        
+        return (
+            <button
+                key={pageNum}
+                onClick={() => onPageChange(pageNum)}
+                className={cn(
+                    "w-8 h-8 rounded-full text-sm font-medium flex items-center justify-center transition-colors",
+                    isActive 
+                        ? "bg-[#F5F5F7] text-[#1D1D1F] font-bold" 
+                        : "hover:bg-[#F5F5F7] text-[#86868B] hover:text-[#1D1D1F]"
+                )}
+            >
+                {pageNum}
+            </button>
+        );
+    });
+  };
+
   return (
-    <div className={cn("flex items-center justify-between px-4 py-3 bg-white border-t border-divider", className)}>
-      <div className="flex flex-1 justify-between sm:hidden">
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-          disabled={currentPage === 1}
-        >
-          Geri
-        </Button>
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-          disabled={currentPage === totalPages}
-        >
-          İleri
-        </Button>
-      </div>
-      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-        <div>
-          <p className="text-caption text-text-secondary font-medium">
-            Sayfa <span className="font-bold text-text-primary">{currentPage}</span> / <span className="font-bold text-text-primary">{totalPages}</span>
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-            className="h-8 px-3 rounded-lg border border-divider hover:bg-bg-secondary transition-all"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-              <path d="m15 18-6-6 6-6"/>
-            </svg>
-            Geri
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-            disabled={currentPage === totalPages}
-            className="h-8 px-3 rounded-lg border border-divider hover:bg-bg-secondary transition-all"
-          >
-            İleri
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
-              <path d="m9 18 6-6-6-6"/>
-            </svg>
-          </Button>
-        </div>
-      </div>
+    <div className={cn("mt-10 flex items-center justify-center space-x-2", className)}>
+      <button
+        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+        disabled={currentPage === 1}
+        className="p-2 rounded-full hover:bg-[#F5F5F7] text-[#86868B] disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      
+      {renderPageNumbers()}
+
+      <button
+        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+        disabled={currentPage === totalPages}
+        className="p-2 rounded-full hover:bg-[#F5F5F7] text-[#86868B] disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
     </div>
   );
 }

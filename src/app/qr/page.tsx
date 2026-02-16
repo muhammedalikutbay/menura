@@ -17,17 +17,17 @@ export default function QRPage() {
   return (
     <div className="space-y-8 pb-20">
       <PageHeader 
-        title="QR Kod Yönetimi" 
-        description="Müşterileriniz için dijital menü erişim kodları oluşturun ve özelleştirin."
+        title="QR Code Management" 
+        description="Create and customize digital menu access codes for your customers."
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Controls */}
         <div className="lg:col-span-1 space-y-6">
           <Card className="p-6 border border-divider shadow-sm space-y-6">
-            <h3 className="text-callout font-black text-text-primary uppercase tracking-widest border-b border-divider pb-4">ÖZELLER</h3>
+            <h3 className="text-callout font-black text-text-primary uppercase tracking-widest border-b border-divider pb-4">SETTINGS</h3>
             
-            <FormField label="Menü Bağlantısı (URL)">
+            <FormField label="Menu Link (URL)">
               <Input 
                 value={menuUrl}
                 onChange={(e) => setMenuUrl(e.target.value)}
@@ -36,7 +36,7 @@ export default function QRPage() {
               />
             </FormField>
 
-            <FormField label="QR Rengi">
+            <FormField label="QR Color">
               <div className="flex gap-4 items-center">
                 <input 
                   type="color" 
@@ -58,15 +58,15 @@ export default function QRPage() {
                 checked={includeLogo}
                 onChange={(e) => setIncludeLogo(e.target.checked)}
               />
-              <label htmlFor="logo" className="text-caption font-black text-text-primary cursor-pointer select-none">LOGO EKLE</label>
+              <label htmlFor="logo" className="text-caption font-black text-text-primary cursor-pointer select-none">ADD LOGO</label>
             </div>
           </Card>
 
           <Card className="p-6 border border-divider shadow-sm bg-primary/5 border-dashed">
              <div className="flex flex-col gap-2">
-                <h4 className="text-caption font-black text-primary uppercase tracking-widest">İpucu</h4>
+                <h4 className="text-caption font-black text-primary uppercase tracking-widest">Tip</h4>
                 <p className="text-caption text-text-secondary leading-relaxed font-medium">
-                  Yüksek baskı kalitesi için **H (High)** hata düzeltme seviyesini kullanıyoruz. Bu sayede QR kodunuz %30'a kadar hasar görse bile taranabilir kalır.
+                  We use **H (High)** error correction level for high print quality. This way your QR code remains scannable even if damaged up to 30%.
                 </p>
              </div>
           </Card>
@@ -76,8 +76,8 @@ export default function QRPage() {
         <div className="lg:col-span-1">
           <Card className="p-8 border border-divider shadow-sm flex flex-col items-center justify-center h-full gap-8">
              <div className="text-center space-y-1">
-                <h3 className="text-callout font-black text-text-primary uppercase tracking-widest">DİJİTAL QR</h3>
-                <p className="text-caption text-text-secondary font-medium italic">Görsel veya Web kullanımı için</p>
+                <h3 className="text-callout font-black text-text-primary uppercase tracking-widest">DIGITAL QR</h3>
+                <p className="text-caption text-text-secondary font-medium italic">For image or web use</p>
              </div>
              <QRGenerator 
                 value={menuUrl} 
@@ -91,8 +91,8 @@ export default function QRPage() {
         <div className="lg:col-span-1">
            <Card className="p-8 border border-divider shadow-sm flex flex-col items-center gap-8 bg-bg-secondary/10">
               <div className="text-center space-y-1">
-                 <h3 className="text-callout font-black text-text-primary uppercase tracking-widest">MASA ÖNİZLEME</h3>
-                 <p className="text-caption text-text-secondary font-medium italic">Gerçek dünya görünümü</p>
+                 <h3 className="text-callout font-black text-text-primary uppercase tracking-widest">TABLE PREVIEW</h3>
+                 <p className="text-caption text-text-secondary font-medium italic">Real world view</p>
               </div>
               <QRPreview>
                  <QRGenerator 

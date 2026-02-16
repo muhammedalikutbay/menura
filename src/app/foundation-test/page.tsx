@@ -7,10 +7,10 @@ export default function FoundationTestPage() {
         <h1 className="heading-primary">Heading Primary</h1>
         <h2 className="heading-secondary">Heading Secondary</h2>
         <p className="text-body">
-          Bu bir body metin örneğidir. Design token sistemi test ediliyor.
+          This is a body text example. Design token system is being tested.
         </p>
-        <p className="text-body-muted">Bu muted body metindir.</p>
-        <span className="text-caption">Caption text örneği</span>
+        <p className="text-body-muted">This is muted body text.</p>
+        <span className="text-caption">Caption text example</span>
       </div>
 
       <div className="surface p-6 space-y-4">

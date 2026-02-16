@@ -28,12 +28,12 @@ export function ProductGrid({
         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="opacity-20 mb-4">
           <path d="m21 8-9-5-9 5v8l9 5 9-5V8z"/><path d="M12 22V12"/><path d="m21 8-9 5-9-5"/>
         </svg>
-        <h3 className="text-headline font-semibold text-text-primary">Ürün Bulunmuyor</h3>
+        <h3 className="text-headline font-semibold text-text-primary">No Products Found</h3>
         <p className="text-body-muted text-center max-w-[320px] mt-1">
-          Kriterlere uygun ürün bulunamadı. Filtreleri temizlemeyi veya yeni ürün eklemeyi deneyin.
+          No products found matching the criteria. Try clearing filters or adding a new product.
         </p>
         <Button variant="secondary" className="mt-6" onClick={onResetFilters}>
-          Filtreleri Sıfırla
+          Reset Filters
         </Button>
       </div>
     );

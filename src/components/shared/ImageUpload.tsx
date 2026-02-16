@@ -34,7 +34,7 @@ export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
   return (
     <div className={cn("space-y-3", className)}>
       <div className="flex items-center justify-between">
-        <span className="text-caption font-semibold text-text-secondary uppercase tracking-tight">Görsel</span>
+        <span className="text-caption font-semibold text-text-secondary uppercase tracking-tight">Image</span>
         <div className="flex bg-bg-secondary rounded-lg p-0.5">
           <button
             onClick={() => setMode("file")}
@@ -43,7 +43,7 @@ export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
               mode === "file" ? "bg-white shadow-sm text-text-primary" : "text-text-secondary"
             )}
           >
-            DOSYA
+            FILE
           </button>
           <button
             onClick={() => setMode("url")}
@@ -95,7 +95,7 @@ export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
               >
                 <div className="flex items-center gap-2 text-text-secondary group-hover:text-action transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-                  <span className="text-caption font-bold">Görsel Seç</span>
+                  <span className="text-caption font-bold">Select Image</span>
                 </div>
               </Button>
               <p className="text-[10px] text-text-secondary text-center italic">PNG, JPG, WEBP (Max 2MB)</p>
@@ -103,12 +103,12 @@ export function ImageUpload({ value, onChange, className }: ImageUploadProps) {
           ) : (
             <div className="space-y-2">
               <Input
-                placeholder="Görsel URL adresini yapıştırın..."
+                placeholder="Paste image URL..."
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 className="h-12"
               />
-              <p className="text-[10px] text-text-secondary text-center italic uppercase tracking-widest font-bold">Harici bir kaynaktan görsel bağlayın</p>
+              <p className="text-[10px] text-text-secondary text-center italic uppercase tracking-widest font-bold">Link an image from an external source</p>
             </div>
           )}
         </div>

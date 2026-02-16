@@ -14,7 +14,7 @@ import { Category } from "@/types/category";
 import { Product, CreateProductInput } from "@/types/product";
 import { cn } from "@/lib/utils";
 
-type FilterStatus = "all" | "active" | "passive";
+type FilterStatus = "all" | "active" | "draft";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -58,9 +58,9 @@ export default function ProductsPage() {
   const filteredProducts = useMemo(() => {
     return products
       .filter((p) => {
-        const trLowerName = p.name.toLocaleLowerCase("tr-TR");
-        const trLowerQuery = searchQuery.toLocaleLowerCase("tr-TR");
-        const matchesSearch = trLowerName.includes(trLowerQuery);
+        const lowerName = p.name.toLowerCase();
+        const lowerQuery = searchQuery.toLowerCase();
+        const matchesSearch = lowerName.includes(lowerQuery);
         
         const matchesCategory = selectedCategoryId === "all" || p.categoryId === selectedCategoryId;
         
@@ -153,7 +153,7 @@ export default function ProductsPage() {
 
   const handleDelete = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
-    if (confirm("Bu ürünü silmek istediğinize emin misiniz?")) {
+    if (confirm("Are you sure you want to delete this product?")) {
       const updated = products.filter(p => p.id !== id);
       setProducts(updated);
       storage.set("PRODUCTS", updated);
@@ -164,10 +164,10 @@ export default function ProductsPage() {
     <div className="p-8 space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
       {/* Header Section */}
       <PageHeader 
-        title="Ürün Yönetimi"
-        description="Menünüzdeki ürünleri ekleyin, düzenleyin ve fiyatlandırın."
+        title="Product Management"
+        description="Add, edit, and price your menu items."
         action={{
-          label: "Yeni Ürün",
+          label: "New Product",
           onClick: () => handleOpenModal(),
           icon: <span>+</span>
         }}
@@ -179,11 +179,11 @@ export default function ProductsPage() {
           <SearchInput 
             value={searchQuery}
             onChange={setSearchQuery}
-            placeholder="Ürünlerde ara..."
+            placeholder="Search products..."
             className="bg-white"
           />
           <span className="hidden lg:block text-[10px] font-black text-text-secondary uppercase tracking-[0.2em] opacity-50 whitespace-nowrap">
-            {filteredProducts.length} ÜRÜN
+            {filteredProducts.length} PRODUCTS
           </span>
         </div>
 
@@ -196,7 +196,7 @@ export default function ProductsPage() {
               onChange={(e) => setSelectedCategoryId(e.target.value)}
               className="appearance-none bg-white border border-divider rounded-xl pl-4 pr-10 py-2.5 text-[12px] font-black uppercase tracking-widest shadow-sm outline-none focus:ring-2 focus:ring-action/20 min-w-[180px] transition-all cursor-pointer hover:border-action/30"
             >
-              <option value="all">TÜM KATEGORİLER</option>
+              <option value="all">ALL CATEGORIES</option>
               {categories.map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.name.toUpperCase()}</option>
               ))}
@@ -208,9 +208,9 @@ export default function ProductsPage() {
 
           <TabNav 
             tabs={[
-              { value: "all", label: "TÜMÜ" },
-              { value: "active", label: "AKTİF" },
-              { value: "passive", label: "PASİF" }
+              { value: "all", label: "ALL" },
+              { value: "active", label: "ACTIVE" },
+              { value: "draft", label: "DRAFT" }
             ]}
             activeTab={activeTab}
             onTabChange={setActiveTab}
@@ -241,8 +241,8 @@ export default function ProductsPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingProduct ? "Ürünü Düzenle" : "Yeni Ürün Ekle"}
-        description="Ürün bilgilerini detaylı bir şekilde girerek menünüzü zenginleştirin."
+        title={editingProduct ? "Edit Product" : "Add New Product"}
+        description="Enhance your menu by entering detailed product information."
       >
         <ProductForm 
           formData={formData}

@@ -7,7 +7,7 @@ interface QRPreviewProps {
   title?: string;
 }
 
-export function QRPreview({ children, title = "MENÜMÜZE GÖZ ATIN" }: QRPreviewProps) {
+export function QRPreview({ children, title = "CHECK OUT OUR MENU" }: QRPreviewProps) {
   return (
     <div className="relative group perspective-1000 w-full flex justify-center">
       <div className="w-full max-w-[320px] aspect-[1/1.4] bg-white rounded-[32px] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] border border-divider/50 overflow-hidden transition-all duration-500 hover:shadow-[0_48px_80px_-16px_rgba(0,0,0,0.18)]">
@@ -26,7 +26,7 @@ export function QRPreview({ children, title = "MENÜMÜZE GÖZ ATIN" }: QRPrevie
 
         {/* Footer */}
         <div className="px-8 pb-8 text-center mt-auto">
-          <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest opacity-50 mb-2">QR Kodu Taratın</p>
+          <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest opacity-50 mb-2">Scan the QR Code</p>
           <div className="flex items-center justify-center gap-2">
             <span className="h-1 w-1 rounded-full bg-primary" />
             <span className="text-[12px] font-black text-primary tracking-tight">menura.app</span>

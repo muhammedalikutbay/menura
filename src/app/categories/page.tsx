@@ -1,33 +1,25 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Modal } from "@/components/ui/modal";
-import { PageHeader } from "@/components/shared/PageHeader";
-import { SearchInput } from "@/components/shared/SearchInput";
-import { TabNav } from "@/components/shared/TabNav";
-import { BulkActionBar } from "@/components/shared/BulkActionBar";
-import { CategoryTable } from "./_components/CategoryTable";
+import { CategoryCard } from "./_components/CategoryCard";
 import { CategoryForm } from "./_components/CategoryForm";
 import { Pagination } from "@/components/shared/Pagination";
+import { SearchInput } from "@/components/shared/SearchInput";
+import { TabNav } from "@/components/shared/TabNav";
 import { storage } from "@/lib/storage";
 import { Category, CreateCategoryInput } from "@/types/category";
-import { cn } from "@/lib/utils";
 
-type FilterStatus = "all" | "active" | "passive";
+type FilterStatus = "all" | "active" | "draft";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<FilterStatus>("all");
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 6;
   
   const [formData, setFormData] = useState<CreateCategoryInput>({
     name: "",
@@ -43,9 +35,9 @@ export default function CategoriesPage() {
   const filteredCategories = useMemo(() => {
     return categories
       .filter((c) => {
-        const trLowerName = c.name.toLocaleLowerCase("tr-TR");
-        const trLowerQuery = searchQuery.toLocaleLowerCase("tr-TR");
-        const matchesSearch = trLowerName.includes(trLowerQuery);
+        const lowerName = c.name.toLowerCase();
+        const lowerQuery = searchQuery.toLowerCase();
+        const matchesSearch = lowerName.includes(lowerQuery);
         
         const matchesStatus = 
           activeTab === "all" ? true :
@@ -67,26 +59,29 @@ export default function CategoriesPage() {
     setCurrentPage(1);
   }, [searchQuery, activeTab]);
 
-  const handleOpenModal = (category?: Category) => {
-    if (category) {
+  const handleEditClick = (category: Category) => {
       setEditingCategory(category);
       setFormData({
         name: category.name,
         description: category.description || "",
+        image: category.image || "",
         order: category.order,
         isActive: category.isActive,
       });
-    } else {
+      // Scroll to top to see form if needed
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const resetForm = () => {
       setEditingCategory(null);
       setFormData({
         name: "",
         description: "",
+        image: "",
         order: categories.length + 1,
         isActive: true,
       });
-    }
-    setIsModalOpen(true);
-  };
+  }
 
   const handleSave = () => {
     if (!formData.name) return;
@@ -110,146 +105,108 @@ export default function CategoriesPage() {
 
     setCategories(updatedCategories);
     storage.set("CATEGORIES", updatedCategories);
-    setIsModalOpen(false);
+    resetForm();
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("Bu kategoriyi silmek istediğinize emin misiniz?")) {
+    if (confirm("Are you sure you want to delete this category?")) {
       const updatedCategories = categories.filter((c) => c.id !== id);
       setCategories(updatedCategories);
       storage.set("CATEGORIES", updatedCategories);
-      setSelectedIds(selectedIds.filter(selectedId => selectedId !== id));
+      if (editingCategory?.id === id) {
+          resetForm();
+      }
     }
-  };
-
-  const toggleStatus = (id: string) => {
-    const updatedCategories = categories.map((c) =>
-      c.id === id ? { ...c, isActive: !c.isActive, updatedAt: Date.now() } : c
-    );
-    setCategories(updatedCategories);
-    storage.set("CATEGORIES", updatedCategories);
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedIds(filteredCategories.map(c => c.id));
-    } else {
-      setSelectedIds([]);
-    }
-  };
-
-  const handleSelectItem = (id: string, checked: boolean) => {
-    if (checked) {
-      setSelectedIds([...selectedIds, id]);
-    } else {
-      setSelectedIds(selectedIds.filter(idx => idx !== id));
-    }
-  };
-
-  const bulkDelete = () => {
-    if (confirm(`${selectedIds.length} kategoriyi silmek istediğinize emin misiniz?`)) {
-      const updatedCategories = categories.filter(c => !selectedIds.includes(c.id));
-      setCategories(updatedCategories);
-      storage.set("CATEGORIES", updatedCategories);
-      setSelectedIds([]);
-    }
-  };
-
-  const bulkToggleStatus = (targetStatus: boolean) => {
-    const updatedCategories = categories.map(c => 
-      selectedIds.includes(c.id) ? { ...c, isActive: targetStatus, updatedAt: Date.now() } : c
-    );
-    setCategories(updatedCategories);
-    storage.set("CATEGORIES", updatedCategories);
   };
 
   return (
-    <div className="p-6 md:p-8 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 max-w-[1600px] mx-auto">
-      <PageHeader 
-        title="Kategori Yönetimi" 
-        description="Menü kategorilerinizi düzenleyin, sıralayın ve yönetin."
-      />
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Panel - Sticky Form */}
-        <div className="lg:col-span-4 lg:sticky lg:top-8 z-10">
-          <CategoryForm 
-            formData={formData}
-            setFormData={setFormData}
-            onSave={handleSave}
-            onCancel={() => {
-              setEditingCategory(null);
-              setFormData({
-                name: "",
-                description: "",
-                order: categories.length + 1,
-                isActive: true,
-              });
-            }}
-            isEditing={!!editingCategory}
-          />
+    <div className="bg-[#F5F5F7] min-h-screen">
+      <main className="flex-grow w-full max-w-[1440px] mx-auto px-6 py-10 md:py-16">
+        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-3 text-[#1D1D1F]">
+                    Categories
+                </h1>
+                <p className="text-lg text-[#86868B] max-w-2xl">
+                    Organize your menu items efficiently. Create categories like
+                    "Starters", "Main Course", or "Beverages" to help customers navigate
+                    your menu.
+                </p>
+            </div>
+            <div className="flex items-center gap-3"></div>
         </div>
 
-        {/* Right Panel - List & Filters */}
-        <div className="lg:col-span-8 space-y-6">
-          {/* Filters Bar */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-2 rounded-2xl border border-divider/60 shadow-sm">
-            <div className="flex items-center gap-3 w-full sm:w-auto px-2">
-              <SearchInput 
-                value={searchQuery}
-                onChange={setSearchQuery}
-                placeholder="Kategori ara..."
-              />
-              <span className="text-[10px] font-black text-text-secondary uppercase tracking-widest opacity-50 whitespace-nowrap">
-                {filteredCategories.length} KAYIT
-              </span>
+        <div className="flex flex-col lg:flex-row gap-8 xl:gap-12 items-start">
+            {/* Sidebar Form */}
+            <div className="w-full lg:w-1/3 xl:w-1/4 sticky top-24">
+               <CategoryForm 
+                 formData={formData}
+                 setFormData={setFormData}
+                 onSave={handleSave}
+                 isEditing={!!editingCategory}
+                 onCancel={resetForm}
+               />
             </div>
-            
-            <div className="w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-               <TabNav 
-                tabs={[
-                  { value: "all", label: "Tümü" },
-                  { value: "active", label: "Aktif" },
-                  { value: "passive", label: "Pasif" }
-                ]}
-                activeTab={activeTab}
-                onTabChange={setActiveTab}
-              />
-            </div>
-          </div>
 
-          {/* Category List */}
-          <div className="bg-white rounded-3xl border border-divider/60 shadow-sm overflow-hidden min-h-[400px]">
-            <div className="p-6">
-              <CategoryTable 
-                categories={currentItems}
-                selectedIds={selectedIds}
-                onSelectAll={handleSelectAll}
-                onSelectItem={handleSelectItem}
-                onEdit={handleOpenModal}
-                onDelete={handleDelete}
-                onToggleStatus={toggleStatus}
-              />
-            </div>
-            
-            <div className="border-t border-divider/50 p-4 bg-bg-secondary/10">
-              <Pagination 
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-              />
-            </div>
-          </div>
+            {/* Main Grid Content */}
+            <div className="w-full lg:w-2/3 xl:w-3/4">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+                    <TabNav 
+                        tabs={[
+                            { value: "all", label: "All Items" },
+                            { value: "active", label: "Active" },
+                            { value: "draft", label: "Drafts" }
+                        ]}
+                        activeTab={activeTab}
+                        onTabChange={setActiveTab}
+                        className="w-full sm:w-auto bg-transparent border-none p-0 shadow-none"
+                    />
+                    
+                    <div className="w-full sm:w-auto">
+                        <SearchInput
+                            value={searchQuery}
+                            onChange={setSearchQuery}
+                            placeholder="Search..."
+                            className="w-full sm:w-64 bg-white border-[#E5E7EB] rounded-full"
+                        />
+                    </div>
+                </div>
 
-          {/* Bulk Actions */}
-          <BulkActionBar 
-            selectedCount={selectedIds.length}
-            onClearSelection={() => setSelectedIds([])}
-            onToggleStatus={bulkToggleStatus}
-            onDelete={bulkDelete}
-          />
+                {currentItems.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {currentItems.map((category) => (
+                            <CategoryCard 
+                                key={category.id} 
+                                category={category} 
+                                onEdit={handleEditClick}
+                                onDelete={handleDelete}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-xl border border-dashed border-[#E5E7EB]">
+                        <div className="w-16 h-16 bg-[#F5F5F7] rounded-full flex items-center justify-center mb-4">
+                            <svg className="w-8 h-8 text-[#86868B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                            </svg>
+                        </div>
+                        <h3 className="text-[#1D1D1F] font-bold text-lg">No Categories Found</h3>
+                        <p className="text-[#86868B]">Try adjusting your search or filters.</p>
+                    </div>
+                )}
+                
+                {totalPages > 1 && (
+                    <div className="mt-10">
+                        <Pagination 
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                        />
+                    </div>
+                )}
+            </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

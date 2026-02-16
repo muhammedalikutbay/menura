@@ -6,9 +6,9 @@ import { cn } from "@/lib/utils";
 
 const routeLabels: Record<string, string> = {
   "": "Dashboard",
-  "categories": "Kategoriler",
-  "products": "Ürünler",
-  "qr": "QR Kod Yönetimi",
+  "categories": "Categories",
+  "products": "Products",
+  "qr": "QR Code Management",
 };
 
 export function Topbar() {
@@ -30,8 +30,8 @@ export function Topbar() {
       <nav className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center gap-8">
         {[
           { label: "Dashboard", href: "/" },
-          { label: "Kategoriler", href: "/categories" },
-          { label: "Ürünler", href: "/products" },
+          { label: "Categories", href: "/categories" },
+          { label: "Products", href: "/products" },
           { label: "QR Codes", href: "/qr" }
         ].map((item) => {
           const isActuallyActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
