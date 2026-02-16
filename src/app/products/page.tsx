@@ -4,9 +4,14 @@ import { useEffect, useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { FormField } from "@/components/ui/form-field";
+import { Modal } from "@/components/ui/modal";
+import { Checkbox } from "@/components/ui/checkbox";
 import { storage } from "@/lib/storage";
 import { Category } from "@/types/category";
-import { Product } from "@/types/product";
+import { Product, CreateProductInput } from "@/types/product";
 import { cn } from "@/lib/utils";
 
 type FilterStatus = "all" | "available" | "unavailable";
@@ -42,7 +47,7 @@ export default function ProductsPage() {
     
     // Set default category if available
     if (storedCategories.length > 0) {
-      setFormData(prev => ({ ...prev, categoryId: storedCategories[0].id }));
+      setFormData((prev: CreateProductInput) => ({ ...prev, categoryId: storedCategories[0].id }));
     }
   }, []);
 
@@ -120,7 +125,8 @@ export default function ProductsPage() {
     setIsModalOpen(false);
   };
 
-  const handleToggleAvailability = (id: string) => {
+  const handleToggleAvailability = (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
     const updated = products.map(p => 
       p.id === id ? { ...p, isAvailable: !p.isAvailable, updatedAt: Date.now() } : p
     );
@@ -269,7 +275,7 @@ export default function ProductsPage() {
                       
                       {/* Action buttons */}
                       <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full hover:bg-bg-secondary" onClick={() => handleToggleAvailability(product.id)} title="Stok Durumu">
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full hover:bg-bg-secondary" onClick={(e) => handleToggleAvailability(product.id, e)} title="Stok Durumu">
                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={product.isAvailable ? "text-success" : "text-text-secondary"}><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                         </Button>
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full hover:bg-bg-secondary" onClick={() => handleOpenModal(product)}>
@@ -300,7 +306,7 @@ export default function ProductsPage() {
             <FormField label="Ürün Adı" error={!formData.name ? "Zorunludur" : ""}>
               <Input
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Örn: Kebap"
                 autoFocus
               />
@@ -309,7 +315,7 @@ export default function ProductsPage() {
             <FormField label="Kategori" error={!formData.categoryId ? "Zorunludur" : ""}>
               <select 
                 value={formData.categoryId}
-                onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, categoryId: e.target.value })}
                 className="w-full bg-white border border-divider rounded-lg px-3 py-2 text-callout shadow-sm outline-none focus:ring-2 focus:ring-action/20"
               >
                 <option value="" disabled>Seçiniz...</option>
@@ -323,7 +329,7 @@ export default function ProductsPage() {
           <FormField label="Açıklama">
             <Textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Ürün içeriği, malzemeler vb."
               rows={3}
             />
@@ -334,7 +340,7 @@ export default function ProductsPage() {
               <Input
                 type="number"
                 value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
               />
             </FormField>
             
@@ -342,14 +348,14 @@ export default function ProductsPage() {
               <Input
                 type="number"
                 value={formData.discountPrice || ""}
-                onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value ? parseFloat(e.target.value) : undefined })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, discountPrice: e.target.value ? parseFloat(e.target.value) : undefined })}
               />
             </FormField>
 
             <FormField label="Görsel URL">
               <Input
                 value={formData.image || ""}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, image: e.target.value })}
                 placeholder="https://..."
               />
             </FormField>
@@ -360,7 +366,7 @@ export default function ProductsPage() {
               <Input
                 type="number"
                 value={formData.order}
-                onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
               />
             </FormField>
 
@@ -368,7 +374,7 @@ export default function ProductsPage() {
               <Input
                 type="number"
                 value={formData.calories || ""}
-                onChange={(e) => setFormData({ ...formData, calories: e.target.value ? parseInt(e.target.value) : undefined })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, calories: e.target.value ? parseInt(e.target.value) : undefined })}
               />
             </FormField>
 
@@ -376,7 +382,7 @@ export default function ProductsPage() {
                <div className="flex items-center h-10 gap-2">
                   <Checkbox 
                     checked={formData.isAvailable}
-                    onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, isAvailable: e.target.checked })}
                   />
                   <span className="text-callout font-medium text-text-primary">Mevcut</span>
                </div>
