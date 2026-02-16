@@ -2,8 +2,17 @@
 
 import { CheckCircle2, AlertCircle, ShoppingBag, PlusCircle, QrCode, Utensils, Download, Printer, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { QRGenerator } from "../qr/QRGenerator";
+import { QRGenerator } from "../../qr/_components/QRGenerator";
 import { useEffect, useState } from "react";
+import { storage } from "@/lib/storage";
+
+interface QRConfig {
+  menuUrl: string;
+  fgColor: string;
+  includeLogo: boolean;
+  logoUrl?: string;
+  cornerStyle: "Square" | "Round" | "Extra Round";
+}
 
 export function RecentActivity() {
   const activities = [
@@ -48,25 +57,47 @@ export function RecentActivity() {
 
 export function MenuQR() {
   const [menuUrl, setMenuUrl] = useState("");
+  const [config, setConfig] = useState<QRConfig>({
+    menuUrl: "",
+    fgColor: "#0071E3",
+    includeLogo: false,
+    cornerStyle: "Round",
+  });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setMenuUrl(window.location.origin);
+      const origin = window.location.origin;
+      setMenuUrl(origin);
+
+      const savedConfig = storage.get<QRConfig>("QR_CONFIG", {
+        menuUrl: origin,
+        fgColor: "#0071E3",
+        includeLogo: false,
+        cornerStyle: "Round",
+      });
+      setConfig(savedConfig);
     }
   }, []);
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   const handleDownload = () => {
-    const canvas = document.querySelector('canvas');
+    // Target the high-res hidden canvas
+    const canvas = document.getElementById("print-qr-code-dash") as HTMLCanvasElement;
     if (canvas) {
       const url = canvas.toDataURL("image/png");
       const link = document.createElement('a');
-      link.download = 'menu-qr.png';
+      link.download = `menura-qr-highres-${Date.now()}.png`;
       link.href = url;
       link.click();
+    } else {
+      // Fallback
+      const anyCanvas = document.querySelector('canvas');
+      if (anyCanvas) {
+        const url = anyCanvas.toDataURL("image/png");
+        const link = document.createElement('a');
+        link.download = 'menu-qr.png';
+        link.href = url;
+        link.click();
+      }
     }
   };
 
@@ -81,11 +112,33 @@ export function MenuQR() {
         <div className="absolute inset-0 bg-black/5 opacity-10 pointer-events-none" />
 
         {/* White QR Wrapper */}
-        <div className="bg-white p-5 rounded-[32px]  border border-white/50 transform transition-transform duration-500 hover:scale-105">
-          <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
-            <QRGenerator value={menuUrl} size={112} hideUI={true} />
+        <div className="bg-white p-5 rounded-[32px]  border border-white/50 transform transition-transform duration-500 hover:scale-110">
+          <div className="flex items-center justify-center">
+            <QRGenerator
+              value={config?.menuUrl || menuUrl}
+              size={220}
+              fgColor={config?.fgColor}
+              includeLogo={config?.includeLogo}
+              logoUrl={config?.logoUrl}
+              cornerStyle={config?.cornerStyle}
+              plain={true}
+            />
           </div>
         </div>
+      </div>
+
+      {/* Hidden High-Res QR for Download */}
+      <div className="hidden pointer-events-none fixed -top-[9999px] -left-[9999px]">
+        <QRGenerator
+          id="print-qr-code-dash"
+          value={config?.menuUrl || menuUrl}
+          fgColor={config?.fgColor}
+          includeLogo={config?.includeLogo}
+          logoUrl={config?.logoUrl}
+          cornerStyle={config?.cornerStyle}
+          size={2048}
+          plain={true}
+        />
       </div>
 
       <div className="flex w-full gap-4 mt-8">
