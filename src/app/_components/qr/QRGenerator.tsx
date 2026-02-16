@@ -10,6 +10,7 @@ interface QRGeneratorProps {
   level?: "L" | "M" | "Q" | "H";
   logo?: string;
   fgColor?: string;
+  hideUI?: boolean;
 }
 
 export function QRGenerator({
@@ -18,6 +19,7 @@ export function QRGenerator({
   level = "H",
   logo,
   fgColor = "#0d7ff2",
+  hideUI = false,
 }: QRGeneratorProps) {
   const downloadQR = () => {
     const canvas = document.querySelector("canvas") as HTMLCanvasElement;
@@ -28,6 +30,29 @@ export function QRGenerator({
     link.href = url;
     link.click();
   };
+
+  if (hideUI) {
+    return (
+      <QRCodeCanvas
+        value={value}
+        size={size}
+        level={level}
+        fgColor={fgColor}
+        imageSettings={
+          logo
+            ? {
+              src: logo,
+              x: undefined,
+              y: undefined,
+              height: size * 0.2,
+              width: size * 0.2,
+              excavate: true,
+            }
+            : undefined
+        }
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col items-center gap-6 w-full">
@@ -40,13 +65,13 @@ export function QRGenerator({
           imageSettings={
             logo
               ? {
-                  src: logo,
-                  x: undefined,
-                  y: undefined,
-                  height: size * 0.2, // Logo takes ~20% of QR size
-                  width: size * 0.2,
-                  excavate: true,
-                }
+                src: logo,
+                x: undefined,
+                y: undefined,
+                height: size * 0.2, // Logo takes ~20% of QR size
+                width: size * 0.2,
+                excavate: true,
+              }
               : undefined
           }
         />
