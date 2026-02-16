@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Modal } from "@/components/ui/modal";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -17,13 +18,24 @@ import { cn } from "@/lib/utils";
 type FilterStatus = "all" | "active" | "draft";
 
 export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProductsContent />
+    </Suspense>
+  );
+}
+
+function ProductsContent() {
+  const searchParams = useSearchParams();
+  const initialCategoryId = searchParams.get("categoryId") || "all";
+  
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(initialCategoryId);
   const [activeTab, setActiveTab] = useState<FilterStatus>("all");
 
   // Pagination State
@@ -49,11 +61,13 @@ export default function ProductsPage() {
     setProducts(storedProducts);
     setCategories(storedCategories);
     
-    // Set default category if available
-    if (storedCategories.length > 0) {
+    // Set default category if available and not set by URL
+    if (storedCategories.length > 0 && initialCategoryId === "all") {
       setFormData((prev: CreateProductInput) => ({ ...prev, categoryId: storedCategories[0].id }));
+    } else if (initialCategoryId !== "all") {
+      setFormData((prev: CreateProductInput) => ({ ...prev, categoryId: initialCategoryId }));
     }
-  }, []);
+  }, [initialCategoryId]);
 
   const filteredProducts = useMemo(() => {
     return products
@@ -98,12 +112,13 @@ export default function ProductsPage() {
         description: product.description || "",
         calories: product.calories,
         allergens: product.allergens || [],
+        preparationTime: product.preparationTime || "",
       });
     } else {
       setEditingProduct(null);
       setFormData({
         name: "",
-        categoryId: categories[0]?.id || "",
+        categoryId: initialCategoryId !== "all" ? initialCategoryId : (categories[0]?.id || ""),
         price: 0,
         discountPrice: undefined,
         isAvailable: true,
