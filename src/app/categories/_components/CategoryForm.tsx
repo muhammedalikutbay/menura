@@ -1,6 +1,6 @@
 "use client";
 
-import { CreateCategoryInput } from "@/types/category";
+import { Category, CreateCategoryInput } from "@/types/category";
 import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -8,9 +8,11 @@ import { Button } from "@/components/ui/button";
 interface CategoryFormProps {
   formData: CreateCategoryInput;
   setFormData: (data: CreateCategoryInput) => void;
+  categories: Category[];
   onSave: () => void;
   onCancel: () => void;
   isEditing: boolean;
+  editingId?: string;
 }
 
 const VALIDATION = {
@@ -26,9 +28,11 @@ const VALIDATION = {
 export function CategoryForm({
   formData,
   setFormData,
+  categories,
   onSave,
   onCancel,
   isEditing,
+  editingId,
 }: CategoryFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -44,6 +48,15 @@ export function CategoryForm({
       newErrors.name = "Only letters and spaces allowed";
     } else if (formData.name.length > VALIDATION.NAME_MAX) {
       newErrors.name = `Max ${VALIDATION.NAME_MAX} characters allowed`;
+    } else {
+      // Duplicate Name Check
+      const isDuplicate = categories.some(c => 
+        c.name.toLowerCase().trim() === formData.name.toLowerCase().trim() && 
+        (!isEditing || c.id !== editingId)
+      );
+      if (isDuplicate) {
+        newErrors.name = "This category name already exists";
+      }
     }
 
     if (!formData.description?.trim()) {

@@ -138,8 +138,10 @@ export default function CategoriesPage() {
                <CategoryForm 
                  formData={formData}
                  setFormData={setFormData}
+                 categories={categories}
                  onSave={handleSave}
                  isEditing={!!editingCategory}
+                 editingId={editingCategory?.id}
                  onCancel={resetForm}
                />
             </div>

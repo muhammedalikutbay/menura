@@ -196,8 +196,10 @@ function ProductsContent() {
                  setFormData={setFormData}
                  categories={categories}
                  topCategories={topCategories}
+                 products={products}
                  onSave={handleSave}
                  isEditing={!!editingProduct}
+                 editingId={editingProduct?.id}
                  onCancel={() => handleOpenModal()} 
                />
             </div>

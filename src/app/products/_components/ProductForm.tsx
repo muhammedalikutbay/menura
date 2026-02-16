@@ -2,7 +2,7 @@
 
 import { useRef, useState, useMemo, useEffect } from "react";
 import { Category } from "@/types/category";
-import { CreateProductInput } from "@/types/product";
+import { Product, CreateProductInput } from "@/types/product";
 import { cn, formatCurrencyInput, parseCurrencyInput } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -11,9 +11,11 @@ interface ProductFormProps {
   setFormData: (data: CreateProductInput) => void;
   categories: Category[];
   topCategories: Category[];
+  products: Product[];
   onSave: () => void;
   onCancel: () => void;
   isEditing: boolean;
+  editingId?: string;
 }
 
 const VALIDATION = {
@@ -31,9 +33,11 @@ export function ProductForm({
   setFormData,
   categories,
   topCategories,
+  products,
   onSave,
   onCancel,
   isEditing,
+  editingId,
 }: ProductFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -81,6 +85,15 @@ export function ProductForm({
       newErrors.name = "Only letters and spaces allowed";
     } else if (formData.name.length > VALIDATION.NAME_MAX) {
       newErrors.name = `Max ${VALIDATION.NAME_MAX} characters allowed`;
+    } else {
+      // Duplicate Name Check
+      const isDuplicate = products.some(p => 
+        p.name.toLowerCase().trim() === formData.name.toLowerCase().trim() && 
+        (!isEditing || p.id !== editingId)
+      );
+      if (isDuplicate) {
+        newErrors.name = "This product name already exists";
+      }
     }
 
     // Category Validation
