@@ -184,7 +184,7 @@ function ProductsContent() {
       <main className="flex-grow w-full max-w-[1440px] mx-auto px-6 py-10 md:py-16">
         {/* Header Section */}
         <SectionHeader 
-            title="Products" 
+            title={selectedCategoryId === "all" ? "Products" : (categories.find(c => c.id === selectedCategoryId)?.name || "Products")} 
             description="Manage your culinary creations. Add new items, update prices, and keep your menu fresh for your customers."
         />
 

@@ -3,7 +3,7 @@
 import { useRef, useState, useMemo, useEffect } from "react";
 import { Category } from "@/types/category";
 import { CreateProductInput } from "@/types/product";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrencyInput, parseCurrencyInput } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 interface ProductFormProps {
@@ -39,6 +39,7 @@ export function ProductForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [displayPrice, setDisplayPrice] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const filteredCategories = useMemo(() => {
@@ -55,6 +56,18 @@ export function ProductForm({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Sync displayPrice when formData.price changes (especially on edit)
+  useEffect(() => {
+    if (formData.price > 0) {
+      const formatted = formData.price.toString().replace(".", ",");
+      if (formatted !== displayPrice.replace(/\./g, ",")) {
+        setDisplayPrice(formatted);
+      }
+    } else if (formData.price === 0) {
+      setDisplayPrice("");
+    }
+  }, [formData.price]);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -251,13 +264,19 @@ export function ProductForm({
         <div className="flex flex-col gap-2">
           <label className="block text-xs font-semibold uppercase tracking-wider text-[#86868B]">Price (₺)</label>
           <input
-            type="number"
+            type="text"
+            inputMode="decimal"
             className={cn(
               "w-full px-4 py-3 rounded-lg bg-[#F5F5F7] border outline-none transition-all text-sm text-[#1D1D1F]",
               errors.price ? "border-red-500 focus:ring-2 focus:ring-red-200" : "border-[#E5E7EB] focus:ring-2 focus:ring-[#0071e3]"
             )}
-            value={formData.price || ""}
-            onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+            placeholder="00,00 ₺"
+            value={displayPrice}
+            onChange={(e) => {
+              const masked = formatCurrencyInput(e.target.value);
+              setDisplayPrice(masked);
+              setFormData({ ...formData, price: parseCurrencyInput(masked) });
+            }}
           />
           {errors.price && <span className="text-[11px] font-bold text-red-500 uppercase tracking-tight ml-1">{errors.price}</span>}
         </div>

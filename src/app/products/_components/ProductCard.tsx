@@ -2,7 +2,7 @@
 
 import { Product } from "@/types/product";
 import { Category } from "@/types/category";
-import { cn } from "@/lib/utils";
+import { cn, formatCompactNumber } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 
 interface ProductCardProps {
@@ -48,8 +48,8 @@ export function ProductCard({
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
           </div>
         )}
-        <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-md text-white text-xs px-2 py-1 rounded-md font-medium">
-          {product.price} ₺
+        <div className="absolute top-3 right-3 bg-blue-500 backdrop-blur-md text-white text-xs px-2 py-1 rounded-md font-medium">
+          {formatCompactNumber(product.price)} ₺
         </div>
       </div>
       

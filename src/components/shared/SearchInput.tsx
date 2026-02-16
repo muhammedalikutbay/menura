@@ -23,7 +23,9 @@ export function SearchInput({
 }: SearchInputProps) {
   return (
     <div className={cn(
-      "relative group flex items-center w-full rounded-full transition-all !bg-[#f5f4f6]",
+      "relative group flex items-center w-full rounded-full transition-all",
+      variant === "gray" && "!bg-[#f5f4f6]",
+      variant === "default" && "bg-white border border-[#E5E7EB] focus-within:border-[#0071e3]",
       className
     )}>
       {showIcon && (
@@ -46,7 +48,9 @@ export function SearchInput({
       )}
       <input 
         className={cn(
-          "w-full pr-4 py-2.5 rounded-full outline-none transition-all focus:ring-4 focus:ring-[#0071e3]/10 text-sm text-[#1D1D1F] placeholder-[#86868B]/60 font-medium bg-transparent border-none",
+          "w-full pr-4 py-2.5 rounded-full outline-none transition-all focus:ring-4 focus:ring-[#0071e3]/10 text-sm text-[#1D1D1F] placeholder-[#86868B]/60 font-medium",
+          variant === "gray" && "bg-transparent border-none",
+          variant === "default" && "bg-white border-none",
           showIcon ? "pl-11" : "pl-4",
           inputClassName
         )}
