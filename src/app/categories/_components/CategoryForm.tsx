@@ -2,7 +2,7 @@
 
 import { CreateCategoryInput } from "@/types/category";
 import { cn } from "@/lib/utils";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 interface CategoryFormProps {
@@ -21,6 +21,16 @@ export function CategoryForm({
   isEditing,
 }: CategoryFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showErrors, setShowErrors] = useState(false);
+
+  const handleSubmit = () => {
+    if (!formData.name || !formData.image || !formData.description) {
+      setShowErrors(true);
+      return;
+    }
+    setShowErrors(false);
+    onSave();
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -48,12 +58,17 @@ export function CategoryForm({
       
       <div className="space-y-6">
         {/* Name Input */}
-        <div className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-[#86868B]" htmlFor="categoryName">
+        <div className="flex flex-col gap-2">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-[#86868B]" htmlFor="categoryName">
             Name
           </label>
           <input
-            className="w-full px-4 py-3 rounded-lg bg-[#F5F5F7] border border-[#E5E7EB] focus:ring-2 focus:ring-[#0071e3] focus:border-transparent outline-none transition-all placeholder-[#86868B]/60 text-sm text-[#1D1D1F]"
+            className={cn(
+              "w-full px-4 py-3 rounded-lg bg-[#F5F5F7] border outline-none transition-all placeholder-[#86868B]/60 text-sm text-[#1D1D1F]",
+              showErrors && !formData.name 
+                ? "border-red-500 focus:ring-2 focus:ring-red-200" 
+                : "border-[#E5E7EB] focus:ring-2 focus:ring-[#0071e3] focus:border-transparent"
+            )}
             id="categoryName"
             placeholder="e.g. Breakfast Specials"
             type="text"
@@ -63,12 +78,17 @@ export function CategoryForm({
         </div>
 
         {/* Description Input */}
-        <div className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-[#86868B]" htmlFor="categoryDesc">
+        <div className="flex flex-col gap-2">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-[#86868B]" htmlFor="categoryDesc">
             Description
           </label>
           <textarea
-            className="w-full px-4 py-3 rounded-lg bg-[#F5F5F7] border border-[#E5E7EB] focus:ring-2 focus:ring-[#0071e3] focus:border-transparent outline-none transition-all placeholder-[#86868B]/60 text-sm resize-none text-[#1D1D1F]"
+            className={cn(
+              "w-full px-4 py-3 rounded-lg bg-[#F5F5F7] border outline-none transition-all placeholder-[#86868B]/60 text-sm resize-none text-[#1D1D1F]",
+              showErrors && !formData.description 
+                ? "border-red-500 focus:ring-2 focus:ring-red-200" 
+                : "border-[#E5E7EB] focus:ring-2 focus:ring-[#0071e3] focus:border-transparent"
+            )}
             id="categoryDesc"
             placeholder="Brief description visible to customers..."
             rows={3}
@@ -78,12 +98,17 @@ export function CategoryForm({
         </div>
 
         {/* Image Upload */}
-        <div className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-[#86868B]">
+        <div className="flex flex-col gap-2">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-[#86868B]">
             Cover Image
           </label>
           <div 
-            className="relative w-full h-32 rounded-lg border-2 border-dashed border-[#D1D5DB] hover:border-[#0071e3] transition-colors flex flex-col items-center justify-center cursor-pointer group bg-[#F5F5F7] overflow-hidden"
+            className={cn(
+              "relative w-full h-32 rounded-lg border-2 border-dashed transition-colors flex flex-col items-center justify-center cursor-pointer group bg-[#F5F5F7] overflow-hidden",
+              showErrors && !formData.image 
+                ? "border-red-500 bg-red-50/50" 
+                : "border-[#D1D5DB] hover:border-[#0071e3]"
+            )}
             onClick={() => fileInputRef.current?.click()}
           >
             {formData.image ? (
@@ -130,9 +155,8 @@ export function CategoryForm({
         {/* Submit Buttons */}
         <div className="flex flex-col gap-3 mt-4">
             <Button
-              onClick={onSave}
-              disabled={!formData.name}
-              className="w-full h-12 rounded-full font-medium shadow-lg shadow-blue-500/30 !bg-[#0071e3] !hover:bg-[#0077ED] text-white"
+              onClick={handleSubmit}
+              className="w-full h-12 rounded-full font-medium shadow-lg shadow-blue-500/30 !bg-[#0071e3] !hover:bg-[#0077ED] text-white opacity-100 cursor-pointer"
             >
                {isEditing ? "Update Category" : "Create Category"}
             </Button>

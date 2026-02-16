@@ -17,7 +17,7 @@ export function SearchInput({ value, onChange, placeholder = "Ara...", className
         <path d="m21 21-4.3-4.3" />
       </svg>
       <input 
-        className="bg-transparent border-none outline-none text-callout w-full placeholder:text-text-secondary/50" 
+        className="bg-transparent border-none !outline-none !ring-0 !focus:outline-none !focus:ring-0 text-callout w-full placeholder:text-text-secondary/50" 
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}

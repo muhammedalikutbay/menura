@@ -138,7 +138,7 @@ export default function CategoriesPage() {
 
         <div className="flex flex-col lg:flex-row gap-8 xl:gap-12 items-start">
             {/* Sidebar Form */}
-            <div className="w-full lg:w-1/3 xl:w-1/4 sticky top-24">
+            <div className="w-full lg:w-1/3 xl:w-1/4">
                <CategoryForm 
                  formData={formData}
                  setFormData={setFormData}
