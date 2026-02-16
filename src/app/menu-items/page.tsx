@@ -10,7 +10,7 @@ import { Pagination } from "@/components/shared/Pagination";
 import { storage } from "@/lib/storage";
 import { Category } from "@/types/category";
 import { Product, CreateProductInput } from "@/types/product";
-import { cn } from "@/lib/utils";
+import { cn, normalizeText } from "@/lib/utils";
 
 type FilterStatus = "all" | "active" | "draft";
 
@@ -74,9 +74,7 @@ function MenuItemsContent() {
   const filteredProducts = useMemo(() => {
     return products
       .filter((p: Product) => {
-        const lowerName = p.name.toLowerCase();
-        const lowerQuery = searchQuery.toLowerCase();
-        const matchesSearch = lowerName.includes(lowerQuery);
+        const matchesSearch = normalizeText(p.name).includes(normalizeText(searchQuery));
 
         const matchesCategory = selectedCategoryId === "all" || p.categoryId === selectedCategoryId;
 

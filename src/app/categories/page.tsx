@@ -10,6 +10,7 @@ import { TabNav } from "@/components/shared/TabNav";
 import { storage } from "@/lib/storage";
 import { Category, CreateCategoryInput } from "@/types/category";
 import { Product } from "@/types/product";
+import { normalizeText } from "@/lib/utils";
 
 type FilterStatus = "all" | "active" | "draft";
 
@@ -39,9 +40,7 @@ export default function CategoriesPage() {
   const filteredCategories = useMemo(() => {
     return categories
       .filter((c) => {
-        const lowerName = c.name.toLowerCase();
-        const lowerQuery = searchQuery.toLowerCase();
-        const matchesSearch = lowerName.includes(lowerQuery);
+        const matchesSearch = normalizeText(c.name).includes(normalizeText(searchQuery));
 
         const matchesStatus =
           activeTab === "all" ? true :

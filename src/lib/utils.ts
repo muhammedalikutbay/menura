@@ -56,3 +56,14 @@ export function parseCurrencyInput(value: string): number {
   const normalized = value.replace(/,/g, ".");
   return parseFloat(normalized) || 0;
 }
+/**
+ * Normalizes text for Turkish search.
+ * Handles İ/i, I/ı and other characters correctly.
+ */
+export function normalizeText(text: string): string {
+  return text
+    .toLocaleLowerCase("tr-TR")
+    .replace(/İ/g, "i")
+    .replace(/I/g, "ı")
+    .trim();
+}

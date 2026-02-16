@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { storage } from "@/lib/storage";
 import { Product } from "@/types/product";
 import { Category } from "@/types/category";
-import { cn } from "@/lib/utils";
+import { cn, normalizeText } from "@/lib/utils";
 
 export default function CustomerMenuView() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -29,7 +29,7 @@ export default function CustomerMenuView() {
 
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = normalizeText(p.name).includes(normalizeText(searchQuery));
       const matchesCategory = p.categoryId === activeCategoryId;
       return matchesSearch && matchesCategory;
     });
