@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { ImageUpload } from "@/components/shared/ImageUpload";
 
 interface CategoryFormProps {
   formData: CreateCategoryInput;
@@ -23,8 +24,14 @@ export function CategoryForm({
   isEditing,
 }: CategoryFormProps) {
   return (
-    <div className="space-y-4">
-      <FormField label="Kategori Adı" error={!formData.name ? "Ad zorunludur" : ""}>
+    <div className="space-y-6">
+      <ImageUpload 
+        value={formData.image}
+        onChange={(val) => setFormData({ ...formData, image: val })}
+      />
+
+      <div className="space-y-4">
+        <FormField label="Kategori Adı" error={!formData.name ? "Ad zorunludur" : ""}>
         <Input
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -59,8 +66,9 @@ export function CategoryForm({
           </div>
         </FormField>
       </div>
+</div>
 
-      <div className="flex gap-2 justify-end pt-4">
+      <div className="flex gap-2 justify-end pt-4 border-t border-divider">
         <Button variant="secondary" onClick={onCancel}>
           İptal
         </Button>
