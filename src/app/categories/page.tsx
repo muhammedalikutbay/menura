@@ -141,7 +141,7 @@ export default function CategoriesPage() {
 
         <div className="flex flex-col lg:flex-row gap-8 xl:gap-12 items-start">
             {/* Sidebar Form */}
-            <div className="w-full lg:w-1/3 xl:w-1/4">
+            <div className="w-full lg:w-[320px] xl:w-[380px] shrink-0">
                <CategoryForm 
                  formData={formData}
                  setFormData={setFormData}
@@ -152,7 +152,7 @@ export default function CategoriesPage() {
             </div>
 
             {/* Main Grid Content */}
-            <div className="w-full lg:w-2/3 xl:w-3/4">
+            <div className="flex-1 min-w-0">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
                     <TabNav 
                         tabs={[
@@ -165,12 +165,11 @@ export default function CategoriesPage() {
                         className="w-full sm:w-auto"
                     />
                     
-                    <div className="w-full sm:w-auto">
+                    <div className="w-full sm:w-64">
                         <SearchInput
                             value={searchQuery}
                             onChange={setSearchQuery}
-                            placeholder="Search..."
-                            className="w-full sm:w-64 bg-white border-[#E5E7EB] rounded-full"
+                            placeholder="Search categories..."
                         />
                     </div>
                 </div>

@@ -1,146 +1,330 @@
 "use client";
 
+import { useRef, useState, useMemo, useEffect } from "react";
 import { Category } from "@/types/category";
 import { CreateProductInput } from "@/types/product";
-import { FormField } from "@/components/ui/form-field";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ImageUpload } from "@/components/shared/ImageUpload";
 
 interface ProductFormProps {
   formData: CreateProductInput;
   setFormData: (data: CreateProductInput) => void;
   categories: Category[];
+  topCategories: Category[];
   onSave: () => void;
   onCancel: () => void;
   isEditing: boolean;
 }
 
+const VALIDATION = {
+  NAME_MIN: 2,
+  NAME_MAX: 30,
+  DESC_MIN: 5,
+  DESC_MAX: 120,
+  MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB
+  ALLOWED_TYPES: ["image/jpeg", "image/png", "image/webp", "image/jpg"],
+  NAME_REGEX: /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]*$/ // Only letters and spaces
+};
+
 export function ProductForm({
   formData,
   setFormData,
   categories,
+  topCategories,
   onSave,
   onCancel,
   isEditing,
 }: ProductFormProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const filteredCategories = useMemo(() => {
+    const list = searchQuery.trim() ? categories : topCategories;
+    return list.filter(cat => cat.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [categories, topCategories, searchQuery]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    
+    // Name Validation (Regex + Length)
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (formData.name.length < VALIDATION.NAME_MIN) {
+      newErrors.name = `Min ${VALIDATION.NAME_MIN} characters required`;
+    } else if (!VALIDATION.NAME_REGEX.test(formData.name)) {
+      newErrors.name = "Only letters and spaces allowed";
+    } else if (formData.name.length > VALIDATION.NAME_MAX) {
+      newErrors.name = `Max ${VALIDATION.NAME_MAX} characters allowed`;
+    }
+
+    // Category Validation
+    if (!formData.categoryId) {
+      newErrors.categoryId = "Category required";
+    }
+
+    // Description Validation (Mandatory + Length)
+    if (!formData.description?.trim()) {
+      newErrors.description = "Description is required";
+    } else if (formData.description.length < VALIDATION.DESC_MIN) {
+      newErrors.description = `At least ${VALIDATION.DESC_MIN} characters`;
+    } else if (formData.description.length > VALIDATION.DESC_MAX) {
+      newErrors.description = `Max ${VALIDATION.DESC_MAX} characters`;
+    }
+
+    // Price Validation
+    if (formData.price <= 0) {
+      newErrors.price = "Price required";
+    }
+
+    // Image Validation (Mandatory)
+    if (!formData.image) {
+      newErrors.image = "Image is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    if (validate()) {
+      setErrors({});
+      onSave();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > VALIDATION.MAX_FILE_SIZE) {
+        setErrors(prev => ({ ...prev, image: `Max ${VALIDATION.MAX_FILE_SIZE / (1024 * 1024)}MB allowed` }));
+        return;
+      }
+      if (!VALIDATION.ALLOWED_TYPES.includes(file.type)) {
+        setErrors(prev => ({ ...prev, image: "JPG, PNG or WEBP only" }));
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, image: reader.result as string });
+        setErrors(prev => {
+          const { image, ...rest } = prev;
+          return rest;
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const selectedCategoryName = categories.find(c => c.id === formData.categoryId)?.name || "";
+
   return (
-    <div className="space-y-6 max-h-[70vh] overflow-y-auto px-1">
-      <ImageUpload 
-        value={formData.image}
-        onChange={(val) => setFormData({ ...formData, image: val })}
-      />
+    <div className="bg-white rounded-xl p-8 shadow-sm border border-[#E5E7EB] transition-all duration-300">
+      <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-[#1D1D1F]">
+        <span className="text-[#0071e3]">
+           {isEditing ? (
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+           ) : (
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="16"/><line x1="8" x2="16" y1="12" y2="12"/></svg>
+           )}
+        </span>
+        {isEditing ? "Edit Product" : "New Product"}
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormField label="Product Name" error={!formData.name ? "Required" : ""}>
-          <Input
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="e.g. Kebab"
-            autoFocus
-          />
-        </FormField>
+      <div className="space-y-6">
+        {/* Category Searchable Selection */}
+        <div className="flex flex-col gap-2 relative" ref={dropdownRef}>
+          <label className="block text-xs font-semibold uppercase tracking-wider text-[#86868B]">Category</label>
+          <div className="relative">
+            <input 
+              type="text"
+              placeholder="Select Category"
+              value={searchQuery || selectedCategoryName}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setIsDropdownOpen(true);
+              }}
+              onFocus={() => setIsDropdownOpen(true)}
+              className={cn(
+                "w-full px-4 py-3 rounded-lg bg-[#F5F5F7] border outline-none transition-all text-sm",
+                formData.categoryId ? "text-[#1D1D1F]" : "text-[#86868B]/60",
+                errors.categoryId ? "border-red-500 focus:ring-2 focus:ring-red-200" : "border-[#E5E7EB] focus:ring-2 focus:ring-[#0071e3]"
+              )}
+            />
+          </div>
+          
+          {isDropdownOpen && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-[#E5E7EB] rounded-xl shadow-xl z-50 py-2 max-h-60 overflow-y-auto">
+              <div className="px-3 py-1 mb-1">
+                <span className="text-[10px] font-bold text-[#86868B] uppercase tracking-widest">
+                  {searchQuery ? "Search Results" : "Most Used Categories"}
+                </span>
+              </div>
+              {filteredCategories.length > 0 ? (
+                filteredCategories.map(cat => (
+                  <button
+                    key={cat.id}
+                    onClick={() => {
+                      setFormData({ ...formData, categoryId: cat.id });
+                      setSearchQuery("");
+                      setIsDropdownOpen(false);
+                    }}
+                    className={cn(
+                      "w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center justify-between",
+                      formData.categoryId === cat.id ? "bg-[#0071e3]/5 text-[#0071e3] font-medium" : "text-[#1D1D1F] hover:bg-[#F5F5F7]"
+                    )}
+                  >
+                    {cat.name}
+                    {formData.categoryId === cat.id && (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    )}
+                  </button>
+                ))
+              ) : (
+                <div className="px-4 py-3 text-xs text-[#86868B] text-center italic">
+                  No matching categories
+                </div>
+              )}
+            </div>
+          )}
+          {errors.categoryId && <span className="text-[11px] font-bold text-red-500 uppercase tracking-tight ml-1">{errors.categoryId}</span>}
+        </div>
 
-        <FormField label="Category" error={!formData.categoryId ? "Required" : ""}>
-          <select 
-            value={formData.categoryId}
-            onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-            className="w-full bg-white border border-divider rounded-lg px-3 py-2 text-callout shadow-sm outline-none focus:ring-2 focus:ring-action/20"
-          >
-            <option value="" disabled>Select...</option>
-            {categories.map(cat => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
-            ))}
-          </select>
-        </FormField>
-      </div>
+        {/* Name Input */}
+        <div className="flex flex-col gap-2">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-[#86868B]">Name</label>
+          <div className="relative">
+            <input
+              className={cn(
+                "w-full px-4 py-3 rounded-lg bg-[#F5F5F7] border outline-none transition-all placeholder-[#86868B]/60 text-sm text-[#1D1D1F]",
+                errors.name ? "border-red-500 focus:ring-2 focus:ring-red-200" : "border-[#E5E7EB] focus:ring-2 focus:ring-[#0071e3] focus:border-transparent"
+              )}
+              placeholder="e.g. Signature Burger"
+              type="text"
+              maxLength={VALIDATION.NAME_MAX}
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            />
+            <div className="absolute right-3 bottom-0.5 text-[10px] font-bold text-[#86868B]/40 uppercase tracking-tighter">
+              {formData.name.length}/{VALIDATION.NAME_MAX}
+            </div>
+          </div>
+          {errors.name && <span className="text-[11px] font-bold text-red-500 uppercase tracking-tight ml-1">{errors.name}</span>}
+        </div>
 
-      <FormField label="Description">
-        <Textarea
-          value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          placeholder="Product content, ingredients, etc."
-          rows={2}
-        />
-      </FormField>
+        {/* Description Input */}
+        <div className="flex flex-col gap-2">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-[#86868B]">Description</label>
+          <div className="relative">
+            <textarea
+              className={cn(
+                "w-full px-4 py-3 rounded-lg bg-[#F5F5F7] border outline-none transition-all placeholder-[#86868B]/60 text-sm resize-none text-[#1D1D1F]",
+                errors.description ? "border-red-500 focus:ring-2 focus:ring-red-200" : "border-[#E5E7EB] focus:ring-2 focus:ring-[#0071e3] focus:border-transparent"
+              )}
+              placeholder="Ingredients, taste profile, etc..."
+              rows={3}
+              maxLength={VALIDATION.DESC_MAX}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            />
+            <div className="absolute right-3 bottom-2 text-[10px] font-bold text-[#86868B]/40 uppercase tracking-tighter">
+              {formData.description?.length || 0}/{VALIDATION.DESC_MAX}
+            </div>
+          </div>
+          {errors.description && <span className="text-[11px] font-bold text-red-500 uppercase tracking-tight ml-1">{errors.description}</span>}
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <FormField label="Price (₺)">
-          <Input
+        {/* Price Input */}
+        <div className="flex flex-col gap-2">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-[#86868B]">Price (₺)</label>
+          <input
             type="number"
-            value={formData.price}
+            className={cn(
+              "w-full px-4 py-3 rounded-lg bg-[#F5F5F7] border outline-none transition-all text-sm text-[#1D1D1F]",
+              errors.price ? "border-red-500 focus:ring-2 focus:ring-red-200" : "border-[#E5E7EB] focus:ring-2 focus:ring-[#0071e3]"
+            )}
+            value={formData.price || ""}
             onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-            className="w-full"
           />
-        </FormField>
-        
-        <FormField label="Discount Price (₺)">
-          <Input
-            type="number"
-            value={formData.discountPrice || ""}
-            onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value ? parseFloat(e.target.value) : undefined })}
-            className="w-full"
-          />
-        </FormField>
+          {errors.price && <span className="text-[11px] font-bold text-red-500 uppercase tracking-tight ml-1">{errors.price}</span>}
+        </div>
 
-        <FormField label="Calories (kcal)">
-          <Input
-            type="number"
-            value={formData.calories || ""}
-            onChange={(e) => setFormData({ ...formData, calories: e.target.value ? parseInt(e.target.value) : undefined })}
-            className="w-full"
-          />
-        </FormField>
-      </div>
+        {/* Image Upload */}
+        <div className="flex flex-col gap-2">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-[#86868B]">Product Image</label>
+          <div 
+            className={cn(
+              "relative w-full h-32 rounded-lg border-2 border-dashed transition-colors flex flex-col items-center justify-center cursor-pointer group bg-[#F5F5F7] overflow-hidden",
+              errors.image ? "border-red-500 bg-red-50/50" : "border-[#D1D5DB] hover:border-[#0071e3]"
+            )}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {formData.image ? (
+              <>
+                 <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-white text-xs font-medium">Change Image</span>
+                 </div>
+              </>
+            ) : (
+                <>
+                    <span className="text-[#9CA3AF] group-hover:text-[#0071e3] transition-colors mb-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                    </span>
+                    <span className="text-xs text-[#9CA3AF] group-hover:text-[#0071e3] transition-colors uppercase tracking-tight font-bold">Upload required</span>
+                </>
+            )}
+            <input ref={fileInputRef} className="hidden" type="file" accept="image/*" onChange={handleFileChange} />
+          </div>
+          {errors.image && <span className="text-[11px] font-bold text-red-500 uppercase tracking-tight ml-1">{errors.image}</span>}
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-        <FormField label="Order">
-          <Input
-            type="number"
-            value={formData.order}
-            onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
-            className="w-full"
-          />
-        </FormField>
+        {/* Visibility Toggle */}
+        <div className="flex items-center justify-between py-2 border-t border-[#F5F5F7] pt-4">
+          <span className="text-sm font-medium text-[#1D1D1F]">Visible on Menu</span>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input 
+                type="checkbox" 
+                className="sr-only peer" 
+                checked={formData.isAvailable}
+                onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
+            />
+            <div className="w-11 h-6 bg-[#E5E7EB] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0071e3]"></div>
+          </label>
+        </div>
 
-        <FormField label="Preparation Time">
-          <Input
-            value={formData.preparationTime || ""}
-            onChange={(e) => setFormData({ ...formData, preparationTime: e.target.value })}
-            placeholder="e.g. 15-20 min"
-            className="w-full"
-          />
-        </FormField>
-      </div>
-
-      <FormField label="Allergens (Separate with commas)">
-        <Input
-          value={formData.allergens?.join(", ") || ""}
-          onChange={(e) => setFormData({ 
-            ...formData, 
-            allergens: e.target.value.split(",").map(s => s.trim()).filter(Boolean) 
-          })}
-          placeholder="e.g. Gluten, Lactose, Nuts"
-          className="w-full"
-        />
-      </FormField>
-
-      <div className="flex items-center h-10 gap-2 border border-divider rounded-lg px-3 bg-bg-secondary/10">
-        <Checkbox 
-          checked={formData.isAvailable}
-          onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
-          id="isAvailable"
-        />
-        <label htmlFor="isAvailable" className="text-caption font-bold text-text-primary cursor-pointer select-none uppercase tracking-widest">Active</label>
-      </div>
-
-      <div className="flex gap-2 justify-end pt-4 border-t border-divider mt-6">
-        <Button variant="secondary" onClick={onCancel}>Cancel</Button>
-        <Button onClick={onSave} disabled={!formData.name || !formData.categoryId} className="shadow-sm">
-          {isEditing ? "Save Changes" : "Add Product"}
-        </Button>
+        {/* Submit Buttons */}
+        <div className="flex flex-col gap-3 mt-4">
+            <Button
+              onClick={handleSubmit}
+              className="w-full h-12 rounded-full font-medium shadow-lg shadow-blue-500/30 !bg-[#0071e3] !hover:bg-[#0077ED] text-white opacity-100 cursor-pointer"
+            >
+               {isEditing ? "Update Product" : "Create Product"}
+            </Button>
+            
+            {isEditing && (
+              <Button
+                variant="secondary"
+                onClick={onCancel}
+                className="w-full h-12 rounded-full font-medium bg-white border border-[#E5E7EB] hover:bg-[#F5F5F7] text-[#86868B]"
+              >
+                 Cancel Edit
+              </Button>
+            )}
+        </div>
       </div>
     </div>
   );
