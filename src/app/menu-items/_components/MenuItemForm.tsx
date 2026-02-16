@@ -3,7 +3,7 @@
 import { useRef, useState, useMemo, useEffect } from "react";
 import { Category } from "@/types/category";
 import { Product, CreateProductInput } from "@/types/product";
-import { cn, formatCurrencyInput, parseCurrencyInput } from "@/lib/utils";
+import { cn, formatCurrencyInput, parseCurrencyInput, normalizeText } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 interface MenuItemFormProps {
@@ -44,11 +44,12 @@ export function MenuItemForm({
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [displayPrice, setDisplayPrice] = useState("");
+  const [categoryInputValue, setCategoryInputValue] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const filteredCategories = useMemo(() => {
     const list = searchQuery.trim() ? categories : topCategories;
-    return list.filter(cat => cat.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    return list.filter(cat => normalizeText(cat.name).includes(normalizeText(searchQuery)));
   }, [categories, topCategories, searchQuery]);
 
   useEffect(() => {
@@ -61,7 +62,6 @@ export function MenuItemForm({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Sync displayPrice when formData.price changes (especially on edit)
   useEffect(() => {
     if (formData.price > 0) {
       const formatted = formData.price.toString().replace(".", ",");
@@ -72,6 +72,16 @@ export function MenuItemForm({
       setDisplayPrice("");
     }
   }, [formData.price]);
+
+  const selectedCategoryName = useMemo(() =>
+    categories.find(c => c.id === formData.categoryId)?.name || ""
+    , [categories, formData.categoryId]);
+
+  useEffect(() => {
+    if (!isDropdownOpen) {
+      setCategoryInputValue(selectedCategoryName);
+    }
+  }, [selectedCategoryName, isDropdownOpen]);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -155,7 +165,7 @@ export function MenuItemForm({
     }
   };
 
-  const selectedCategoryName = categories.find(c => c.id === formData.categoryId)?.name || "";
+
 
   return (
     <div className="bg-white rounded-xl p-8 shadow-sm border border-[#E5E7EB] transition-all duration-300">
@@ -178,12 +188,17 @@ export function MenuItemForm({
             <input
               type="text"
               placeholder="Select Category"
-              value={searchQuery || selectedCategoryName}
+              value={isDropdownOpen ? categoryInputValue : selectedCategoryName}
               onChange={(e) => {
+                setCategoryInputValue(e.target.value);
                 setSearchQuery(e.target.value);
                 setIsDropdownOpen(true);
               }}
-              onFocus={() => setIsDropdownOpen(true)}
+              onFocus={() => {
+                setIsDropdownOpen(true);
+                setCategoryInputValue("");
+                setSearchQuery("");
+              }}
               className={cn(
                 "w-full px-4 py-3 rounded-lg bg-[#F5F5F7] border outline-none transition-all text-sm",
                 formData.categoryId ? "text-[#1D1D1F]" : "text-[#86868B]/60",
