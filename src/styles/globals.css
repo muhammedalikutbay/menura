@@ -51,8 +51,10 @@
   --font-size-callout: var(--text-callout);
   --font-size-caption: var(--text-caption);
 
+  --color-overlay: var(--color-overlay);
+
   /* Glassmorphism utility */
-  --backdrop-blur-default: 12px;
+  --backdrop-blur-default: var(--backdrop-blur-default);
 }
 
 @layer base {

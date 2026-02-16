@@ -116,10 +116,15 @@ export function MenuQR() {
   );
 }
 
-export function QuickActions() {
+interface QuickActionsProps {
+  onAddCategory?: () => void;
+  onAddItem?: () => void;
+}
+
+export function QuickActions({ onAddCategory, onAddItem }: QuickActionsProps) {
   const actions = [
-    { label: 'Add Category', icon: <PlusCircle size={20} />, href: '/categories' },
-    { label: 'Add Item', icon: <PlusCircle size={20} />, href: '/products' },
+    { label: 'Add Category', icon: <PlusCircle size={20} />, action: onAddCategory },
+    { label: 'Add Item', icon: <PlusCircle size={20} />, action: onAddItem },
   ];
 
   return (
@@ -129,7 +134,7 @@ export function QuickActions() {
         {actions.map((action, i) => (
           <button
             key={i}
-            onClick={() => (window.location.href = action.href)}
+            onClick={action.action}
             className="w-full flex items-center justify-between p-4 px-6 rounded-full transition-all group active:scale-[0.98]"
             style={{
               border: "2px dashed #86868B",
