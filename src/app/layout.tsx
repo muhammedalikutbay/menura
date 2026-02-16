@@ -23,6 +23,7 @@ export const metadata: Metadata = {
 };
 
 import { Topbar } from "@/components/layout/topbar";
+import { Footer } from "@/components/shared/Footer";
 
 export default function RootLayout({
   children,
@@ -38,6 +39,7 @@ export default function RootLayout({
             <main className="flex-1 bg-bg-secondary/50">
               {children}
             </main>
+            <Footer />
           </div>
         </div>
       </body>
