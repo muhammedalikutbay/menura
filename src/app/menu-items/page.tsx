@@ -36,7 +36,7 @@ function MenuItemsContent() {
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 6;
 
   const [formData, setFormData] = useState<CreateProductInput>({
     name: "",
@@ -231,7 +231,7 @@ function MenuItemsContent() {
               />
 
               {totalPages > 1 && (
-                <div className="mt-12 mb-8">
+                <div className="mt-10">
                   <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}

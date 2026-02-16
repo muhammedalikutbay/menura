@@ -29,26 +29,32 @@ export function CategoryCard({ category, productCount, onEdit, onDelete }: Categ
 
   return (
     <div className="group bg-white rounded-xl overflow-hidden border border-[#E5E7EB] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-      <div className="relative h-48 overflow-hidden bg-[#F5F5F7]">
+      <div
+        onClick={() => router.push(`/menu-items?categoryId=${category.id}`)}
+        className="relative h-48 overflow-hidden bg-[#F5F5F7] cursor-pointer"
+      >
         {category.image ? (
           <img
             src={category.image}
             alt={category.name}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-[#86868B]">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg>
           </div>
         )}
-        <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-md text-white text-xs px-2 py-1 rounded-md font-medium">
+        <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-md text-white text-xs px-2 py-1 rounded-md font-medium z-10">
           {productCount} {productCount === 1 ? "item" : "items"}
         </div>
       </div>
 
       <div className="p-5">
         <div className="flex justify-between items-start mb-2 relative" ref={menuRef}>
-          <h3 className="text-lg font-semibold text-[#1D1D1F] group-hover:text-[#0071e3] transition-colors">
+          <h3
+            onClick={() => router.push(`/menu-items?categoryId=${category.id}`)}
+            className="text-lg font-semibold text-[#1D1D1F] group-hover:text-[#0071e3] transition-colors cursor-pointer"
+          >
             {category.name}
           </h3>
           <button

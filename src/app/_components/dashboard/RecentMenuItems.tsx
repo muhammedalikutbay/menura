@@ -16,7 +16,7 @@ export function RecentMenuItems({ onEditMenuItem }: RecentMenuItemsProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 6;
 
   useEffect(() => {
     const allProducts = storage.get<Product[]>("PRODUCTS", []);
@@ -108,12 +108,15 @@ export function RecentMenuItems({ onEditMenuItem }: RecentMenuItemsProps) {
         )}
       </div>
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-        className="mt-8 pt-6 border-t border-[#F2F2F7]"
-      />
+      {totalPages > 1 && (
+        <div className="mt-8">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
+      )}
     </section>
   );
 }
