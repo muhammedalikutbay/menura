@@ -5,11 +5,12 @@ import { cn } from "@/lib/utils";
 
 interface CategoryCardProps {
   category: Category;
+  productCount: number;
   onEdit: (category: Category) => void;
   onDelete: (id: string) => void;
 }
 
-export function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) {
+export function CategoryCard({ category, productCount, onEdit, onDelete }: CategoryCardProps) {
   return (
     <div className="group bg-white rounded-xl overflow-hidden border border-[#E5E7EB] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
       <div className="relative h-48 overflow-hidden bg-[#F5F5F7]">
@@ -25,7 +26,7 @@ export function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) 
           </div>
         )}
         <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-md text-white text-xs px-2 py-1 rounded-md font-medium">
-          0 items
+          {productCount} {productCount === 1 ? "item" : "items"}
         </div>
       </div>
       

@@ -8,11 +8,13 @@ import { SearchInput } from "@/components/shared/SearchInput";
 import { TabNav } from "@/components/shared/TabNav";
 import { storage } from "@/lib/storage";
 import { Category, CreateCategoryInput } from "@/types/category";
+import { Product } from "@/types/product";
 
 type FilterStatus = "all" | "active" | "draft";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<FilterStatus>("all");
@@ -30,6 +32,7 @@ export default function CategoriesPage() {
 
   useEffect(() => {
     setCategories(storage.get<Category>("CATEGORIES"));
+    setProducts(storage.get<Product>("PRODUCTS"));
   }, []);
 
   const filteredCategories = useMemo(() => {
@@ -153,13 +156,13 @@ export default function CategoriesPage() {
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
                     <TabNav 
                         tabs={[
-                            { value: "all", label: "All Items" },
+                            { value: "all", label: "All Categories" },
                             { value: "active", label: "Active" },
                             { value: "draft", label: "Drafts" }
                         ]}
                         activeTab={activeTab}
                         onTabChange={setActiveTab}
-                        className="w-full sm:w-auto bg-transparent border-none p-0 shadow-none"
+                        className="w-full sm:w-auto"
                     />
                     
                     <div className="w-full sm:w-auto">
@@ -178,6 +181,7 @@ export default function CategoriesPage() {
                             <CategoryCard 
                                 key={category.id} 
                                 category={category} 
+                                productCount={products.filter(p => p.categoryId === category.id).length}
                                 onEdit={handleEditClick}
                                 onDelete={handleDelete}
                             />

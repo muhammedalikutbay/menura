@@ -28,7 +28,7 @@ export function TabNav<T extends string>({ tabs, activeTab, onTabChange, classNa
   }, [activeTab, tabs]);
 
   return (
-    <div className={cn("inline-flex p-1 bg-[#F5F5F7] rounded-full relative", className)}>
+    <div className={cn("inline-flex p-1.5 bg-white border border-[#E5E7EB] shadow-sm rounded-full relative", className)}>
       <div 
         className="absolute bg-[#1D1D1F] rounded-full transition-all duration-400 cubic-bezier(0.4, 0, 0.2, 1) z-0"
         style={indicatorStyle}
@@ -41,7 +41,7 @@ export function TabNav<T extends string>({ tabs, activeTab, onTabChange, classNa
           role="tab"
           aria-selected={activeTab === tab.value}
           className={cn(
-            "relative px-6 py-1.5 text-[14px] font-medium transition-colors whitespace-nowrap outline-none rounded-full z-10",
+            "relative px-8 py-2.5 text-[15px] font-medium transition-colors whitespace-nowrap outline-none rounded-full z-10",
             activeTab === tab.value 
               ? "text-white" 
               : "text-[#1D1D1F]/70 hover:text-[#1D1D1F]"

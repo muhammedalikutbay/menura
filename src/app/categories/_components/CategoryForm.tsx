@@ -13,6 +13,16 @@ interface CategoryFormProps {
   isEditing: boolean;
 }
 
+const VALIDATION = {
+  NAME_MIN: 2,
+  NAME_MAX: 30,
+  DESC_MIN: 5,
+  DESC_MAX: 120,
+  MAX_FILE_SIZE: 2 * 1024 * 1024, // 2MB
+  ALLOWED_TYPES: ["image/jpeg", "image/png", "image/webp", "image/jpg"],
+  NAME_REGEX: /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]*$/ // Only letters and spaces
+};
+
 export function CategoryForm({
   formData,
   setFormData,
@@ -21,23 +31,65 @@ export function CategoryForm({
   isEditing,
 }: CategoryFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [showErrors, setShowErrors] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (formData.name.length < VALIDATION.NAME_MIN) {
+      newErrors.name = `Min ${VALIDATION.NAME_MIN} characters required`;
+    } else if (!VALIDATION.NAME_REGEX.test(formData.name)) {
+      newErrors.name = "Only letters and spaces allowed";
+    } else if (formData.name.length > VALIDATION.NAME_MAX) {
+      newErrors.name = `Max ${VALIDATION.NAME_MAX} characters allowed`;
+    }
+
+    if (!formData.description?.trim()) {
+      newErrors.description = "Description is required";
+    } else if (formData.description.length < VALIDATION.DESC_MIN) {
+      newErrors.description = `At least ${VALIDATION.DESC_MIN} characters`;
+    } else if (formData.description.length > VALIDATION.DESC_MAX) {
+      newErrors.description = `Max ${VALIDATION.DESC_MAX} characters`;
+    }
+
+    if (!formData.image) {
+      newErrors.image = "Image is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = () => {
-    if (!formData.name || !formData.image || !formData.description) {
-      setShowErrors(true);
-      return;
+    if (validate()) {
+      setErrors({});
+      onSave();
     }
-    setShowErrors(false);
-    onSave();
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Size check
+      if (file.size > VALIDATION.MAX_FILE_SIZE) {
+        setErrors(prev => ({ ...prev, image: "Max 2MB allowed" }));
+        return;
+      }
+      // Format check
+      if (!VALIDATION.ALLOWED_TYPES.includes(file.type)) {
+        setErrors(prev => ({ ...prev, image: "Only JPG, PNG and WEBP" }));
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData({ ...formData, image: reader.result as string });
+        setErrors(prev => {
+          const { image, ...rest } = prev;
+          return rest;
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -62,19 +114,26 @@ export function CategoryForm({
           <label className="block text-xs font-semibold uppercase tracking-wider text-[#86868B]" htmlFor="categoryName">
             Name
           </label>
-          <input
-            className={cn(
-              "w-full px-4 py-3 rounded-lg bg-[#F5F5F7] border outline-none transition-all placeholder-[#86868B]/60 text-sm text-[#1D1D1F]",
-              showErrors && !formData.name 
-                ? "border-red-500 focus:ring-2 focus:ring-red-200" 
-                : "border-[#E5E7EB] focus:ring-2 focus:ring-[#0071e3] focus:border-transparent"
-            )}
-            id="categoryName"
-            placeholder="e.g. Breakfast Specials"
-            type="text"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
+          <div className="relative">
+            <input
+              className={cn(
+                "w-full px-4 py-3 rounded-lg bg-[#F5F5F7] border outline-none transition-all placeholder-[#86868B]/60 text-sm text-[#1D1D1F]",
+                errors.name 
+                  ? "border-red-500 focus:ring-2 focus:ring-red-200" 
+                  : "border-[#E5E7EB] focus:ring-2 focus:ring-[#0071e3] focus:border-transparent"
+              )}
+              id="categoryName"
+              placeholder="e.g. Breakfast Specials"
+              type="text"
+              maxLength={VALIDATION.NAME_MAX}
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            />
+            <div className="absolute right-3 bottom-0.5 text-[10px] font-bold text-[#86868B]/40 uppercase tracking-tighter">
+              {formData.name.length}/{VALIDATION.NAME_MAX}
+            </div>
+          </div>
+          {errors.name && <span className="text-[11px] font-bold text-red-500 uppercase tracking-tight ml-1">{errors.name}</span>}
         </div>
 
         {/* Description Input */}
@@ -82,19 +141,26 @@ export function CategoryForm({
           <label className="block text-xs font-semibold uppercase tracking-wider text-[#86868B]" htmlFor="categoryDesc">
             Description
           </label>
-          <textarea
-            className={cn(
-              "w-full px-4 py-3 rounded-lg bg-[#F5F5F7] border outline-none transition-all placeholder-[#86868B]/60 text-sm resize-none text-[#1D1D1F]",
-              showErrors && !formData.description 
-                ? "border-red-500 focus:ring-2 focus:ring-red-200" 
-                : "border-[#E5E7EB] focus:ring-2 focus:ring-[#0071e3] focus:border-transparent"
-            )}
-            id="categoryDesc"
-            placeholder="Brief description visible to customers..."
-            rows={3}
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          />
+          <div className="relative">
+            <textarea
+              className={cn(
+                "w-full px-4 py-3 rounded-lg bg-[#F5F5F7] border outline-none transition-all placeholder-[#86868B]/60 text-sm resize-none text-[#1D1D1F]",
+                errors.description 
+                  ? "border-red-500 focus:ring-2 focus:ring-red-200" 
+                  : "border-[#E5E7EB] focus:ring-2 focus:ring-[#0071e3] focus:border-transparent"
+              )}
+              id="categoryDesc"
+              placeholder="Brief description visible to customers..."
+              rows={3}
+              maxLength={VALIDATION.DESC_MAX}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            />
+            <div className="absolute right-3 bottom-2 text-[10px] font-bold text-[#86868B]/40 uppercase tracking-tighter">
+              {formData.description?.length || 0}/{VALIDATION.DESC_MAX}
+            </div>
+          </div>
+          {errors.description && <span className="text-[11px] font-bold text-red-500 uppercase tracking-tight ml-1">{errors.description}</span>}
         </div>
 
         {/* Image Upload */}
@@ -105,7 +171,7 @@ export function CategoryForm({
           <div 
             className={cn(
               "relative w-full h-32 rounded-lg border-2 border-dashed transition-colors flex flex-col items-center justify-center cursor-pointer group bg-[#F5F5F7] overflow-hidden",
-              showErrors && !formData.image 
+              errors.image 
                 ? "border-red-500 bg-red-50/50" 
                 : "border-[#D1D5DB] hover:border-[#0071e3]"
             )}
@@ -136,6 +202,7 @@ export function CategoryForm({
                 onChange={handleFileChange}
             />
           </div>
+          {errors.image && <span className="text-[11px] font-bold text-red-500 uppercase tracking-tight ml-1">{errors.image}</span>}
         </div>
 
         {/* Visibility Toggle */}
