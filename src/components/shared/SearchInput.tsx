@@ -9,6 +9,7 @@ interface SearchInputProps {
   className?: string; // Container className
   inputClassName?: string; // Specific input className if needed
   showIcon?: boolean;
+  variant?: "default" | "gray";
 }
 
 export function SearchInput({ 
@@ -17,10 +18,14 @@ export function SearchInput({
   placeholder = "Search...", 
   className,
   inputClassName,
-  showIcon = true
+  showIcon = true,
+  variant = "default"
 }: SearchInputProps) {
   return (
-    <div className={cn("relative group flex items-center w-full", className)}>
+    <div className={cn(
+      "relative group flex items-center w-full rounded-full transition-all !bg-[#f5f4f6]",
+      className
+    )}>
       {showIcon && (
         <div className="absolute left-4 text-[#86868B] transition-colors group-focus-within:text-[#0071e3] z-10">
           <svg 
@@ -30,7 +35,7 @@ export function SearchInput({
             viewBox="0 0 24 24" 
             fill="none" 
             stroke="currentColor" 
-            strokeWidth="2" 
+            strokeWidth="2.5" 
             strokeLinecap="round" 
             strokeLinejoin="round"
           >
@@ -41,7 +46,7 @@ export function SearchInput({
       )}
       <input 
         className={cn(
-          "w-full pr-4 py-2.5 rounded-full bg-white border border-[#E5E7EB] outline-none transition-all focus:ring-4 focus:ring-[#0071e3]/10 focus:border-[#0071e3] text-sm text-[#1D1D1F] placeholder-[#86868B]/60",
+          "w-full pr-4 py-2.5 rounded-full outline-none transition-all focus:ring-4 focus:ring-[#0071e3]/10 text-sm text-[#1D1D1F] placeholder-[#86868B]/60 font-medium bg-transparent border-none",
           showIcon ? "pl-11" : "pl-4",
           inputClassName
         )}

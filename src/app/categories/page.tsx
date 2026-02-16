@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { CategoryCard } from "./_components/CategoryCard";
 import { CategoryForm } from "./_components/CategoryForm";
+import { SectionHeader } from "@/components/shared/SectionHeader";
 import { Pagination } from "@/components/shared/Pagination";
 import { SearchInput } from "@/components/shared/SearchInput";
 import { TabNav } from "@/components/shared/TabNav";
@@ -125,19 +126,11 @@ export default function CategoriesPage() {
   return (
     <div className="bg-[#F5F5F7] min-h-screen">
       <main className="flex-grow w-full max-w-[1440px] mx-auto px-6 py-10 md:py-16">
-        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-                <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-3 text-[#1D1D1F]">
-                    Categories
-                </h1>
-                <p className="text-lg text-[#86868B] max-w-2xl">
-                    Organize your menu items efficiently. Create categories like
-                    "Starters", "Main Course", or "Beverages" to help customers navigate
-                    your menu.
-                </p>
-            </div>
-            <div className="flex items-center gap-3"></div>
-        </div>
+        {/* Header Section */}
+        <SectionHeader 
+            title="Categories" 
+            description="Organize your menu items efficiently. Create categories like 'Starters', 'Main Course', or 'Beverages' to help customers navigate your menu." 
+        />
 
         <div className="flex flex-col lg:flex-row gap-8 xl:gap-12 items-start">
             {/* Sidebar Form */}
