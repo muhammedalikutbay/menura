@@ -9,6 +9,9 @@ import { FormField } from "@/components/ui/form-field";
 import { Modal } from "@/components/ui/modal";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { SearchInput } from "@/components/shared/SearchInput";
+import { TabNav } from "@/components/shared/TabNav";
 import { storage } from "@/lib/storage";
 import { Category, CreateCategoryInput } from "@/types/category";
 import { cn } from "@/lib/utils";
@@ -147,53 +150,33 @@ export default function CategoriesPage() {
 
   return (
     <div className="p-8 space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-h2 font-bold text-text-primary tracking-tight">Kategori Yönetimi</h1>
-          <p className="text-body-muted">Menü kategorilerinizi düzenleyin, sıralayın ve yönetin.</p>
-        </div>
-        <Button onClick={() => handleOpenModal()} className="shadow-sm">
-          + Yeni Kategori
-        </Button>
-      </div>
+      <PageHeader 
+        title="Kategori Yönetimi" 
+        description="Menü kategorilerinizi düzenleyin, sıralayın ve yönetin."
+        action={{
+          label: "Yeni Kategori",
+          onClick: () => handleOpenModal(),
+          icon: <span>+</span>
+        }}
+      />
 
       <Card className="border-none bg-white shadow-sm overflow-hidden">
         <div className="p-4 border-b border-divider bg-bg-secondary/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-2 bg-white border border-divider rounded-lg px-3 py-1.5 w-full md:w-80 shadow-sm focus-within:ring-2 focus-within:ring-action/20 transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input 
-              className="bg-transparent border-none outline-none text-callout w-full placeholder:text-text-secondary/50" 
-              placeholder="Kategori ara..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+          <SearchInput 
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Kategori ara..."
+          />
 
-          {/* Apple Professional TabNav Styling */}
-          <div className="flex items-center p-1 bg-white border border-divider rounded-full shadow-sm relative min-w-[240px]">
-            <div 
-              className={cn(
-                "absolute h-[calc(100%-8px)] rounded-full bg-action transition-all duration-300 ease-out z-0",
-                activeTab === "all" ? "left-1 w-[32%]" : 
-                activeTab === "active" ? "left-[34%] w-[32%]" : 
-                "left-[67%] w-[32%]"
-              )}
-            />
-            {(["all", "active", "inactive"] as FilterStatus[]).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={cn(
-                  "flex-1 py-1.5 text-caption font-semibold rounded-full transition-all relative z-10 capitalize",
-                  activeTab === tab 
-                    ? "text-white" 
-                    : "text-text-secondary hover:text-text-primary"
-                )}
-              >
-                {tab === "all" ? "Hepsi" : tab === "active" ? "Aktif" : "Pasif"}
-              </button>
-            ))}
-          </div>
+          <TabNav 
+            tabs={[
+              { value: "all", label: "Hepsi" },
+              { value: "active", label: "Aktif" },
+              { value: "inactive", label: "Pasif" }
+            ]}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+          />
         </div>
 
         <div className="overflow-x-auto">
