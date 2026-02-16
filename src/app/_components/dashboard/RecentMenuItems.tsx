@@ -6,6 +6,7 @@ import { Product } from "@/types/product";
 import { Category } from "@/types/category";
 import { cn } from "@/lib/utils";
 import { Edit2, Package } from "lucide-react";
+import { Pagination } from "@/components/shared/Pagination";
 
 interface RecentMenuItemsProps {
   onEditMenuItem?: (item: Product) => void;
@@ -93,7 +94,7 @@ export function RecentMenuItems({ onEditMenuItem }: RecentMenuItemsProps) {
                   {product.isAvailable ? "Active" : "Draft"}
                 </span>
                 <button
-                  className="p-3 text-[#86868B] hover:text-[#0071E3] bg-white rounded-xl border border-[#E8E8ED] shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:scale-110 active:scale-90"
+                  className="p-3 text-[#0071E3] hover:text-[#0071E3] bg-white rounded-xl border border-[#E8E8ED] shadow-sm opacity-60 group-hover:opacity-100 transition-all hover:scale-110 active:scale-90"
                   onClick={(e) => {
                     e.stopPropagation();
                     onEditMenuItem?.(product);
@@ -107,29 +108,12 @@ export function RecentMenuItems({ onEditMenuItem }: RecentMenuItemsProps) {
         )}
       </div>
 
-      {totalPages > 1 && (
-        <div className="mt-8 pt-6 border-t border-[#F2F2F7] flex items-center justify-between">
-          <p className="text-[13px] text-[#86868B] font-medium">
-            Page <span className="text-[#1D1D1F] font-bold">{currentPage}</span> of {totalPages}
-          </p>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-              disabled={currentPage === 1}
-              className="p-2 px-4 rounded-xl text-[12px] font-bold border border-[#E8E8ED] disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#F5F5F7] transition-all active:scale-95"
-            >
-              Previous
-            </button>
-            <button
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-              disabled={currentPage === totalPages}
-              className="p-2 px-4 rounded-xl text-[12px] font-bold bg-[#1D1D1F] text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#1D1D1F]/90 transition-all active:scale-95"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        className="mt-8 pt-6 border-t border-[#F2F2F7]"
+      />
     </section>
   );
 }

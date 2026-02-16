@@ -32,8 +32,8 @@ export default function CategoriesPage() {
   });
 
   useEffect(() => {
-    setCategories(storage.get<Category>("CATEGORIES"));
-    setProducts(storage.get<Product>("PRODUCTS"));
+    setCategories(storage.get<Category[]>("CATEGORIES", []));
+    setProducts(storage.get<Product[]>("PRODUCTS", []));
   }, []);
 
   const filteredCategories = useMemo(() => {

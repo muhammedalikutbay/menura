@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 
 import { Topbar } from "@/components/layout/topbar";
 import { Footer } from "@/components/shared/Footer";
+import { DataInitializer } from "@/components/shared/DataInitializer";
 
 export default function RootLayout({
   children,
@@ -28,6 +29,7 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <DataInitializer />
         <div className="flex min-h-screen bg-bg-primary">
           <div className="flex flex-1 flex-col">
             <div className="print:hidden">
