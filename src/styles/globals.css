@@ -65,3 +65,70 @@
     border-color: var(--color-border);
   }
 }
+
+/* Screen Only Style for Print Wrapper */
+.printable-qr-wrapper {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Printing Utilities */
+@media print {
+  @page {
+    margin: 0;
+    size: auto;
+  }
+
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Hide everything by default */
+  header,
+  footer,
+  nav,
+  aside,
+  .topbar-wrapper,
+  .footer-wrapper,
+  .no-print,
+  [class*="print:hidden"] {
+    display: none !important;
+  }
+
+  /* Surgical Hide of main UI containers if needed */
+  #root,
+  .__next {
+    display: block !important;
+  }
+
+  /* The print container takes over the whole world */
+  .printable-qr-wrapper {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147483647 !important;
+    /* Maximum possible z-index */
+    background: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+  }
+
+  canvas {
+    max-width: 90vw !important;
+    max-height: 90vh !important;
+  }
+}

@@ -35,11 +35,15 @@ export default function RootLayout({
       <body className={`${inter.variable} ${geistSans.variable} ${geistMono.variable} antialiased font-inter`}>
         <div className="flex min-h-screen bg-bg-primary">
           <div className="flex flex-1 flex-col">
-            <Topbar />
+            <div className="print:hidden">
+              <Topbar />
+            </div>
             <main className="flex-1 bg-bg-secondary/50">
               {children}
             </main>
-            <Footer />
+            <div className="print:hidden">
+              <Footer />
+            </div>
           </div>
         </div>
       </body>
