@@ -13,15 +13,15 @@ export default function CustomerMenuView() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    const storedProducts = storage.get<Product>("PRODUCTS") || [];
-    const storedCategories = storage.get<Category>("CATEGORIES") || [];
-    
+    const storedProducts = storage.get<Product[]>("PRODUCTS", []);
+    const storedCategories = storage.get<Category[]>("CATEGORIES", []);
+
     const activeCategories = storedCategories.filter(c => c.isActive).sort((a, b) => a.order - b.order);
     const activeProducts = storedProducts.filter(p => p.isAvailable).sort((a, b) => a.order - b.order);
-    
+
     setCategories(activeCategories);
     setProducts(activeProducts);
-    
+
     if (activeCategories.length > 0) {
       setActiveCategoryId(activeCategories[0].id);
     }
@@ -40,15 +40,15 @@ export default function CustomerMenuView() {
       {/* Search Header */}
       <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-divider px-4 py-3 pb-4">
         <div className="relative group">
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Search flavors..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full h-12 bg-bg-secondary/50 border border-divider rounded-2xl px-12 text-body-muted font-medium outline-none focus:ring-2 focus:ring-action/20 transition-all placeholder:text-text-secondary/50"
           />
           <div className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary opacity-40">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
           </div>
         </div>
       </div>
@@ -62,8 +62,8 @@ export default function CustomerMenuView() {
               onClick={() => setActiveCategoryId(cat.id)}
               className={cn(
                 "px-5 py-2.5 rounded-full text-caption font-black transition-all uppercase tracking-widest",
-                activeCategoryId === cat.id 
-                  ? "bg-action text-white shadow-lg shadow-action/20 scale-105" 
+                activeCategoryId === cat.id
+                  ? "bg-action text-white shadow-lg shadow-action/20 scale-105"
                   : "bg-white border border-divider text-text-secondary hover:bg-bg-secondary"
               )}
             >
@@ -78,7 +78,7 @@ export default function CustomerMenuView() {
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredProducts.map((product) => (
-              <div 
+              <div
                 key={product.id}
                 className="bg-white rounded-3xl border border-divider overflow-hidden hover:shadow-xl transition-all duration-500 group"
               >
@@ -88,13 +88,13 @@ export default function CustomerMenuView() {
                     <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-text-secondary/20">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg>
                     </div>
                   )}
                   {/* Preparation Time Badge */}
                   {product.preparationTime && (
                     <div className="absolute top-3 right-3 bg-white/90 backdrop-blur shadow-sm px-2 py-1 rounded-lg text-[10px] font-black text-text-primary flex items-center gap-1.5 uppercase tracking-tighter">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
                       {product.preparationTime}
                     </div>
                   )}
@@ -145,7 +145,7 @@ export default function CustomerMenuView() {
           {filteredProducts.length === 0 && (
             <div className="py-20 text-center space-y-4">
               <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto border border-divider shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary opacity-30"><path d="m21 8-9-5-9 5v8l9 5 9-5V8z"/><path d="M12 22V12"/><path d="m21 8-9 5-9-5"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary opacity-30"><path d="m21 8-9-5-9 5v8l9 5 9-5V8z" /><path d="M12 22V12" /><path d="m21 8-9 5-9-5" /></svg>
               </div>
               <div>
                 <h4 className="text-body font-black text-text-primary uppercase tracking-widest">No Flavors Found</h4>
