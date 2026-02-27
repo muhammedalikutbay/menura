@@ -1,0 +1,58 @@
+/* =========================
+   SEMANTIC TYPOGRAPHY LAYER
+========================== */
+
+.heading-hero {
+  font-family: var(--font-primary);
+  font-size: var(--text-hero);
+  font-weight: 600;
+  line-height: 1.07;
+  letter-spacing: -0.005em;
+}
+
+.heading-primary {
+  font-family: var(--font-primary);
+  font-size: var(--text-h1);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.003em;
+}
+
+.heading-secondary {
+  font-family: var(--font-primary);
+  font-size: var(--text-h2);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.heading-tertiary {
+  font-family: var(--font-primary);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: 0.007em;
+}
+
+.text-body {
+  font-family: var(--font-text);
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: 1.47;
+  letter-spacing: -0.022em;
+}
+
+.text-body-muted {
+  font-family: var(--font-text);
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: 1.47;
+  letter-spacing: -0.022em;
+  color: var(--color-text-secondary);
+}
+
+.text-caption {
+  font-family: var(--font-text);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  line-height: 1.33;
+}
