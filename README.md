@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Menura - Smart QR Menu System
 
-## Getting Started
+Menura, modern restoranlar ve kafeler için tasarlanmış, Apple estetiğinden ilham alan premium bir Akıllı QR Menü yönetim sistemidir. Bu proje, **Software Persona 11. Dönem Staj** eğitimi çerçevesinde, modern web teknolojilerini ve CRUD operasyonlarını bütüncül bir şekilde uygulamak amacıyla geliştirilmiştir.
 
-First, run the development server:
+🚀 **Canlı Önizleme:** [menuratnc.netlify.app](https://menuratnc.netlify.app)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🎯 Proje Amacı ve Kapsamı
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Bu uygulama, eğitim yönergesinde belirtilen tüm adımları kapsayacak şekilde inşa edilmiştir:
+- **Teknoloji**: Next.js 16 ve React 19 kullanılarak modern bir çerçeve üzerine kuruldu.
+- **CRUD Operasyonları**: Kategori ve Menü Ürünleri için Ekleme, Listeleme, Güncelleme ve Silme işlemleri eksiksiz uygulanmıştır.
+- **Yayınlama**: Netlify platformu üzerinden sürekli dağıtım (CD) ile yayına alınmıştır.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠 Teknoloji Yığını
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework**: [Next.js 16 (App Router)](https://nextjs.org/)
+- **UI & State**: React 19, LocalStorage Persistence
+- **Styling**: Tailwind CSS 4 (Apple UI Design Guidelines)
+- **Icons**: Lucide React
+- **QR Generation**: qr-code-styling
 
-## Learn More
+## ✨ Gelişmiş Özellikler ve Edge Case Yönetimi
 
-To learn more about Next.js, take a look at the following resources:
+Uygulama geliştirilirken sadece temel özellikler değil, kullanıcı deneyimini etkileyen kritik uç durumlar (edge cases) de dikkate alınmıştır:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Veri Güvenliği ve Persistence**: `localStorage` bazlı veri mimarisi ile sayfa yenilense bile veriler korunur.
+- **Otomatik Seeding**: Uygulama ilk açıldığında boş kalmaması için kategorilerden ve ürünlerden ıkuşan profesyonel veri seti otomatik olarak yüklenir.
+- **İleri Seviye Navigasyon**: Kategori kartlarından doğrudan ilgili ürünlere filtrelenmiş yönlendirme.
+- **Pagination (Sayfalama)**: Büyük veri setlerinde performansı korumak için Dashboard ve listelerde özelleştirilmiş 6'lı sayfalama sistemi.
+- **Boş Durum (Empty States)**: Hiç veri olmadığında kullanıcıyı yönlendiren şık boş durum arayüzleri.
+- **Görsel Fallback**: Ürün resmi eksik olduğunda otomatik devreye giren modern yer tutucu (placeholder) sistemi.
+- **Responsive Tasarım**: Tüm ekran boyutlarında ve cihazlarda kusursuz görüntüleme.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## � Proje Yapısı
 
-## Deploy on Vercel
+Eğitim yönergesine sadık kalınarak oluşturulan ağaç yapısı:
+- `src/components`: Paylaşılan bileşenler.
+- `src/app/pages`: Sayfa yönlendirmeleri ve ana modüller.
+- `src/types`: `Interfaces` ve tip tanımlamaları.
+- `src/lib`: Depolama ve yardımcı fonksiyonlar.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
