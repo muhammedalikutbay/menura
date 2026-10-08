@@ -175,7 +175,8 @@ export function AppearanceEditor({
         <PublishCard isPublished={isPublished} slug={slug} />
         <SlugCard slug={slug} host={host} />
 
-        <form onSubmit={handleSubmit} noValidate>
+        {/* One form for both cards: they save the same four values together. */}
+        <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
           <Card>
             <CardHeader>
               <CardTitle>Tema</CardTitle>
@@ -191,11 +192,8 @@ export function AppearanceEditor({
                 disabled={isPending}
               />
             </CardContent>
-            <CardFooter className="justify-end">{saveButton}</CardFooter>
           </Card>
-        </form>
 
-        <form onSubmit={handleSubmit} noValidate>
           <Card>
             <CardHeader>
               <CardTitle>Fiyat ve içerik</CardTitle>

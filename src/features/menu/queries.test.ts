@@ -106,6 +106,16 @@ describe("getPublicMenu", () => {
     expect(menu?.categories[0]?.products.map((p) => p.name)).toEqual(["Kebap"]);
   });
 
+  it("keeps hidden sold-out products for the owner's appearance preview", async () => {
+    const tenant = await createTenant({ isPublished: true, hideUnavailable: true });
+    const mains = await addCategory(tenant, { name: "Ana yemekler" });
+    await addProduct(tenant, mains.id, { name: "Kebap", position: 1 });
+    await addProduct(tenant, mains.id, { name: "Tükenen", isAvailable: false, position: 2 });
+
+    const menu = await getPublicMenu(tenant.restaurant.slug, true);
+    expect(menu?.categories[0]?.products.map((p) => p.name)).toEqual(["Kebap", "Tükenen"]);
+  });
+
   it("keeps unavailable products, flagged, when the restaurant shows them", async () => {
     const tenant = await createTenant({ isPublished: true, hideUnavailable: false });
     const mains = await addCategory(tenant, { name: "Ana yemekler" });

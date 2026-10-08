@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Görünüm" };
 export default async function AppearancePage() {
   const { restaurant } = await requireRestaurant();
   // The owner always gets their own menu back, even while it is unpublished.
-  const menu = await getPublicMenu(restaurant.slug);
+  const menu = await getPublicMenu(restaurant.slug, true);
 
   return (
     <div className="flex flex-col gap-6">

@@ -12,8 +12,10 @@ export type { PublicCategory, PublicMenu, PublicProduct, PublicRestaurant } from
 /**
  * Everything the public menu page needs, or `null` when there is nothing to show.
  * Unpublished restaurants are visible only to their owner (preview).
+ * `includeUnavailable` keeps sold-out products even when the restaurant hides them (owner's live
+ * appearance preview, which applies that setting on the client).
  */
-export const getPublicMenu = cache(async (slug: string): Promise<PublicMenu | null> => {
+export const getPublicMenu = cache(async (slug: string, includeUnavailable = false): Promise<PublicMenu | null> => {
   const [row] = await db
     .select()
     .from(restaurant)
@@ -44,7 +46,7 @@ export const getPublicMenu = cache(async (slug: string): Promise<PublicMenu | nu
                 product.categoryId,
                 categoryRows.map((c) => c.id),
               ),
-              row.hideUnavailable ? eq(product.isAvailable, true) : undefined,
+              row.hideUnavailable && !includeUnavailable ? eq(product.isAvailable, true) : undefined,
             ),
           )
           .orderBy(asc(product.position), asc(product.createdAt), asc(product.id));
