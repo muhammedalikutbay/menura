@@ -58,7 +58,9 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 30,
     updateAge: 60 * 60 * 24,
-    cookieCache: { enabled: true, maxAge: 5 * 60 },
+    // Disabled on purpose: a cached session cookie is trusted on its signature alone, so anyone
+    // holding the auth secret could forge one. Every request validates the session in the DB.
+    cookieCache: { enabled: false },
     // Deleting the account without re-entering the password needs a session younger than this.
     freshAge: 10 * 60,
   },
