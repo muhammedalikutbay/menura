@@ -83,7 +83,7 @@ export function QrPrintSheet({ menuUrl, restaurantName, logoUrl }: QrPrintSheetP
     <div className="flex flex-col gap-6">
       <style>{PRINT_CSS}</style>
 
-      <div className="flex flex-col gap-6 print:hidden">
+      <div className="flex flex-col gap-6 sm:gap-8 print:hidden">
         <Card>
           <CardHeader>
             <CardTitle>Baskı ayarları</CardTitle>
@@ -110,7 +110,7 @@ export function QrPrintSheet({ menuUrl, restaurantName, logoUrl }: QrPrintSheetP
                 />
               </Field>
             </div>
-            {cappedNotice && <p className="text-sm text-warning">{cappedNotice}</p>}
+            {cappedNotice && <p className="text-sm text-warning-text">{cappedNotice}</p>}
           </CardContent>
         </Card>
 
@@ -119,11 +119,11 @@ export function QrPrintSheet({ menuUrl, restaurantName, logoUrl }: QrPrintSheetP
             <Printer aria-hidden="true" />
             Yazdır
           </Button>
-          <Link href={"/dashboard/qr" as Route} className={buttonVariants({ variant: "ghost" })}>
+          <Link href={"/dashboard/qr" as Route} className={buttonVariants({ variant: "secondary" })}>
             <ArrowLeft aria-hidden="true" />
             QR koda dön
           </Link>
-          <p className="text-sm text-fg-muted" aria-live="polite">
+          <p className="type-caption tabular text-fg-muted" aria-live="polite">
             {cards.length} kart · {pages.length} sayfa
           </p>
         </div>
@@ -141,7 +141,7 @@ export function QrPrintSheet({ menuUrl, restaurantName, logoUrl }: QrPrintSheetP
             <section
               key={pageIndex}
               aria-label={`Sayfa ${pageIndex + 1}`}
-              className="grid shrink-0 bg-white shadow-md print:shadow-none"
+              className="grid shrink-0 bg-white shadow-float print:shadow-none"
               style={{
                 width: SHEET_WIDTH,
                 height: SHEET_HEIGHT,

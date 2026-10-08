@@ -69,10 +69,10 @@ export function OnboardingChecklist({ progress }: { progress: ChecklistProgress 
     <Card role="region" aria-labelledby="checklist-title">
       <CardHeader>
         <div className="flex items-baseline justify-between gap-3">
-          <CardTitle id="checklist-title" className="text-lg">
+          <CardTitle id="checklist-title">
             Kurulumu tamamlayın
           </CardTitle>
-          <p className="text-sm font-medium text-fg-muted tabular-nums">
+          <p className="type-caption tabular text-fg-muted">
             {doneCount} / {steps.length}
           </p>
         </div>
@@ -83,37 +83,37 @@ export function OnboardingChecklist({ progress }: { progress: ChecklistProgress 
           aria-valuemin={0}
           aria-valuemax={steps.length}
           aria-valuenow={doneCount}
-          className="mt-2 h-1.5 overflow-hidden rounded-full bg-surface-muted"
+          className="mt-3 h-2 overflow-hidden rounded-full bg-surface-muted"
         >
           <div
-            className="h-full rounded-full bg-accent transition-[width]"
+            className="gradient-brand h-full rounded-full transition-[width]"
             style={{ width: `${(doneCount / steps.length) * 100}%` }}
           />
         </div>
       </CardHeader>
       <CardContent>
         <ol className="flex flex-col divide-y divide-border">
-          {steps.map((step) => (
+          {steps.map((step, index) => (
             <li key={step.id}>
               <Link
                 href={step.href as Route}
-                className="-mx-2 flex min-h-14 items-center gap-3 rounded-md px-2 py-2.5 transition-colors hover:bg-surface-muted"
+                className="-mx-3 flex min-h-16 items-center gap-4 rounded-md px-3 py-3 transition-colors hover:bg-surface-muted"
               >
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "flex size-6 shrink-0 items-center justify-center rounded-full border",
-                    step.done ? "border-success bg-success text-bg" : "border-border-strong",
+                    "tabular flex size-7 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold",
+                    step.done ? "bg-success text-bg" : "gradient-brand text-brand-fg",
                   )}
                 >
-                  {step.done && <Check className="size-3.5" strokeWidth={3} />}
+                  {step.done ? <Check className="size-4" strokeWidth={3} /> : index + 1}
                 </span>
                 <span className="flex min-w-0 flex-col">
                   <span className={cn("text-[15px] font-medium", step.done && "text-fg-muted line-through")}>
                     {step.label}
                     <span className="sr-only">{step.done ? " (tamamlandı)" : " (yapılacak)"}</span>
                   </span>
-                  {!step.done && <span className="text-sm text-fg-muted">{step.hint}</span>}
+                  {!step.done && <span className="type-body text-fg-muted">{step.hint}</span>}
                 </span>
               </Link>
             </li>

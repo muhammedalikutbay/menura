@@ -60,35 +60,35 @@ export function QrCustomizer({ menuUrl, restaurantName, slug, logoUrl }: QrCusto
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start">
+    <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
       {/* Preview and actions */}
-      <Card className="lg:sticky lg:top-6">
-        <CardContent className="flex flex-col items-center gap-5">
-          <div className="w-full max-w-72 overflow-hidden rounded-lg border border-border shadow-sm">
+      <Card className="gap-6 lg:sticky lg:top-6">
+        <CardContent className="flex flex-col items-center gap-6">
+          <div className="w-full max-w-96 overflow-hidden rounded-xl bg-surface-muted p-3 shadow-hairline">
             <QrPreview
               style={style}
               data={menuUrl}
               logoUrl={logoUrl}
               label={`${restaurantName} menüsü için QR kod`}
-              className="block aspect-square w-full"
+              className="block aspect-square w-full rounded-lg"
             />
           </div>
-          <p className="max-w-full text-center text-sm break-all text-fg-muted">{menuUrl}</p>
-          <div className="grid w-full gap-2 sm:grid-cols-2 lg:grid-cols-1">
+          <p className="type-caption max-w-full text-center break-all text-fg-muted">{menuUrl}</p>
+          <div className="grid w-full gap-3 sm:grid-cols-2">
             <Button onClick={() => download("png")} loading={busy === "png"} disabled={busy !== null}>
               {busy !== "png" && <Download aria-hidden="true" />}
               PNG indir (1024 px)
             </Button>
-            <Button variant="outline" onClick={() => download("svg")} loading={busy === "svg"} disabled={busy !== null}>
+            <Button variant="secondary" onClick={() => download("svg")} loading={busy === "svg"} disabled={busy !== null}>
               {busy !== "svg" && <FileDown aria-hidden="true" />}
               SVG indir
             </Button>
-            <CopyLinkButton url={menuUrl} className="w-full" />
+            <CopyLinkButton url={menuUrl} variant="secondary" className="w-full" />
             <a
               href={menuUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={buttonVariants({ variant: "outline", className: "w-full" })}
+              className={buttonVariants({ variant: "secondary", className: "w-full" })}
             >
               <ExternalLink aria-hidden="true" />
               Menüyü aç
@@ -99,7 +99,7 @@ export function QrCustomizer({ menuUrl, restaurantName, slug, logoUrl }: QrCusto
       </Card>
 
       {/* Customization */}
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 sm:gap-8">
         <Card>
           <CardHeader>
             <CardTitle>Renkler</CardTitle>
@@ -113,7 +113,7 @@ export function QrCustomizer({ menuUrl, restaurantName, slug, logoUrl }: QrCusto
             {colors.status !== "ok" && (
               <div
                 role="status"
-                className="flex gap-3 rounded-md bg-warning-soft p-3 text-sm text-warning"
+                className="flex gap-3 rounded-md bg-warning-soft p-4 text-sm text-warning-text"
               >
                 <TriangleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
                 <p>
@@ -128,7 +128,7 @@ export function QrCustomizer({ menuUrl, restaurantName, slug, logoUrl }: QrCusto
 
         <Card>
           <CardHeader>
-            <CardTitle>Stil</CardTitle>
+            <CardTitle>Desen</CardTitle>
             <CardDescription>Çok süslü stiller okunabilirliği azaltabilir; baskıdan önce telefonunuzla deneyin.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
@@ -162,7 +162,7 @@ export function QrCustomizer({ menuUrl, restaurantName, slug, logoUrl }: QrCusto
             {!logoUrl && (
               <Link
                 href={"/dashboard/restaurant" as Route}
-                className="text-sm font-medium text-accent-text underline-offset-4 hover:underline"
+                className="type-caption text-accent-text underline-offset-4 hover:underline"
               >
                 Logo yükle
               </Link>

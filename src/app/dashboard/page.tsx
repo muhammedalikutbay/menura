@@ -34,18 +34,23 @@ export default async function DashboardOverviewPage() {
   const lastWeek = sumLast(daily, 7);
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-8">
+    <div className="flex flex-col gap-8 sm:gap-10">
       <PageHeader title="Genel bakış" description={`${restaurant.name} için menü özeti ve son görüntülenmeler.`} />
 
       {!restaurant.isPublished && (
         <div
           role="status"
-          className="flex flex-col gap-3 rounded-lg bg-warning-soft p-4 text-warning sm:flex-row sm:items-center"
+          className="flex flex-col gap-4 rounded-lg bg-warning-soft p-5 text-warning-text sm:flex-row sm:items-center sm:p-6"
         >
-          <TriangleAlert aria-hidden="true" className="size-5 shrink-0" />
-          <div className="flex flex-1 flex-col gap-0.5 text-sm">
-            <p className="font-semibold">Menünüz henüz yayında değil</p>
-            <p>
+          <span
+            aria-hidden="true"
+            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface/70"
+          >
+            <TriangleAlert className="size-5" />
+          </span>
+          <div className="flex flex-1 flex-col gap-0.5">
+            <p className="type-title text-base">Menünüz henüz yayında değil</p>
+            <p className="type-body">
               Misafirler QR kodu okuttuğunda &ldquo;Menü bulunamadı&rdquo; sayfasını görür. Hazır olduğunuzda
               yayınlayın.
             </p>
@@ -53,9 +58,9 @@ export default async function DashboardOverviewPage() {
           <Link
             href={"/dashboard/appearance" as Route}
             className={buttonVariants({
-              variant: "outline",
+              variant: "secondary",
               size: "sm",
-              className: "shrink-0 self-start sm:self-auto",
+              className: "shrink-0 self-start bg-surface sm:self-auto",
             })}
           >
             Görünüme git
@@ -72,13 +77,13 @@ export default async function DashboardOverviewPage() {
         }}
       />
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="flex flex-col gap-6 lg:col-span-2">
-          <section aria-labelledby="views-heading" className="flex flex-col gap-4">
+      <div className="grid gap-8 lg:grid-cols-3">
+        <div className="flex flex-col gap-8 lg:col-span-2">
+          <section aria-labelledby="views-heading" className="flex flex-col gap-4 sm:gap-6">
             <h2 id="views-heading" className="sr-only">
               Menü görüntülenmeleri
             </h2>
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-3 sm:gap-6">
               <StatCard label="Bugün" value={formatCount(today)} detail="menü görüntülenmesi" />
               <StatCard label="Son 7 gün" value={formatCount(lastWeek)} detail="menü görüntülenmesi" />
               <StatCard label="Toplam" value={formatCount(totalViews)} detail="menü görüntülenmesi" />
@@ -96,11 +101,11 @@ export default async function DashboardOverviewPage() {
             </Card>
           </section>
 
-          <section aria-labelledby="content-heading" className="flex flex-col gap-4">
+          <section aria-labelledby="content-heading" className="flex flex-col gap-4 sm:gap-6">
             <h2 id="content-heading" className="sr-only">
               Menü içeriği
             </h2>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
               <StatCard
                 label="Kategoriler"
                 value={formatCount(counts.categories.total)}
@@ -115,7 +120,7 @@ export default async function DashboardOverviewPage() {
           </section>
         </div>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-8">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between gap-2">
@@ -126,14 +131,14 @@ export default async function DashboardOverviewPage() {
               </div>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
-              <p className="rounded-md bg-surface-muted px-3 py-2.5 text-sm break-all">{menuUrl}</p>
+              <p className="rounded-md bg-surface-muted px-4 py-3 text-sm break-all text-fg-muted">{menuUrl}</p>
               <div className="flex flex-wrap gap-2">
-                <CopyLinkButton url={menuUrl} size="sm" />
+                <CopyLinkButton url={menuUrl} size="sm" variant="primary" />
                 <a
                   href={menuUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={buttonVariants({ variant: "outline", size: "sm" })}
+                  className={buttonVariants({ variant: "secondary", size: "sm" })}
                 >
                   <ExternalLink aria-hidden="true" />
                   Menüyü aç
@@ -148,7 +153,7 @@ export default async function DashboardOverviewPage() {
               <CardTitle>Hızlı işlemler</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="flex flex-col gap-2">
+              <ul className="flex flex-col gap-3">
                 <li>
                   <Link href={"/dashboard/products/new" as Route} className={quickActionClass}>
                     <Plus aria-hidden="true" />

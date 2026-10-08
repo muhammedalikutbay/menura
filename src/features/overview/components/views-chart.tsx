@@ -38,13 +38,13 @@ export function ViewsChart({ days }: { days: DayCount[] }) {
                 className="group flex min-w-0 flex-1 flex-col items-center"
               >
                 <div className="relative flex w-full flex-1 items-end justify-center">
-                  <span className="pointer-events-none absolute -top-5 z-10 rounded-sm bg-fg px-1.5 py-0.5 text-[11px] leading-none font-medium whitespace-nowrap text-bg tabular-nums opacity-0 transition-opacity group-hover:opacity-100">
+                  <span className="pointer-events-none absolute -top-5 z-10 rounded-full bg-ink px-2 py-0.5 text-[11px] leading-none font-medium whitespace-nowrap text-ink-fg tabular-nums opacity-0 transition-opacity group-hover:opacity-100">
                     {formatCount(bar.count)}
                   </span>
                   <div
                     className={cn(
-                      "w-full max-w-7 rounded-t-sm transition-colors",
-                      bar.count > 0 ? "bg-accent group-hover:bg-accent-hover" : "bg-border",
+                      "w-full max-w-6 rounded-full transition-colors",
+                      bar.count > 0 ? "bg-accent group-hover:bg-accent-hover" : "bg-border-strong/60",
                     )}
                     style={{ height: bar.count > 0 ? `${bar.heightPercent}%` : "2px" }}
                   />

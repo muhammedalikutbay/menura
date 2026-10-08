@@ -30,7 +30,7 @@ export default function DashboardError({
             <RefreshCw aria-hidden="true" />
             Tekrar dene
           </Button>
-          <Link href={"/dashboard" as Route} className={buttonVariants({ variant: "outline" })}>
+          <Link href={"/dashboard" as Route} className={buttonVariants({ variant: "secondary" })}>
             Genel bakışa dön
           </Link>
         </div>

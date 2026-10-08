@@ -11,10 +11,10 @@ type StatCardProps = {
 
 export function StatCard({ label, value, detail, className }: StatCardProps) {
   return (
-    <Card className={cn("gap-1 px-5 sm:px-6", className)}>
-      <p className="text-sm font-medium text-fg-muted">{label}</p>
-      <p className="text-3xl font-semibold tracking-tight tabular-nums">{value}</p>
-      {detail && <p className="text-sm text-fg-muted">{detail}</p>}
+    <Card className={cn("gap-1.5 px-5 sm:px-6", className)}>
+      <p className="type-caption text-fg-muted">{label}</p>
+      <p className="tabular text-[32px] leading-tight font-semibold tracking-[-0.03em] sm:text-4xl">{value}</p>
+      {detail && <p className="type-caption text-fg-muted">{detail}</p>}
     </Card>
   );
 }
