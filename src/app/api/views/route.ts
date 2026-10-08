@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { recordMenuView } from "@/features/analytics/server";
-import { slugSchema } from "@/features/restaurant/schema";
+import { SLUG_MAX, SLUG_PATTERN } from "@/lib/text";
 
-const bodySchema = z.object({ slug: slugSchema });
+// Format check only: reserved slugs (e.g. the seeded "demo" menu) must still be countable.
+const bodySchema = z.object({ slug: z.string().max(SLUG_MAX).regex(SLUG_PATTERN) });
 const MAX_BODY_BYTES = 1024;
 
 /**

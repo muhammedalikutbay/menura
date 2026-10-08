@@ -24,6 +24,12 @@ describe("POST /api/views", () => {
     expect(await getTotalViews(tenant.restaurant.id)).toBe(1);
   });
 
+  it("counts reserved-but-seeded slugs such as demo", async () => {
+    const demo = await createTenant({ slug: "demo", isPublished: true });
+    expect((await beacon("demo", { "sec-fetch-site": "same-origin" })).status).toBe(204);
+    expect(await getTotalViews(demo.restaurant.id)).toBe(1);
+  });
+
   it("rejects malformed and oversized bodies", async () => {
     const bad = await POST(new Request(URL_BASE, { method: "POST", body: "not json" }));
     expect(bad.status).toBe(400);
