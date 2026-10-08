@@ -19,30 +19,30 @@ export function LegalPage({
   sections: LegalSection[];
 }) {
   return (
-    <article className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-      <div role="note" className="mb-8 flex gap-3 rounded-lg bg-warning-soft p-4 text-warning">
+    <article className="mx-auto w-full max-w-[640px] px-4 py-14 sm:px-6 sm:py-20">
+      <div role="note" className="mb-10 flex gap-3 rounded-lg bg-warning-soft p-4 text-warning-text">
         <TriangleAlert aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
-        <p className="text-sm font-medium">
+        <p className="type-body font-medium">
           Bu metin şablondur; yayına almadan önce hukuki danışmanınıza kontrol ettirin.
         </p>
       </div>
 
-      <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{title}</h1>
-      <p className="mt-4 text-lg text-fg-muted">{intro}</p>
+      <h1 className="type-display text-balance">{title}</h1>
+      <p className="type-body-lg mt-5 text-pretty text-fg-muted">{intro}</p>
 
-      <div className="mt-10 flex flex-col gap-8">
+      <div className="mt-12 flex flex-col gap-10">
         {sections.map((section, index) => (
-          <section key={section.title} aria-labelledby={`legal-${index}`} className="flex flex-col gap-3">
-            <h2 id={`legal-${index}`} className="text-xl font-semibold tracking-tight">
+          <section key={section.title} aria-labelledby={`legal-${index}`} className="flex flex-col gap-3 border-t border-border pt-8">
+            <h2 id={`legal-${index}`} className="type-title">
               {index + 1}. {section.title}
             </h2>
             {section.body.map((paragraph) => (
-              <p key={paragraph} className="text-base text-fg-muted">
+              <p key={paragraph} className="type-body-lg text-pretty text-fg-muted">
                 {paragraph}
               </p>
             ))}
             {section.items && (
-              <ul className="list-disc space-y-1.5 pl-6 text-base text-fg-muted marker:text-fg-muted">
+              <ul className="type-body-lg list-disc space-y-2 pl-6 text-fg-muted marker:text-fg-subtle">
                 {section.items.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
