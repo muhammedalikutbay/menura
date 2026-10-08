@@ -148,7 +148,7 @@ export function QrCustomizer({ menuUrl, restaurantName, slug, logoUrl }: QrCusto
             <CardDescription>
               {logoUrl
                 ? "Restoran logonuz kodun ortasında görünür. Logo varken hata düzeltme seviyesi en yükseğe alınır."
-                : "Kodun ortasında göstermek için önce Ayarlar bölümünden logo yükleyin."}
+                : "Kodun ortasında göstermek için önce Restoran sayfasından logo yükleyin."}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center gap-3">

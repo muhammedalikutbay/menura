@@ -14,7 +14,7 @@ export function UnpublishedQrNotice() {
         <p className="type-body">
           Menünüzü yayınlayana kadar bu QR kodu okutan misafirler &ldquo;Menü bulunamadı&rdquo; sayfasını görür.{" "}
           <Link href={"/dashboard/appearance" as Route} className="font-medium underline underline-offset-4">
-            Ayarlardan yayınlayın
+            Görünüm sayfasından yayınlayın
           </Link>
           .
         </p>

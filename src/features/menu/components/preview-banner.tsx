@@ -12,7 +12,7 @@ export function PreviewBanner() {
           href={"/dashboard/appearance" as Route}
           className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-full px-2 font-semibold underline-offset-4 hover:underline"
         >
-          Ayarlara git
+          Görünüme git
           <ArrowRight aria-hidden="true" className="size-4" />
         </Link>
       </div>

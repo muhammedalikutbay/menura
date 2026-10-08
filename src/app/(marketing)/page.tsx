@@ -99,7 +99,7 @@ const FAQ: Array<{ question: string; answer: React.ReactNode }> = [
   {
     question: "Alerjen bilgilerini ve fiyatlardaki KDV notunu yönetebilir miyim?",
     answer:
-      "Evet. Her ürün için alerjenleri ve diyet etiketlerini seçebilir, “KDV dahildir” notunu ayarlardan açıp kapatabilirsiniz. Bilgilerin doğruluğundan işletme olarak siz sorumlusunuz.",
+      "Evet. Her ürün için alerjenleri ve diyet etiketlerini seçebilir, “KDV dahildir” notunu Görünüm sayfasından açıp kapatabilirsiniz. Bilgilerin doğruluğundan işletme olarak siz sorumlusunuz.",
   },
   {
     question: "Verilerim nasıl işleniyor?",
