@@ -14,7 +14,7 @@ Postgres 15+ work the same way.
 | `DATABASE_URL` | yes | Pooled Postgres URL |
 | `BETTER_AUTH_SECRET` | yes | 32+ random chars: `openssl rand -base64 32` |
 | `APP_URL` | yes* | Public URL without trailing slash, e.g. `https://menuratnc.netlify.app`. QR codes encode `APP_URL/m/<slug>`, so set the final domain before printing QR codes. *On Netlify it defaults to the site URL. |
-| `RESEND_API_KEY` | no | Enables password-reset emails. Without it the "Şifremi unuttum" link is hidden. |
+| `RESEND_API_KEY` | recommended | Enables password-reset and email-verification emails. With it, new accounts must verify their email before signing in; without it, the "Şifremi unuttum" link is hidden and sign-up is instant. |
 | `EMAIL_FROM` | with Resend | Sender on a domain verified in Resend |
 | `DATABASE_POOL_MAX` | no | Connections per server instance (default 5) |
 

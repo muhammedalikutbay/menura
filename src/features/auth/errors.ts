@@ -22,7 +22,7 @@ const MESSAGES: Record<string, string> = {
   SESSION_EXPIRED: STALE_SESSION,
   SESSION_NOT_FRESH: STALE_SESSION,
   CREDENTIAL_ACCOUNT_NOT_FOUND: "Bu hesapta şifre tanımlı değil.",
-  EMAIL_NOT_VERIFIED: "E-posta adresiniz doğrulanmamış.",
+  EMAIL_NOT_VERIFIED: "E-posta adresiniz henüz doğrulanmadı. Size yeni bir doğrulama bağlantısı gönderdik; gelen kutunuzu kontrol edin.",
 };
 
 /** Turkish message for a Better Auth client error. Unknown errors get `fallback`. */

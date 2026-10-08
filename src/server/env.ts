@@ -8,6 +8,8 @@ const schema = z.object({
   APP_URL: z.url().default("http://localhost:3000"),
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().default("Menura <noreply@menura.app>"),
+  /** Development only: "console" enables email flows and prints messages instead of sending. */
+  EMAIL_TRANSPORT: z.enum(["resend", "console"]).optional(),
 });
 
 // Netlify exposes the site URL as URL; use it when APP_URL is not set explicitly.
@@ -28,7 +30,9 @@ export const env = {
   ...parsed.data,
   /** Public base URL without a trailing slash; used for QR codes and emails. */
   APP_URL: parsed.data.APP_URL.replace(/\/$/, ""),
-  isEmailEnabled: Boolean(parsed.data.RESEND_API_KEY),
+  isEmailEnabled:
+    Boolean(parsed.data.RESEND_API_KEY) ||
+    (parsed.data.NODE_ENV !== "production" && parsed.data.EMAIL_TRANSPORT === "console"),
   /** Production requires a real secret (checked above); dev, test and build use a fixed placeholder. */
   authSecret: parsed.data.BETTER_AUTH_SECRET ?? "menura-insecure-dev-secret-do-not-use-in-production",
 };

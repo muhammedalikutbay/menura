@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AuthCard } from "@/features/auth/components/auth-card";
 import { RegisterForm } from "@/features/auth/components/register-form";
 import { redirectIfSignedIn } from "@/features/auth/server";
+import { env } from "@/server/env";
 
 export const metadata: Metadata = { title: "Kayıt ol" };
 
@@ -22,7 +23,7 @@ export default async function RegisterPage() {
         </>
       }
     >
-      <RegisterForm />
+      <RegisterForm requiresVerification={env.isEmailEnabled} />
     </AuthCard>
   );
 }

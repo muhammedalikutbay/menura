@@ -27,12 +27,28 @@ export const auth = betterAuth({
     minPasswordLength: 8,
     maxPasswordLength: 128,
     autoSignIn: true,
+    // With an email provider configured, accounts must prove they own the address
+    // (prevents signing up with someone else's email). Without one, sign-up stays instant.
+    requireEmailVerification: env.isEmailEnabled,
     revokeSessionsOnPasswordReset: true,
     sendResetPassword: async ({ user, url }) => {
       await sendEmail({
         to: user.email,
         subject: "Menura şifre sıfırlama",
         text: `Merhaba ${user.name},\n\nŞifreni sıfırlamak için bu bağlantıyı aç (1 saat geçerli):\n${url}\n\nBu isteği sen yapmadıysan bu e-postayı yok sayabilirsin.`,
+      });
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: env.isEmailEnabled,
+    sendOnSignIn: env.isEmailEnabled,
+    autoSignInAfterVerification: true,
+    expiresIn: 24 * 60 * 60,
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendEmail({
+        to: user.email,
+        subject: "Menura e-posta doğrulama",
+        text: `Merhaba ${user.name},\n\nMenura hesabını etkinleştirmek için bu bağlantıyı aç (24 saat geçerli):\n${url}\n\nBu kaydı sen yapmadıysan bu e-postayı yok sayabilirsin.`,
       });
     },
   },

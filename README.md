@@ -40,8 +40,9 @@ npm run db:seed     # migration'ları uygular ve /m/demo restoranını oluşturu
 npm run dev         # http://localhost:3000
 ```
 
-Kayıt olup restoranınızı oluşturun; panel `/dashboard` adresindedir. Geliştirme ortamında
-e-postalar gönderilmez, konsola yazılır.
+Kayıt olup restoranınızı oluşturun; panel `/dashboard` adresindedir. E-posta doğrulama ve şifre
+sıfırlamayı yerelde denemek için `.env.local` içine `EMAIL_TRANSPORT=console` yazın; e-postalar
+gönderilmez, bağlantılar sunucu konsoluna yazılır.
 
 ## Komutlar
 

@@ -1,10 +1,8 @@
 "use client";
 
-import type { Route } from "next";
-import Link from "next/link";
 import { MailCheck } from "lucide-react";
 import { useState, useTransition } from "react";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { fromZodError, type FieldErrors } from "@/lib/action-result";
@@ -63,9 +61,6 @@ export function ForgotPasswordForm() {
           Bu e-posta adresiyle kayıtlı bir hesap varsa, şifre sıfırlama bağlantısı gönderdik. Gelen kutunuzu ve
           gereksiz e-posta klasörünü kontrol edin.
         </p>
-        <Link href={"/login" as Route} className={buttonVariants({ variant: "outline", className: "w-full" })}>
-          Girişe dön
-        </Link>
       </div>
     );
   }

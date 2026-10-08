@@ -19,13 +19,14 @@ import { useFocusInvalid } from "./use-focus-invalid";
 
 const linkClass = "font-medium text-accent-text underline-offset-4 hover:underline";
 
-export function RegisterForm() {
+export function RegisterForm({ requiresVerification = false }: { requiresVerification?: boolean }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [redirecting, setRedirecting] = useState(false);
   const [consent, setConsent] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
+  const [verificationSentTo, setVerificationSentTo] = useState<string | null>(null);
   const { formRef, requestFocus } = useFocusInvalid();
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -50,7 +51,7 @@ export function RegisterForm() {
     startTransition(async () => {
       try {
         const { name, email, password } = parsed.data;
-        const { error } = await authClient.signUp.email({ name, email, password });
+        const { error } = await authClient.signUp.email({ name, email, password, callbackURL: "/onboarding" });
         if (error) {
           if (error.code === "USER_ALREADY_EXISTS" || error.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
             setErrors({ email: [authErrorMessage(error)] });
@@ -58,6 +59,10 @@ export function RegisterForm() {
           } else {
             setFormError(authErrorMessage(error, GENERIC_AUTH_ERROR));
           }
+          return;
+        }
+        if (requiresVerification) {
+          setVerificationSentTo(email);
           return;
         }
         setRedirecting(true);
@@ -70,6 +75,19 @@ export function RegisterForm() {
   }
 
   const consentError = errors.consent?.[0];
+
+  if (verificationSentTo) {
+    return (
+      <div role="status" className="flex flex-col gap-3 text-sm leading-6">
+        <p className="text-base font-semibold text-fg">E-postanızı doğrulayın</p>
+        <p className="text-fg-muted">
+          <span className="font-medium text-fg">{verificationSentTo}</span> adresine bir doğrulama bağlantısı
+          gönderdik. Bağlantıyı açtığınızda hesabınız etkinleşir ve restoranınızı oluşturmaya devam edersiniz.
+        </p>
+        <p className="text-fg-muted">E-posta birkaç dakika içinde gelmezse istenmeyen e-posta klasörünü kontrol edin.</p>
+      </div>
+    );
+  }
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
