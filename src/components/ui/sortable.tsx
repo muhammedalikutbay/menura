@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import {
   closestCenter,
   DndContext,
@@ -42,6 +43,9 @@ const SCREEN_READER_INSTRUCTIONS = {
 
 /** Vertical drag-and-drop list with pointer + keyboard support and Turkish screen reader announcements. */
 export function SortableList({ items, onReorder, children, className, ...rest }: SortableListProps) {
+  // dnd-kit numbers its aria-describedby ids with a global counter; a stable id keeps SSR and
+  // hydration in sync.
+  const dndId = useId();
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
@@ -73,6 +77,7 @@ export function SortableList({ items, onReorder, children, className, ...rest }:
 
   return (
     <DndContext
+      id={dndId}
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
