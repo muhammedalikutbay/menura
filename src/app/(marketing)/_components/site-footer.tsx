@@ -2,14 +2,16 @@ import type { Route } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/app-shell/logo";
 
+const DEMO_LINK = { href: "/m/demo", label: "Demo menü" } as const;
+
 const FOOTER_LINKS = [
-  { href: "/m/demo", label: "Demo menü" },
   { href: "/privacy", label: "KVKK aydınlatma metni" },
   { href: "/terms", label: "Kullanım koşulları" },
   { href: "/login", label: "Giriş yap" },
 ] as const;
 
-export function SiteFooter() {
+export function SiteFooter({ showDemo }: { showDemo: boolean }) {
+  const links = showDemo ? [DEMO_LINK, ...FOOTER_LINKS] : FOOTER_LINKS;
   return (
     <footer className="border-t border-border bg-surface-muted">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">
@@ -22,7 +24,7 @@ export function SiteFooter() {
           </div>
           <nav aria-label="Alt bilgi">
             <ul className="flex flex-col gap-1 sm:items-end">
-              {FOOTER_LINKS.map((link) => (
+              {links.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href as Route}

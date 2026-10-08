@@ -12,7 +12,9 @@ Architecture and decisions: `docs/architecture.md`. Read it before structural ch
 - Zod 4 for every input; Vitest for unit/integration; Playwright for e2e
 - Next.js docs for the installed version live in `node_modules/next/dist/docs/` — check them
   instead of relying on memory (Next 16: `proxy.ts` replaces middleware, `params` are Promises).
-  Cache Components are NOT enabled; pages read the DB per request.
+  Cache Components are NOT enabled; pages read the DB per request. A server component that
+  queries the DB on a page without other dynamic APIs must `await connection()` (next/server)
+  first, otherwise `next build` tries to prerender it against an empty database.
 
 ## Commands
 `npm run dev` (starts the PGlite socket server on :5433 and Next.js against it) · `npm run check` (lint + typecheck + test + build) · `npm run db:generate`

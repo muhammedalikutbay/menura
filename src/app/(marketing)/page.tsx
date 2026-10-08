@@ -15,6 +15,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { hasDemoMenu } from "@/features/menu/demo";
 import { getSession } from "@/server/session";
 import { PhoneMockup } from "./_components/phone-mockup";
 
@@ -131,6 +132,7 @@ const primaryCta = buttonVariants({ size: "lg" });
 const secondaryCta = buttonVariants({ variant: "outline", size: "lg" });
 
 export default async function LandingPage() {
+  const showDemo = await hasDemoMenu();
   const session = await getSession().catch(() => null);
   const ctaHref = (session ? "/dashboard" : "/register") as Route;
   const ctaLabel = session ? "Panele git" : "Ücretsiz başla";
@@ -156,9 +158,11 @@ export default async function LandingPage() {
                 {ctaLabel}
                 <ArrowRight aria-hidden="true" />
               </Link>
-              <Link href={"/m/demo" as Route} className={secondaryCta}>
-                Demo menüyü gör
-              </Link>
+              {showDemo && (
+                <Link href={"/m/demo" as Route} className={secondaryCta}>
+                  Demo menüyü gör
+                </Link>
+              )}
             </div>
           </div>
           <PhoneMockup />
@@ -267,9 +271,11 @@ export default async function LandingPage() {
                 {ctaLabel}
                 <ArrowRight aria-hidden="true" />
               </Link>
-              <Link href={"/m/demo" as Route} className={buttonVariants({ variant: "outline", size: "lg", className: "bg-surface" })}>
-                Demo menüyü gör
-              </Link>
+              {showDemo && (
+                <Link href={"/m/demo" as Route} className={buttonVariants({ variant: "outline", size: "lg", className: "bg-surface" })}>
+                  Demo menüyü gör
+                </Link>
+              )}
             </div>
           </div>
         </div>
