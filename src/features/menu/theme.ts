@@ -7,13 +7,12 @@ export const DEFAULT_ACCENT = "#0071e3";
 
 type Rgb = readonly [number, number, number];
 
-/** Foreground candidates for text on top of the accent color (the UI kit's fg token and white). */
+/** Foreground candidates for text on top of the accent color (white and the UI kit's `fg` token). */
 const LIGHT_FOREGROUND = "#ffffff";
-const DARK_FOREGROUND = "#1d1d1f";
+const DARK_FOREGROUND = "#0b0b0f";
 
-/** Backgrounds accent-colored text can appear on (the muted surfaces are the stricter ones). */
-const LIGHT_TEXT_BACKGROUND = "#f5f5f7";
-const DARK_TEXT_BACKGROUND = "#2c2c2e";
+/** Darkest background accent-colored text can appear on: the kit's `surface-muted` (chips, tinted blocks). */
+const TEXT_BACKGROUND = "#f2f2f5";
 
 /** WCAG AA for normal-size text. */
 export const MIN_TEXT_CONTRAST = 4.5;
@@ -77,7 +76,8 @@ function mix(from: Rgb, to: Rgb, amount: number): Rgb {
 /**
  * The accent shifted toward `target` (black on light backgrounds, white on dark ones) just enough
  * to reach `minContrast` against `background`. In the worst case it ends at the target itself,
- * which is the same as falling back to the regular foreground color.
+ * which is the same as falling back to the regular foreground color. The guest menu is light only,
+ * so it always shifts toward black.
  */
 export function accentForText(
   accent: string,
@@ -97,15 +97,14 @@ export function accentForText(
 /**
  * Inline CSS variables for the menu wrapper:
  * - `--color-accent` / `--color-accent-fg`: fills (active chip, gradients) and the text on them,
- * - `--menu-accent-text`: the accent as small text or thin lines, adjusted per color scheme.
+ * - `--menu-accent-text`: the accent as small text, prices and focus outlines on the light surfaces,
+ *   darkened just enough to reach AA contrast.
  */
 export function menuThemeVars(themeColor: string | null | undefined): Record<string, string> {
   const accent = normalizeAccent(themeColor);
-  const onLight = accentForText(accent, LIGHT_TEXT_BACKGROUND, "black");
-  const onDark = accentForText(accent, DARK_TEXT_BACKGROUND, "white");
   return {
     "--color-accent": accent,
     "--color-accent-fg": readableForeground(accent),
-    "--menu-accent-text": `light-dark(${onLight}, ${onDark})`,
+    "--menu-accent-text": accentForText(accent, TEXT_BACKGROUND, "black"),
   };
 }

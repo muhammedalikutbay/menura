@@ -1,15 +1,14 @@
-
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/cn";
 import { tagLabel } from "@/lib/menu-attributes";
 import type { PublicProduct } from "../types";
 import { searchText } from "../sheet-data";
-import { Price } from "./price";
 import { MenuImage } from "./menu-image";
+import { Price } from "./price";
 
 /** Whole row opens the detail sheet: the name button is stretched over the row. */
 export const stretchedButtonClass =
-  "text-left outline-none after:absolute after:inset-0 after:rounded-lg " +
+  "text-left outline-none after:absolute after:inset-0 after:rounded-md " +
   "focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-solid " +
   "focus-visible:after:outline-(color:--menu-accent-text)";
 
@@ -28,7 +27,7 @@ export function ProductRow({
   return (
     <li data-search={searchText(product, categoryName)} className="relative flex gap-4 py-4">
       <div className="flex min-w-0 flex-1 flex-col items-start gap-1">
-        <h3 className={cn("text-base leading-snug font-semibold text-balance", unavailable && "text-fg-muted")}>
+        <h3 className={cn("text-[15px] leading-snug font-semibold text-balance", unavailable && "text-fg-muted")}>
           <button type="button" data-product-id={product.id} className={stretchedButtonClass}>
             {product.name}
           </button>
@@ -52,13 +51,13 @@ export function ProductRow({
       </div>
 
       {product.imageUrl && (
-        <div className="relative size-24 shrink-0 self-start overflow-hidden rounded-lg bg-surface-muted">
+        <div className="relative size-21 shrink-0 self-start overflow-hidden rounded-md bg-surface-muted">
           <MenuImage
             src={product.imageUrl}
             alt=""
             fill
             loading="lazy"
-            sizes="96px"
+            sizes="84px"
             className={cn("object-cover", unavailable && "opacity-60 grayscale")}
           />
         </div>

@@ -41,8 +41,8 @@ describe("readableForeground", () => {
   it("uses white on dark accents and near-black on light accents", () => {
     expect(readableForeground("#0071e3")).toBe("#ffffff");
     expect(readableForeground("#7a1f1f")).toBe("#ffffff");
-    expect(readableForeground("#ffd60a")).toBe("#1d1d1f");
-    expect(readableForeground("#ffffff")).toBe("#1d1d1f");
+    expect(readableForeground("#ffd60a")).toBe("#0b0b0f");
+    expect(readableForeground("#ffffff")).toBe("#0b0b0f");
   });
 
   it("reaches AA contrast for the chosen foreground on any accent", () => {
@@ -74,11 +74,24 @@ describe("accentForText", () => {
 });
 
 describe("menuThemeVars", () => {
-  it("exposes the accent, its foreground and a scheme-aware text color", () => {
+  it("exposes the accent, its foreground and a readable text color", () => {
     const vars = menuThemeVars("#FFD60A");
     expect(vars["--color-accent"]).toBe("#ffd60a");
-    expect(vars["--color-accent-fg"]).toBe("#1d1d1f");
-    expect(vars["--menu-accent-text"]).toMatch(/^light-dark\(#[0-9a-f]{6}, #[0-9a-f]{6}\)$/);
+    expect(vars["--color-accent-fg"]).toBe("#0b0b0f");
+    expect(vars["--menu-accent-text"]).toMatch(/^#[0-9a-f]{6}$/);
+    expect(Object.keys(vars).sort()).toEqual(["--color-accent", "--color-accent-fg", "--menu-accent-text"]);
+  });
+
+  it("is light only: no color-scheme functions in any value", () => {
+    for (const value of Object.values(menuThemeVars("#1a237e"))) expect(value).not.toContain("light-dark");
+  });
+
+  it("keeps the accent text readable on white and on the muted surface for any accent", () => {
+    for (const hex of ["#0071e3", "#ff9500", "#34c759", "#ffd60a", "#8e8e93", "#00ffff", "#c2410c", "#6e56cf"]) {
+      const text = menuThemeVars(hex)["--menu-accent-text"]!;
+      expect(contrastRatio(text, "#ffffff")).toBeGreaterThanOrEqual(MIN_TEXT_CONTRAST);
+      expect(contrastRatio(text, "#f2f2f5")).toBeGreaterThanOrEqual(MIN_TEXT_CONTRAST);
+    }
   });
 
   it("uses the default theme for an invalid color", () => {

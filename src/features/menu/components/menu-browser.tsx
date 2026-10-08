@@ -221,8 +221,8 @@ export function MenuBrowser({
 
   return (
     <div ref={rootRef}>
-      <div className="sticky top-0 z-30 border-b border-border bg-bg/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-14 max-w-2xl items-center gap-2 px-4">
+      <div className="sticky top-0 z-30 border-b border-border bg-bg/85 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-2xl items-center gap-2 px-4">
           {searching ? (
             <form
               role="search"
@@ -259,7 +259,7 @@ export function MenuBrowser({
               <button
                 type="button"
                 onClick={closeSearch}
-                className="inline-flex h-11 shrink-0 items-center rounded-full px-3 text-base font-medium text-fg hover:bg-surface-muted"
+                className="inline-flex h-11 shrink-0 items-center rounded-full px-4 text-[15px] font-medium text-fg hover:bg-surface-muted"
               >
                 Vazgeç
               </button>
@@ -278,7 +278,7 @@ export function MenuBrowser({
               <nav
                 ref={chipsRef}
                 aria-label="Kategoriler"
-                className="no-scrollbar relative -mr-4 flex min-w-0 flex-1 items-center gap-2 overflow-x-auto scroll-smooth py-1.5 pr-4 motion-reduce:scroll-auto"
+                className="no-scrollbar relative -mr-4 flex min-w-0 flex-1 items-center gap-2 overflow-x-auto scroll-smooth py-1.5 pr-4 [mask-image:linear-gradient(to_right,#000_calc(100%-20px),transparent)] motion-reduce:scroll-auto"
               >
                 {sections.map((section) => {
                   const isActive = section.id === active;
@@ -286,11 +286,11 @@ export function MenuBrowser({
                     "data-chip": section.id,
                     "aria-current": isActive ? ("true" as const) : undefined,
                     className: cn(
-                      "relative inline-flex h-9 shrink-0 items-center rounded-full px-4 text-sm whitespace-nowrap transition-colors",
-                      // Invisible 44px hit area around the 36px pill.
-                      "before:absolute before:-inset-y-1 before:inset-x-0 before:content-['']",
+                      "relative inline-flex h-10 shrink-0 items-center rounded-full px-4 text-sm whitespace-nowrap transition-colors",
+                      // Invisible 44px hit area around the 40px pill.
+                      "before:absolute before:-inset-y-0.5 before:inset-x-0 before:content-['']",
                       isActive
-                        ? "bg-accent font-semibold text-accent-fg ring-1 ring-fg/15"
+                        ? "bg-accent font-semibold text-accent-fg"
                         : "bg-surface-muted font-medium text-fg hover:bg-border",
                     ),
                   };
@@ -320,7 +320,7 @@ export function MenuBrowser({
       </div>
 
       {hasQuery && resultCount !== null && (
-        <p role="status" className={cn("mx-auto max-w-2xl px-4 pt-4 text-sm text-fg-muted", resultCount === 0 && "sr-only")}>
+        <p role="status" className={cn("type-caption mx-auto max-w-2xl px-4 pt-4 text-fg-muted", resultCount === 0 && "sr-only")}>
           {resultCount === 0 ? "Sonuç bulunamadı" : `${resultCount} sonuç`}
         </p>
       )}
@@ -335,14 +335,14 @@ export function MenuBrowser({
           >
             <SearchX className="size-6" />
           </div>
-          <p className="text-lg font-semibold tracking-tight">Sonuç bulunamadı</p>
-          <p className="max-w-xs text-sm text-fg-muted">
+          <p className="type-title">Sonuç bulunamadı</p>
+          <p className="type-body max-w-xs text-fg-muted">
             “{query.trim()}” ile eşleşen bir ürün yok. Farklı bir kelime deneyin.
           </p>
           <button
             type="button"
             onClick={() => changeQuery("")}
-            className="mt-1 inline-flex h-11 items-center gap-2 rounded-full bg-surface-muted px-5 text-sm font-medium hover:bg-border"
+            className="mt-1 inline-flex h-11 items-center gap-2 rounded-full bg-surface-muted px-5 text-[15px] font-medium hover:bg-border"
           >
             <X aria-hidden="true" className="size-4" />
             Aramayı temizle

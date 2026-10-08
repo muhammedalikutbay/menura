@@ -45,12 +45,12 @@ export function WifiDialog({
       >
         <dl className="flex flex-col gap-4 rounded-lg bg-surface-muted p-4">
           <div className="flex flex-col gap-1">
-            <dt className="text-xs font-medium text-fg-muted">Ağ adı</dt>
+            <dt className="type-caption text-fg-muted">Ağ adı</dt>
             <dd className="text-lg font-semibold break-all select-all">{name}</dd>
           </div>
           {password && (
             <div className="flex flex-col gap-1">
-              <dt className="text-xs font-medium text-fg-muted">Şifre</dt>
+              <dt className="type-caption text-fg-muted">Şifre</dt>
               <dd className="font-mono text-lg font-semibold break-all select-all">{password}</dd>
             </div>
           )}

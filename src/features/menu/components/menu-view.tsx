@@ -65,8 +65,8 @@ export function MenuView({
             >
               <UtensilsCrossed className="size-6" />
             </div>
-            <h2 className="text-lg font-semibold tracking-tight">Menü hazırlanıyor</h2>
-            <p className="max-w-xs text-sm text-fg-muted">Bu menüye henüz ürün eklenmedi. Lütfen daha sonra tekrar bakın.</p>
+            <h2 className="type-title">Menü hazırlanıyor</h2>
+            <p className="type-body max-w-xs text-fg-muted">Bu menüye henüz ürün eklenmedi. Lütfen daha sonra tekrar bakın.</p>
           </div>
         )}
       </Main>

@@ -3,7 +3,7 @@
 import { Clock, Flame, X, type LucideIcon } from "lucide-react";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { Badge } from "@/components/ui/badge";
+import { Badge, Chip } from "@/components/ui/badge";
 import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog";
 import type { SheetProduct } from "../sheet-data";
 import { MENU_CONTENT_SELECTOR, MENU_ROOT_SELECTOR, type MenuMode } from "./menu-mode";
@@ -101,7 +101,7 @@ function SheetBody({ product, themeStyle }: { product: SheetProduct; themeStyle:
       <div className="sticky top-0 z-10 h-0">
         <DialogClose
           aria-label="Kapat"
-          className="absolute top-3 right-3 inline-flex size-11 items-center justify-center rounded-full bg-surface/85 text-fg shadow-md backdrop-blur-md transition-colors hover:bg-surface"
+          className={closeButtonClass}
         >
           <X aria-hidden="true" className="size-5" />
         </DialogClose>
@@ -200,7 +200,7 @@ function EmbeddedProductSheet({ products }: { products: SheetProduct[] }) {
                 type="button"
                 aria-label="Kapat"
                 onClick={() => setOpen(false)}
-                className="absolute top-3 right-3 inline-flex size-11 items-center justify-center rounded-full bg-surface/85 text-fg shadow-md backdrop-blur-md transition-colors hover:bg-surface"
+                className={closeButtonClass}
               >
                 <X aria-hidden="true" className="size-5" />
               </button>
@@ -213,6 +213,11 @@ function EmbeddedProductSheet({ products }: { products: SheetProduct[] }) {
   );
 }
 
+/** Round floating close button that stays reachable while the sheet scrolls. */
+const closeButtonClass =
+  "absolute top-3 right-3 inline-flex size-11 items-center justify-center rounded-full bg-surface/90 text-fg " +
+  "shadow-float backdrop-blur-md transition-colors hover:bg-surface";
+
 function ProductDetails({ product, imageSizes }: { product: SheetProduct; imageSizes: string }) {
   const allergenHeadingId = useId();
   const meta: { key: string; icon: LucideIcon; label: string }[] = [];
@@ -222,29 +227,32 @@ function ProductDetails({ product, imageSizes }: { product: SheetProduct; imageS
   return (
     <>
       {product.imageUrl && (
-        <div className="relative aspect-[4/3] w-full shrink-0 bg-surface-muted">
-          <MenuImage
-            src={product.imageUrl}
-            alt={product.name}
-            fill
-            sizes={imageSizes}
-            className={product.isAvailable ? "object-cover" : "object-cover opacity-70 grayscale"}
-          />
+        <div className="p-3 pb-0">
+          <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-lg bg-surface-muted">
+            <MenuImage
+              src={product.imageUrl}
+              alt={product.name}
+              fill
+              sizes={imageSizes}
+              className={product.isAvailable ? "object-cover" : "object-cover opacity-70 grayscale"}
+            />
+          </div>
         </div>
       )}
 
       <div className="flex flex-col gap-4 p-5 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-        <div className="flex flex-col gap-2">
-          <p aria-hidden="true" className="text-2xl leading-tight font-bold tracking-tight text-balance">
+        {/* Right padding keeps the name clear of the close button when there is no photo. */}
+        <div className={product.imageUrl ? "flex flex-col gap-2" : "flex flex-col gap-2 pr-12"}>
+          <p aria-hidden="true" className="type-title-lg text-balance">
             {product.name}
           </p>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 tabular-nums">
-            <span className="text-xl font-semibold">
+          <div className="tabular flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="type-title text-(color:--menu-accent-text)">
               {product.oldPrice && <span className="sr-only">İndirimli fiyat: </span>}
               {product.price}
             </span>
             {product.oldPrice && (
-              <del className="text-base text-fg-muted">
+              <del className="type-body text-fg-muted">
                 <span className="sr-only">Eski fiyat: </span>
                 {product.oldPrice}
               </del>
@@ -253,16 +261,16 @@ function ProductDetails({ product, imageSizes }: { product: SheetProduct; imageS
           </div>
         </div>
 
-        {product.description && (
-          <p className="text-base leading-relaxed whitespace-pre-line text-fg">{product.description}</p>
-        )}
+        {product.description && <p className="type-body-lg whitespace-pre-line text-fg">{product.description}</p>}
 
         {meta.length > 0 && (
-          <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-fg-muted">
+          <ul className="flex flex-wrap gap-2">
             {meta.map((item) => (
-              <li key={item.key} className="inline-flex items-center gap-1.5">
-                <item.icon aria-hidden="true" className="size-4" />
-                {item.label}
+              <li key={item.key}>
+                <Chip>
+                  <item.icon aria-hidden="true" className="size-4" />
+                  {item.label}
+                </Chip>
               </li>
             ))}
           </ul>
@@ -280,7 +288,7 @@ function ProductDetails({ product, imageSizes }: { product: SheetProduct; imageS
 
         {product.allergens.length > 0 && (
           <section aria-labelledby={allergenHeadingId} className="flex flex-col gap-2 rounded-lg bg-surface-muted p-4">
-            <h3 id={allergenHeadingId} className="text-sm font-semibold">
+            <h3 id={allergenHeadingId} className="type-caption">
               Alerjen bilgisi
             </h3>
             <ul className="flex flex-wrap gap-2">
