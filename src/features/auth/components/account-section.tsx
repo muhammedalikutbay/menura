@@ -15,6 +15,7 @@ import { authErrorMessage, GENERIC_AUTH_ERROR } from "../errors";
 import { changePasswordSchema, PASSWORD_MIN } from "../schema";
 import { FormError } from "./auth-card";
 import { PasswordInput } from "./password-input";
+import { ProfileCard } from "./profile-card";
 import { useFocusInvalid } from "./use-focus-invalid";
 
 function ChangePasswordCard() {
@@ -142,7 +143,7 @@ function DeleteAccountCard({ restaurantName }: { restaurantName: string }) {
   return (
     <Card className="border-danger/40">
       <CardHeader>
-        <CardTitle className="text-danger">Hesabı sil</CardTitle>
+        <CardTitle className="text-danger">Tehlikeli bölge</CardTitle>
         <CardDescription>
           Hesabınız, restoranınız, tüm kategoriler, ürünler ve görseller kalıcı olarak silinir. QR kodlarınız
           çalışmaz. Bu işlem geri alınamaz.
@@ -196,9 +197,18 @@ function DeleteAccountCard({ restaurantName }: { restaurantName: string }) {
   );
 }
 
-export function AccountSection({ restaurantName }: { restaurantName: string }) {
+export function AccountSection({
+  restaurantName,
+  userName,
+  userEmail,
+}: {
+  restaurantName: string;
+  userName: string;
+  userEmail: string;
+}) {
   return (
     <>
+      <ProfileCard name={userName} email={userEmail} />
       <ChangePasswordCard />
       <DeleteAccountCard restaurantName={restaurantName} />
     </>
