@@ -7,7 +7,9 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "pglite-server --db=.data/pglite --port=5433 --max-connections=20 --run \"node node_modules/next/dist/bin/next dev\" --include-database-url",
+    "dev:next": "next dev",
+    "db:server": "pglite-server --db=.data/pglite --port=5433 --max-connections=20",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -42,6 +44,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite-socket": "^0.2.11",
     "@playwright/test": "^1.64.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22",

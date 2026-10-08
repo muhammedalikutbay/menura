@@ -15,9 +15,11 @@ Architecture and decisions: `docs/architecture.md`. Read it before structural ch
   Cache Components are NOT enabled; pages read the DB per request.
 
 ## Commands
-`npm run dev` · `npm run check` (lint + typecheck + test + build) · `npm run db:generate`
+`npm run dev` (starts the PGlite socket server on :5433 and Next.js against it) · `npm run check` (lint + typecheck + test + build) · `npm run db:generate`
 after schema changes · `npm run db:migrate` · `npm run db:seed` (demo restaurant, slug `demo`).
-PGlite is single-process: stop the dev server before running migrate/seed against `.data/pglite`.
+PGlite is single-process: never open `.data/pglite` from two processes (it corrupts). While
+`npm run dev` runs, point scripts at the socket server:
+`DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5433/postgres npm run db:seed`.
 
 ## Layout
 ```

@@ -30,8 +30,9 @@ PostgreSQL + Drizzle ORM · Better Auth · sharp · Zod · Vitest · Playwright
 
 ## Yerelde çalıştırma
 
-Gereksinim: Node.js 22+. Veritabanı kurmanız gerekmez; `DATABASE_URL` boşsa gömülü PGlite
-(`.data/pglite`) kullanılır.
+Gereksinim: Node.js 22+. Veritabanı kurmanız gerekmez: `npm run dev`, gömülü PGlite'ı
+(`.data/pglite`) yerel bir Postgres sunucusu olarak (port 5433) başlatır ve Next.js'i ona bağlar.
+Kendi Postgres'inizi kullanmak için `.env.local` içine `DATABASE_URL` yazıp `npm run dev:next` çalıştırın.
 
 ```bash
 npm install
@@ -46,7 +47,8 @@ e-postalar gönderilmez, konsola yazılır.
 
 | Komut | Açıklama |
 |---|---|
-| `npm run dev` | Geliştirme sunucusu |
+| `npm run dev` | Yerel veritabanı + geliştirme sunucusu |
+| `npm run dev:next` | Yalnız Next.js (kendi `DATABASE_URL`'iniz ile) |
 | `npm run check` | Lint + typecheck + birim/entegrasyon testleri + üretim derlemesi |
 | `npm test` | Vitest (bellek içi Postgres ile entegrasyon testleri dahil) |
 | `npm run test:e2e` | Playwright uçtan uca testleri (masaüstü + mobil) |
