@@ -1,21 +1,6 @@
-import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
+import { controlBase } from "./input";
 
-export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
-
-export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, ...props }, ref) => {
-    return (
-      <textarea
-        className={cn(
-          "flex min-h-[80px] w-full rounded-md border border-divider bg-surface px-3 py-2 text-body ring-offset-bg-primary placeholder:text-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
-    );
-  }
-);
-Textarea.displayName = "Textarea";
+export function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
+  return <textarea className={cn(controlBase, "min-h-24 resize-y py-2.5", className)} {...props} />;
+}

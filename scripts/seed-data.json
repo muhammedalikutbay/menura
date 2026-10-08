@@ -1,0 +1,346 @@
+[
+  {
+    "name": "Başlangıçlar",
+    "description": "İştahınızı açacak özenle seçilmiş lezzetler.",
+    "image": "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&q=80&w=1200",
+    "products": [
+      {
+        "name": "Bruschetta",
+        "description": "Domates, sarımsak ve taze fesleğenli kızarmış ekmek dilimleri.",
+        "price": 110,
+        "image": "https://images.unsplash.com/photo-1572656631137-7935297eff55?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Kalamar Tava",
+        "description": "Tarator sos eşliğinde çıtır kalamar halkaları.",
+        "price": 290,
+        "image": "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Mantar Dolması",
+        "description": "Üç çeşit peynirle doldurulmuş fırın mantar.",
+        "price": 155,
+        "image": null
+      },
+      {
+        "name": "Paçanga Böreği",
+        "description": "Pastırmalı ve kaşar peynirli fırınlanmış çıtır börek.",
+        "price": 145,
+        "image": "https://images.unsplash.com/photo-1608897013039-887f21d8c804?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Humus",
+        "description": "Pastırma ve sıcak tereyağı ile servis edilen klasik humus.",
+        "price": 95,
+        "image": "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Izgara Kuşkonmaz",
+        "description": "Parmesan ve balzamik sirke ile lezzetlendirilmiş.",
+        "price": 180,
+        "image": "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Çıtır Karides",
+        "description": "Acı tatlı sos eşliğinde panko kaplı karidesler.",
+        "price": 320,
+        "image": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Peynir Tabağı",
+        "description": "Yerli ve yabancı peynir çeşitleri, meyvelerle birlikte.",
+        "price": 350,
+        "image": null
+      }
+    ]
+  },
+  {
+    "name": "Ana Yemekler",
+    "description": "Usta ellerden çıkan geleneksel ve modern ana yemekler.",
+    "image": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=1200",
+    "products": [
+      {
+        "name": "Antrikot Izgara",
+        "description": "Patates püresi ve ızgara sebzeler eşliğinde.",
+        "price": 580,
+        "image": "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Somon Izgara",
+        "description": "Kuşkonmaz ve limonlu tereyağı sosu ile.",
+        "price": 460,
+        "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Kuzu İncik",
+        "description": "Ağır ateşte pişmiş, patlıcan beğendi üzerinde.",
+        "price": 520,
+        "image": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Tavuk Schnitzel",
+        "description": "Alman usulü patates salatası ve roka ile.",
+        "price": 320,
+        "image": null
+      },
+      {
+        "name": "Lazanya",
+        "description": "Bolonez soslu, beşamel ve bol peynirli katlar.",
+        "price": 310,
+        "image": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Mantar Risotto",
+        "description": "Trüf yağı ve taze yabani mantarlar ile.",
+        "price": 340,
+        "image": "https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Fırın Ördek",
+        "description": "Portakal sosu ve karamelize soğanlı patates ile.",
+        "price": 650,
+        "image": null
+      },
+      {
+        "name": "Deniz Mahsüllü Makarna",
+        "description": "Karides, kalamar ve midye ile linguine makarna.",
+        "price": 420,
+        "image": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&q=80&w=1200"
+      }
+    ]
+  },
+  {
+    "name": "Burgerler",
+    "description": "Sulu köfteler ve taze malzemelerle hazırlanan gurme burgerler.",
+    "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=1200",
+    "products": [
+      {
+        "name": "Classic Burger",
+        "description": "180gr köfte, marul, domates, turşu ve özel sos.",
+        "price": 280,
+        "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Cheeseburger",
+        "description": "Ekstra cheddar peyniri ve karamelize soğan ile.",
+        "price": 310,
+        "image": "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Mushroom Swiss",
+        "description": "Izgara mantar ve emmental peyniri birlikteliği.",
+        "price": 330,
+        "image": "https://images.unsplash.com/photo-1510693206972-df098062cb71?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "BBQ Bacon Burger",
+        "description": "Dana füme et, BBQ sos ve çıtır soğan halkası.",
+        "price": 350,
+        "image": "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Crispy Chicken",
+        "description": "Panelenmiş çıtır tavuk göğsü ve coleslaw salata.",
+        "price": 260,
+        "image": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Double Smash",
+        "description": "2 adet 100gr ince köfte, bol cheddar ve soğan.",
+        "price": 420,
+        "image": "https://images.unsplash.com/photo-1596662951482-0c4ba74a6df6?auto=format&fit=crop&q=80&w=1200"
+      }
+    ]
+  },
+  {
+    "name": "Pizzalar",
+    "description": "İnce hamurlu, bol malzemeli taş fırın pizzaları.",
+    "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=1200",
+    "products": [
+      {
+        "name": "Pepperoni",
+        "description": "Dana pepperoni dilimleri ve bol mozzarella.",
+        "price": 320,
+        "image": "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Quattro Formaggi",
+        "description": "Dört çeşit peynir: Mozzarella, Parmesan, Rokfor, Gravyer.",
+        "price": 340,
+        "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Dört Mevsim",
+        "description": "Mantar, enginar, zeytin ve dana jambon.",
+        "price": 310,
+        "image": "https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Barbekü Tavuk",
+        "description": "Izgara tavuk parçaları, BBQ sos ve kırmızı soğan.",
+        "price": 330,
+        "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Deniz Mahsüllü",
+        "description": "Karides, midye, tuna ve taze kişniş.",
+        "price": 390,
+        "image": "https://images.unsplash.com/photo-1555072956-7758afb20e8f?auto=format&fit=crop&q=80&w=1200"
+      }
+    ]
+  },
+  {
+    "name": "Tatlılar",
+    "description": "Gününüzü tatlandıracak ev yapımı tatlı seçenekleri.",
+    "image": "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&q=80&w=1200",
+    "products": [
+      {
+        "name": "Tiramisu",
+        "description": "Mascarpone peynirli ve espresso ıslatmalı klasik İtalyan tatlısı.",
+        "price": 160,
+        "image": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Çikolatalı Sufle",
+        "description": "Sıcak servis edilen, akışkan çikolatalı kek.",
+        "price": 175,
+        "image": "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Magnolia",
+        "description": "Muzlu, bisküvili ve ipeksi kremalı hafif sütlü tatlı.",
+        "price": 140,
+        "image": "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Profiterol",
+        "description": "Taze hamur topları, krema dolgusu ve yoğun çikolata sos.",
+        "price": 155,
+        "image": "https://images.unsplash.com/photo-1612203985729-70726954388c?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Baklava Tabağı",
+        "description": "Gaziantep fıstıklı baklava, Maraş dondurması ile.",
+        "price": 220,
+        "image": "https://images.unsplash.com/photo-1519676867240-f03562e64548?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Meyve Tabağı",
+        "description": "Mevsim meyvelerinden oluşan taze seçenekler.",
+        "price": 190,
+        "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=1200"
+      }
+    ]
+  },
+  {
+    "name": "Soğuk İçecekler",
+    "description": "Ferahlatıcı meşrubatlar ve taze sıkılmış meyve suları.",
+    "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&q=80&w=1200",
+    "products": [
+      {
+        "name": "Ev Yapımı Limonata",
+        "description": "Taze nane ve çilek seçenekleriyle.",
+        "price": 85,
+        "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Taze Portakal Suyu",
+        "description": "Günlük taze sıkılmış.",
+        "price": 95,
+        "image": "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Cola / Fanta / Sprite",
+        "description": "330ml kutu seçenekleri.",
+        "price": 65,
+        "image": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Churchill",
+        "description": "Limon suyu, soda ve tuz karışımı ferahlık.",
+        "price": 75,
+        "image": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Iced Latte",
+        "description": "Soğuk sütlü ve buzlu espresso.",
+        "price": 110,
+        "image": "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Berry Smoothie",
+        "description": "Yaban mersini, çilek ve yoğurt bazlı.",
+        "price": 135,
+        "image": "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&q=80&w=1200"
+      }
+    ]
+  },
+  {
+    "name": "Sıcak İçecekler",
+    "description": "Özel harman kahveler ve demlleme çay çeşitleri.",
+    "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=1200",
+    "products": [
+      {
+        "name": "Espresso",
+        "description": "Yoğun ve güçlü aromalı tek shot.",
+        "price": 70,
+        "image": "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Cappuccino",
+        "description": "Espresso, sıcak süt ve bol süt köpüğü.",
+        "price": 105,
+        "image": "https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&q=80&w=1200"
+      }
+    ]
+  },
+  {
+    "name": "Çocuk Menüsü",
+    "description": "Minik misafirlerimiz için hem eğlenceli hem besleyici tabaklar.",
+    "image": "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&q=80&w=1200",
+    "products": [
+      {
+        "name": "Mini Köfte Tabağı",
+        "description": "Patates kızartması ve yoğurt ile.",
+        "price": 195,
+        "image": "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Spagetti Bolonez",
+        "description": "Çocuklar için ölçeklendirilmiş kıymalı makarna.",
+        "price": 175,
+        "image": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Nugget & Chips",
+        "description": "6 adet çıtır tavuk ve parmak patates.",
+        "price": 165,
+        "image": "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Mini Pizza",
+        "description": "Sadece peynir ve domates soslu çocuk pizzası.",
+        "price": 180,
+        "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Izgara Tavuk Şiş",
+        "description": "Pirinç pilavı ve sotelenmiş mevsim sebzeleri.",
+        "price": 185,
+        "image": "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Balık Kroket",
+        "description": "Kılçıksız levrekten hazırlanmış çıtır toplar.",
+        "price": 210,
+        "image": "https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&q=80&w=1200"
+      },
+      {
+        "name": "Gülümseyen Patatesler",
+        "description": "Yanında ketçap ve mayonez ile eğlenceli patatesler.",
+        "price": 110,
+        "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&q=80&w=1200"
+      }
+    ]
+  }
+]

@@ -1,48 +1,42 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "@/styles/globals.css";
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
+import { Toaster } from "@/components/ui/toaster";
+import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+// latin-ext carries the Turkish glyphs (ç ğ ı ö ş ü İ).
+const inter = Inter({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Menura - Smart QR Menu",
-  description: "Next-gen QR Menu System",
+  metadataBase: new URL(process.env.APP_URL ?? "http://localhost:3000"),
+  title: {
+    default: "Menura — Akıllı QR Menü",
+    template: "%s · Menura",
+  },
+  description:
+    "Restoranınız için dakikalar içinde şık bir dijital menü oluşturun, QR kodla misafirlerinizle paylaşın ve menünüzü anında güncelleyin.",
+  applicationName: "Menura",
 };
 
-import { Topbar } from "@/components/layout/topbar";
-import { Footer } from "@/components/shared/Footer";
-import { DataInitializer } from "@/components/shared/DataInitializer";
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
+};
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="tr">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <DataInitializer />
-        <div className="flex min-h-screen bg-bg-primary">
-          <div className="flex flex-1 flex-col">
-            <div className="print:hidden">
-              <Topbar />
-            </div>
-            <main className="flex-1 bg-bg-secondary/50">
-              {children}
-            </main>
-            <div className="print:hidden">
-              <Footer />
-            </div>
-          </div>
-        </div>
+    <html lang="tr" className={inter.variable}>
+      <body>
+        {children}
+        <Toaster />
       </body>
     </html>
   );

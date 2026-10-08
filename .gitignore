@@ -49,3 +49,9 @@ next-env.d.ts
 .beads-credential-key
 .beads/proxieddb/
 *.gate.lock*
+
+# local data and test output
+/.data/
+/playwright-report/
+/test-results/
+!.env.example

@@ -1,0 +1,61 @@
+# Menura — agent instructions
+
+Menura is a multi-tenant QR menu SaaS: a restaurant owner signs up, builds a menu in
+`/dashboard`, and guests open it at `/m/<slug>` by scanning a QR code.
+Architecture and decisions: `docs/architecture.md`. Read it before structural changes.
+
+## Stack (do not swap without a recorded decision)
+- Next.js 16 App Router, React 19 (React Compiler on), TypeScript strict
+- Tailwind CSS 4 (tokens in `src/app/globals.css`), `radix-ui` primitives, `lucide-react` icons, `sonner` toasts
+- PostgreSQL + Drizzle ORM. No `DATABASE_URL` → embedded PGlite at `.data/pglite` (dev) / `memory://` (tests)
+- Better Auth (email + password), config in `src/server/auth.ts`
+- Zod 4 for every input; Vitest for unit/integration; Playwright for e2e
+- Next.js docs for the installed version live in `node_modules/next/dist/docs/` — check them
+  instead of relying on memory (Next 16: `proxy.ts` replaces middleware, `params` are Promises).
+  Cache Components are NOT enabled; pages read the DB per request.
+
+## Commands
+`npm run dev` · `npm run check` (lint + typecheck + test + build) · `npm run db:generate`
+after schema changes · `npm run db:migrate` · `npm run db:seed` (demo restaurant, slug `demo`).
+PGlite is single-process: stop the dev server before running migrate/seed against `.data/pglite`.
+
+## Layout
+```
+src/app/            routes only (thin): (marketing), (auth), onboarding, dashboard, m/[slug], media/[id], api
+src/features/<x>/   domain modules: schema.ts (zod), queries.ts (server-only reads),
+                    actions.ts ("use server" mutations), components/ (feature UI)
+src/components/ui/  design-system primitives (no domain knowledge)
+src/components/     shared composites (app shell, empty states, ...)
+src/db/             schema.ts, client, migrations runner
+src/server/         server-only infrastructure: auth, session, env, email
+src/lib/            pure helpers usable on both sides (money, text, cn, menu-attributes)
+drizzle/            generated SQL migrations (commit them; never edit applied ones)
+```
+
+## Hard rules
+1. **Code is English, UI is Turkish.** All identifiers, file names and comments in English;
+   every user-visible string in Turkish (proper Turkish characters, sentence case).
+2. **Tenant isolation.** Every dashboard page and server action starts with
+   `const { restaurant } = await requireRestaurant()` (`src/server/session.ts`). Every query on a
+   domain table filters by `restaurantId = restaurant.id`, including updates and deletes
+   (`where(and(eq(t.id, id), eq(t.restaurantId, restaurant.id)))`). Never trust ids from the client.
+   Foreign ids sent by the client (e.g. `categoryId`, `imageMediaId`) must be verified to belong
+   to the same restaurant.
+3. **Validate on the server.** Server actions parse input with the feature's zod schema and return
+   `ActionResult` (`src/lib/action-result.ts`); they never throw for user errors. Forms may reuse
+   the same schema client-side.
+4. **Money** is integer minor units. Convert only with `src/lib/money.ts`.
+5. **Server-only modules** (`queries.ts`, `src/server/*`, `src/db/index.ts`) start with
+   `import "server-only"`. Client components never import them.
+6. Prefer Server Components; add `"use client"` only to the interactive leaf.
+7. After a mutation call `revalidatePath` for the affected dashboard route(s) and
+   `revalidatePath(\`/m/${restaurant.slug}\`)`.
+8. No fake data in the product UI. Demo content lives only in `scripts/seed.ts`.
+9. Accessibility: semantic elements, labels on every input, visible focus, `aria-*` on custom
+   controls, color contrast AA, touch targets ≥ 44px on the public menu.
+10. Do not add dependencies without a reason written in the task result. Do not edit
+    `package.json`, `src/db/schema.ts` or `drizzle/` unless the task says so.
+
+## Task tracking
+Beads (`bd`), see the `beads-workflow` skill. Only the main session writes to `bd`;
+subagents report results back instead.

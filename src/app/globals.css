@@ -1,26 +1,200 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Menura design tokens.
+ *
+ * Semantic names only: components use `bg-surface`, `text-fg-muted`, `bg-accent`, ...
+ * never raw hex. Dark values live in the `prefers-color-scheme` block below.
+ *
+ * Per-restaurant theming: set `--color-accent` inline on a wrapper element
+ * (`style={{ "--color-accent": restaurant.themeColor }}`). Every accent variant is derived
+ * with color-mix() at the element that uses it, so the override cascades to all of them.
+ */
+
+/* Base tokens. `static` keeps every variable in the output (the dark block and wrappers rely on them). */
+@theme static {
+  /* Surfaces */
+  --color-bg: #ffffff;
+  --color-canvas: #f5f5f7; /* dashboard page background behind cards */
+  --color-surface: #ffffff;
+  --color-surface-muted: #f5f5f7;
+  --color-overlay: rgb(0 0 0 / 0.4);
+
+  /* Text */
+  --color-fg: #1d1d1f;
+  --color-fg-muted: #6e6e73; /* 5:1 on white, 4.6:1 on surface-muted */
+
+  /* Lines. `border` is decorative; `border-strong` meets 3:1 for form controls. */
+  --color-border: #d2d2d7;
+  --color-border-strong: #8e8e93;
+
+  /* Accent (overridable per restaurant) */
+  --color-accent: #0071e3;
+  --color-accent-fg: #ffffff;
+
+  /* Semantic. Strong enough for text on white and on their own soft tint. */
+  --color-success: #1e7b34;
+  --color-warning: #b25000;
+  --color-danger: #d70015;
+  --color-danger-fg: #ffffff; /* text on a solid danger background */
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* Soft shadows */
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.07), 0 2px 4px rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.12), 0 4px 8px rgb(0 0 0 / 0.04);
+
+  /* Motion */
+  --animate-fade-in: fade-in 150ms ease-out;
+  --animate-fade-out: fade-out 120ms ease-in;
+  --animate-pop-in: pop-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-pop-out: pop-out 120ms ease-in;
+  --animate-sheet-in: sheet-in 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-sheet-out: sheet-out 180ms ease-in;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  @keyframes pop-in {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes pop-out {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.96); }
+  }
+  @keyframes sheet-in {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  @keyframes sheet-out {
+    from { transform: translateY(0); }
+    to { transform: translateY(100%); }
+  }
 }
 
+/*
+ * Derived tokens. `inline` makes utilities embed the expression, so var(--color-accent)
+ * is resolved on the element itself and honors a wrapper-level override.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans:
+    var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+
+  --color-accent-hover: color-mix(in oklab, var(--color-accent), var(--shift-target) 14%);
+  --color-accent-soft: color-mix(in oklab, var(--color-accent) 12%, transparent);
+  /* Accent for text and icons on surfaces: darker on light, lighter on dark. */
+  --color-accent-text: color-mix(in oklab, var(--color-accent), var(--shift-target) var(--accent-text-shift));
+
+  --color-success-soft: color-mix(in oklab, var(--color-success) 12%, transparent);
+  --color-warning-soft: color-mix(in oklab, var(--color-warning) 12%, transparent);
+  --color-danger-soft: color-mix(in oklab, var(--color-danger) 10%, transparent);
+  --color-danger-hover: color-mix(in oklab, var(--color-danger), var(--shift-target) 14%);
+}
+
+:root {
+  color-scheme: light dark;
+  --shift-target: black;
+  --accent-text-shift: 15%;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --shift-target: white;
+    --accent-text-shift: 45%;
+
+    --color-bg: #000000;
+    --color-canvas: #000000;
+    --color-surface: #1c1c1e;
+    --color-surface-muted: #2c2c2e;
+    --color-overlay: rgb(0 0 0 / 0.6);
+
+    --color-fg: #f5f5f7;
+    --color-fg-muted: #a1a1a6;
+
+    --color-border: #38383a;
+    --color-border-strong: #7c7c80;
+
+    --color-success: #30d158;
+    --color-warning: #ff9f0a;
+    --color-danger: #ff453a;
+    --color-danger-fg: #000000;
+
+    --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.5);
+    --shadow-md: 0 4px 12px rgb(0 0 0 / 0.5);
+    --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.65);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-accent) 28%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  button,
+  [role="button"],
+  summary {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
