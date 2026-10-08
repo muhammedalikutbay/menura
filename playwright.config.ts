@@ -3,6 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 const PORT = 3100;
 // E2E runs a production build against a throwaway PGlite database.
 const env = {
+  E2E: "1",
   DATABASE_URL: ".data/e2e-pglite",
   APP_URL: `http://localhost:${PORT}`,
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET ?? "e2e-only-secret-that-is-long-enough-1234567890",

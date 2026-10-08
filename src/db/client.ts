@@ -19,12 +19,12 @@ export function createDatabase(url: string | undefined): Database {
     const client = postgres(url, { max: Number(process.env.DATABASE_POOL_MAX ?? 5), prepare: false });
     return drizzlePostgres(client, { schema, casing: "snake_case" });
   }
-  if (process.env.NODE_ENV === "production" && !url) {
-    // `next build` evaluates route modules without a database; nothing is queried then.
-    if (process.env.NEXT_PHASE !== "phase-production-build") {
-      throw new Error("DATABASE_URL must be set in production.");
-    }
+  if (process.env.NEXT_PHASE === "phase-production-build") {
+    // `next build` evaluates route modules in parallel workers but never queries; an embedded
+    // database directory must not be opened by several processes at once.
     url = "memory://";
+  } else if (process.env.NODE_ENV === "production" && !url) {
+    throw new Error("DATABASE_URL must be set in production.");
   }
   const dataDir = url === "memory://" ? undefined : (url ?? LOCAL_PGLITE_DIR);
   if (dataDir) mkdirSync(dataDir, { recursive: true });

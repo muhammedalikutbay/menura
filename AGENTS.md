@@ -53,7 +53,9 @@ drizzle/            generated SQL migrations (commit them; never edit applied on
 8. No fake data in the product UI. Demo content lives only in `scripts/seed.ts`.
 9. Accessibility: semantic elements, labels on every input, visible focus, `aria-*` on custom
    controls, color contrast AA, touch targets ≥ 44px on the public menu.
-10. Do not add dependencies without a reason written in the task result. Do not edit
+10. Process-wide singletons (DB client, pools, caches) are stored on `globalThis` in every
+    environment: production builds evaluate a module once per server chunk (see mnr-58i.9).
+11. Do not add dependencies without a reason written in the task result. Do not edit
     `package.json`, `src/db/schema.ts` or `drizzle/` unless the task says so.
 
 ## Task tracking

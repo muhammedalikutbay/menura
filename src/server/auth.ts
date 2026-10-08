@@ -45,7 +45,8 @@ export const auth = betterAuth({
     cookieCache: { enabled: true, maxAge: 5 * 60 },
   },
   rateLimit: {
-    enabled: process.env.NODE_ENV === "production",
+    // E2E runs a production build and signs up repeatedly; it opts out explicitly.
+    enabled: process.env.NODE_ENV === "production" && process.env.E2E !== "1",
     storage: "database",
     window: 60,
     max: 100,
