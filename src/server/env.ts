@@ -10,16 +10,18 @@ const schema = z.object({
   EMAIL_FROM: z.string().default("Menura <noreply@menura.app>"),
 });
 
-const parsed = schema.safeParse(process.env);
+// Netlify exposes the site URL as URL; use it when APP_URL is not set explicitly.
+const parsed = schema.safeParse({ ...process.env, APP_URL: process.env.APP_URL || process.env.URL || undefined });
 if (!parsed.success) {
   throw new Error(`Invalid environment variables:\n${z.prettifyError(parsed.error)}`);
 }
 
 const isBuild = process.env.NEXT_PHASE === "phase-production-build";
 if (parsed.data.NODE_ENV === "production" && !isBuild) {
-  for (const key of ["DATABASE_URL", "BETTER_AUTH_SECRET", "APP_URL"] as const) {
+  for (const key of ["DATABASE_URL", "BETTER_AUTH_SECRET"] as const) {
     if (!process.env[key]) throw new Error(`${key} must be set in production.`);
   }
+  if (!process.env.APP_URL && !process.env.URL) throw new Error("APP_URL must be set in production.");
 }
 
 export const env = {

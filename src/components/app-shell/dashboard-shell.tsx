@@ -65,7 +65,7 @@ export function DashboardShell({ restaurant, user, children }: DashboardShellPro
       </a>
 
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col gap-6 border-r border-border bg-surface p-4 lg:flex">
+      <aside className="print:hidden fixed inset-y-0 left-0 z-30 hidden w-64 flex-col gap-6 border-r border-border bg-surface p-4 lg:flex">
         <Link href={"/dashboard" as Route} className="rounded-sm px-2 pt-1" aria-label="Menura — Genel bakış">
           <Logo />
         </Link>
@@ -73,7 +73,7 @@ export function DashboardShell({ restaurant, user, children }: DashboardShellPro
       </aside>
 
       {/* Mobile top bar */}
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-surface/85 px-4 backdrop-blur lg:hidden">
+      <header className="print:hidden sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-surface/85 px-4 backdrop-blur lg:hidden">
         <Link href={"/dashboard" as Route} className="rounded-sm" aria-label="Menura — Genel bakış">
           <Logo />
         </Link>
@@ -89,7 +89,7 @@ export function DashboardShell({ restaurant, user, children }: DashboardShellPro
         </Dialog>
       </header>
 
-      <main id="main-content" tabIndex={-1} className="outline-none lg:pl-64">
+      <main id="main-content" tabIndex={-1} className="outline-none lg:pl-64 print:p-0">
         <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">{children}</div>
       </main>
     </div>

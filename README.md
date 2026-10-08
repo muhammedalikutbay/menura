@@ -1,43 +1,75 @@
-# Menura - Smart QR Menu System
+# Menura — Akıllı QR Menü
 
-Menura, modern restoranlar ve kafeler için tasarlanmış, Apple estetiğinden ilham alan premium bir Akıllı QR Menü yönetim sistemidir. Bu proje, **Software Persona 11. Dönem Staj** eğitimi çerçevesinde, modern web teknolojilerini ve CRUD operasyonlarını bütüncül bir şekilde uygulamak amacıyla geliştirilmiştir.
+Menura, restoran ve kafelerin dakikalar içinde dijital menü oluşturup QR kodla misafirleriyle
+paylaşmasını sağlayan çok kiracılı (multi-tenant) bir web uygulamasıdır. İşletme sahibi panelden
+menüsünü yönetir; misafir masadaki QR kodu okuttuğunda menüyü `/m/<restoran>` adresinde anında görür.
 
-🚀 **Canlı Önizleme:** [menuratnc.netlify.app](https://menuratnc.netlify.app)
+**Demo menü:** `/m/demo` · **Mimari:** [docs/architecture.md](docs/architecture.md) · **Yayınlama:** [docs/deployment.md](docs/deployment.md)
 
-## 🎯 Proje Amacı ve Kapsamı
+## Özellikler
 
-Bu uygulama, eğitim yönergesinde belirtilen tüm adımları kapsayacak şekilde inşa edilmiştir:
-- **Teknoloji**: Next.js 16 ve React 19 kullanılarak modern bir çerçeve üzerine kuruldu.
-- **CRUD Operasyonları**: Kategori ve Menü Ürünleri için Ekleme, Listeleme, Güncelleme ve Silme işlemleri eksiksiz uygulanmıştır.
-- **Yayınlama**: Netlify platformu üzerinden sürekli dağıtım (CD) ile yayına alınmıştır.
+**İşletme paneli**
+- E-posta/şifre ile hesap, şifre sıfırlama (e-posta servisi tanımlıysa), hesap silme
+- Restoran profili: logo, kapak görseli, iletişim, Instagram, Wi-Fi bilgisi, tema rengi, para birimi
+- Kategoriler: ekleme/düzenleme/silme, sürükle-bırak sıralama, aktif/pasif
+- Ürünler: fiyat ve indirimli fiyat, görsel, 14 yasal alerjen, diyet etiketleri (vegan, glutensiz…),
+  kalori, hazırlanma süresi, öne çıkarma, tükendi durumu, toplu işlemler, kopyalama, sıralama
+- QR kod tasarımı (renk, desen, logo), PNG/SVG indirme, A4 masa kartı baskısı
+- Gerçek menü görüntülenme istatistikleri, kurulum kontrol listesi
+- Yayın durumu: hazır olana kadar menü taslakta kalır
 
-## 🛠 Teknoloji Yığını
+**Misafir menüsü**
+- Mobil öncelikli, hızlı, sunucuda üretilen sayfa; açık/koyu tema
+- Yapışkan kategori gezinmesi, Türkçe karakter duyarlı arama, ürün detay penceresi
+- Alerjen bilgisi, "Fiyatlarımıza KDV dahildir" notu, SEO ve paylaşım görselleri
 
-- **Framework**: [Next.js 16 (App Router)](https://nextjs.org/)
-- **UI & State**: React 19, LocalStorage Persistence
-- **Styling**: Tailwind CSS 4 (Apple UI Design Guidelines)
-- **Icons**: Lucide React
-- **QR Generation**: qr-code-styling
+## Teknoloji
 
-## ✨ Gelişmiş Özellikler ve Edge Case Yönetimi
+Next.js 16 (App Router, Server Actions) · React 19 · TypeScript · Tailwind CSS 4 · Radix UI ·
+PostgreSQL + Drizzle ORM · Better Auth · sharp · Zod · Vitest · Playwright
 
-Uygulama geliştirilirken sadece temel özellikler değil, kullanıcı deneyimini etkileyen kritik uç durumlar (edge cases) de dikkate alınmıştır:
+## Yerelde çalıştırma
 
-- **Veri Güvenliği ve Persistence**: `localStorage` bazlı veri mimarisi ile sayfa yenilense bile veriler korunur.
-- **Otomatik Seeding**: Uygulama ilk açıldığında boş kalmaması için kategorilerden ve ürünlerden ıkuşan profesyonel veri seti otomatik olarak yüklenir.
-- **İleri Seviye Navigasyon**: Kategori kartlarından doğrudan ilgili ürünlere filtrelenmiş yönlendirme.
-- **Pagination (Sayfalama)**: Büyük veri setlerinde performansı korumak için Dashboard ve listelerde özelleştirilmiş 6'lı sayfalama sistemi.
-- **Boş Durum (Empty States)**: Hiç veri olmadığında kullanıcıyı yönlendiren şık boş durum arayüzleri.
-- **Görsel Fallback**: Ürün resmi eksik olduğunda otomatik devreye giren modern yer tutucu (placeholder) sistemi.
-- **Responsive Tasarım**: Tüm ekran boyutlarında ve cihazlarda kusursuz görüntüleme.
+Gereksinim: Node.js 22+. Veritabanı kurmanız gerekmez; `DATABASE_URL` boşsa gömülü PGlite
+(`.data/pglite`) kullanılır.
 
-## � Proje Yapısı
+```bash
+npm install
+npm run db:seed     # migration'ları uygular ve /m/demo restoranını oluşturur
+npm run dev         # http://localhost:3000
+```
 
-Eğitim yönergesine sadık kalınarak oluşturulan ağaç yapısı:
-- `src/components`: Paylaşılan bileşenler.
-- `src/app/pages`: Sayfa yönlendirmeleri ve ana modüller.
-- `src/types`: `Interfaces` ve tip tanımlamaları.
-- `src/lib`: Depolama ve yardımcı fonksiyonlar.
+Kayıt olup restoranınızı oluşturun; panel `/dashboard` adresindedir. Geliştirme ortamında
+e-postalar gönderilmez, konsola yazılır.
+
+## Komutlar
+
+| Komut | Açıklama |
+|---|---|
+| `npm run dev` | Geliştirme sunucusu |
+| `npm run check` | Lint + typecheck + birim/entegrasyon testleri + üretim derlemesi |
+| `npm test` | Vitest (bellek içi Postgres ile entegrasyon testleri dahil) |
+| `npm run test:e2e` | Playwright uçtan uca testleri (masaüstü + mobil) |
+| `npm run db:generate` | Şema değişikliğinden migration üretir |
+| `npm run db:migrate` | Migration'ları uygular |
+| `npm run db:seed` | Demo restoranı oluşturur (`-- --reset` ile yeniden) |
+
+## Proje yapısı
+
+```
+src/app/          sayfalar ve route'lar (ince katman)
+src/features/     alan modülleri: schema (zod), queries, actions, components
+src/components/   tasarım sistemi (ui/) ve uygulama kabuğu
+src/db/           Drizzle şeması ve istemci
+src/server/       kimlik doğrulama, oturum, ortam değişkenleri, e-posta
+src/lib/          para, metin, alerjen gibi saf yardımcılar
+drizzle/          SQL migration'ları
+e2e/              Playwright testleri
+```
+
+Geliştirme kuralları ve yapay zekâ ajanları için talimatlar: [AGENTS.md](AGENTS.md).
 
 ---
 
+İlk sürüm Software Persona 11. Dönem staj eğitimi kapsamında geliştirildi; v2 ile üretim
+kullanımına uygun, çok kiracılı bir mimariye taşındı.

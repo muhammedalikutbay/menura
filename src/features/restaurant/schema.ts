@@ -31,27 +31,67 @@ export const createRestaurantSchema = z.object({
   slug: slugSchema,
 });
 
+/** Instagram handle; also accepts "@name" or a pasted profile URL. Empty becomes null. */
+const instagramSchema = z
+  .string()
+  .trim()
+  .transform((value) =>
+    value
+      .replace(/^https?:\/\/(www\.)?instagram\.com\//i, "")
+      .replace(/^@/, "")
+      .replace(/\/+$/, ""),
+  )
+  .pipe(
+    z.union([
+      z.literal(""),
+      z.string().regex(/^[A-Za-z0-9._]{1,30}$/, "Geçerli bir kullanıcı adı girin (örn. menura)."),
+    ]),
+  )
+  .transform((value) => (value === "" ? null : value))
+  .nullable()
+  .optional();
+
+/** Only http(s) links: the value is rendered as a link on the public menu. */
+const websiteSchema = z
+  .string()
+  .trim()
+  .pipe(
+    z.union([
+      z.literal(""),
+      z.url({ protocol: /^https?$/, error: "Geçerli bir adres girin (https://...)." }),
+    ]),
+  )
+  .transform((value) => (value === "" ? null : value))
+  .nullable()
+  .optional();
+
 export const updateRestaurantSchema = z.object({
   name: restaurantNameSchema,
   slug: slugSchema,
   description: optionalText(300),
   phone: optionalText(30),
   address: optionalText(200),
-  instagram: optionalText(30).transform((value) => value?.replace(/^@/, "") ?? null),
-  website: z
-    .union([z.literal(""), z.url("Geçerli bir adres girin (https://...).")])
-    .nullable()
-    .optional()
-    .transform((value) => (value ? value : null)),
+  instagram: instagramSchema,
+  website: websiteSchema,
   wifiName: optionalText(64),
   wifiPassword: optionalText(64),
   currency: z.enum(SUPPORTED_CURRENCIES),
   themeColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Geçerli bir renk seçin."),
   showVatNote: z.boolean(),
   hideUnavailable: z.boolean(),
+  /** undefined leaves the image unchanged, null removes it. */
   logoMediaId: z.string().nullable().optional(),
   coverMediaId: z.string().nullable().optional(),
 });
 
+/** Profile settings without the slug: the public address is changed separately (it breaks QR codes). */
+export const updateRestaurantProfileSchema = updateRestaurantSchema.omit({ slug: true });
+
+export const updateSlugSchema = z.object({ slug: slugSchema });
+
+export const setPublishedSchema = z.object({ isPublished: z.boolean() });
+
 export type CreateRestaurantInput = z.input<typeof createRestaurantSchema>;
 export type UpdateRestaurantInput = z.input<typeof updateRestaurantSchema>;
+export type UpdateRestaurantProfileInput = z.input<typeof updateRestaurantProfileSchema>;
+export type UpdateSlugInput = z.input<typeof updateSlugSchema>;
