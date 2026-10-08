@@ -16,7 +16,14 @@ folders.
 - Only create/edit files inside the paths your task lists. If you need a change elsewhere
   (schema, UI kit, package.json, another feature), do not make it: describe it in your report.
   Small additive new files in `src/components/ui/` are allowed if a primitive is missing.
-- Never run `bd`, `git commit`, `next build`, `next dev` or `npm install`.
+- Never run `bd`, `next build`, `next dev` or `npm install`.
+- **Git (commit and push your own work):** you work on the current branch (do not switch or create
+  branches). Other agents share this working tree, so stage ONLY your own files: `git add <paths>`
+  then `git commit -m "<type>(<scope>): <what>" -m "Task: <bd id>"` (Conventional Commits, English).
+  Never `git add -A`/`git add .`, never commit `.beads/`, never amend or rebase others' commits.
+  Commit after each coherent, verified step (tsc + eslint + related tests green), then
+  `git push origin HEAD`. If `.git/index.lock` exists, wait a few seconds and retry; if the push is
+  rejected, `git pull --rebase origin <branch>` then push again. Never force-push.
 - Do not create docs or README files unless asked.
 
 ## Quality
@@ -33,5 +40,5 @@ folders.
 ## Verify, then report
 Run from the repo root and fix everything in your files:
 `npx tsc --noEmit` · `npx eslint <your paths>` · `npx vitest run <your test files>`
-Report (concise): files created/changed, decisions and deviations, requests for changes outside
+Report (concise): commits (hashes), files created/changed, decisions and deviations, requests for changes outside
 your scope, and the exact verification results. Errors in files you did not touch: list them, don't fix.
