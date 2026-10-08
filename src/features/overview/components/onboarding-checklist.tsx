@@ -36,7 +36,7 @@ export function OnboardingChecklist({ progress }: { progress: ChecklistProgress 
       id: "product",
       label: "Ürün ekle",
       hint: "İlk ürününüzü fiyatı ve açıklamasıyla ekleyin.",
-      href: "/dashboard/products/new",
+      href: "/dashboard/menu?new=product",
       done: progress.hasProduct,
     },
     {

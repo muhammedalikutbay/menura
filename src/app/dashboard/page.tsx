@@ -155,7 +155,7 @@ export default async function DashboardOverviewPage() {
             <CardContent>
               <ul className="flex flex-col gap-3">
                 <li>
-                  <Link href={"/dashboard/products/new" as Route} className={quickActionClass}>
+                  <Link href={"/dashboard/menu?new=product" as Route} className={quickActionClass}>
                     <Plus aria-hidden="true" />
                     Ürün ekle
                   </Link>
