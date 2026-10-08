@@ -1,8 +1,9 @@
-import Image from "next/image";
+
 import { cn } from "@/lib/cn";
 import type { PublicProduct } from "../types";
 import { Price } from "./price";
 import { stretchedButtonClass } from "./product-row";
+import { MenuImage } from "./menu-image";
 
 /** Horizontal strip of featured products ("Öne çıkanlar"). */
 export function FeaturedStrip({ products, currency }: { products: PublicProduct[]; currency: string }) {
@@ -16,7 +17,7 @@ export function FeaturedStrip({ products, currency }: { products: PublicProduct[
           <li key={product.id} className="relative flex w-44 shrink-0 scroll-ml-4 snap-start flex-col gap-2 sm:w-52">
             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-surface-muted">
               {product.imageUrl && (
-                <Image
+                <MenuImage
                   src={product.imageUrl}
                   alt=""
                   fill

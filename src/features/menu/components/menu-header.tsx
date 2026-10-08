@@ -1,11 +1,12 @@
 import { AtSign, Globe, MapPin, Phone, Wifi } from "lucide-react";
-import Image from "next/image";
+
 import type { PublicRestaurant } from "../types";
 import { menuThemeVars } from "../theme";
 import { instagramHandle, instagramUrl, mapsSearchUrl, safeHttpUrl, telHref } from "../links";
 import { infoPillClass } from "./info-pill";
 import type { MenuMode } from "./menu-mode";
 import { WifiDialog } from "./wifi-dialog";
+import { MenuImage } from "./menu-image";
 
 const externalLink = { target: "_blank", rel: "noopener noreferrer" } as const;
 
@@ -58,7 +59,7 @@ export function MenuHeader({ restaurant, mode = "page" }: { restaurant: PublicRe
         }
       >
         {coverUrl && (
-          <Image
+          <MenuImage
             src={coverUrl}
             alt=""
             fill
@@ -80,7 +81,7 @@ export function MenuHeader({ restaurant, mode = "page" }: { restaurant: PublicRe
       <div className="mx-auto max-w-2xl px-4 pb-2">
         {logoUrl && (
           <div className="relative -mt-10 size-20 overflow-hidden rounded-2xl border-4 border-bg bg-surface shadow-md">
-            <Image src={logoUrl} alt={`${name} logosu`} fill loading="eager" sizes="80px" className="object-cover" />
+            <MenuImage src={logoUrl} alt={`${name} logosu`} fill loading="eager" sizes="80px" className="object-cover" />
           </div>
         )}
         <Title className={`${logoUrl ? "mt-3" : "mt-5"} text-3xl font-bold tracking-tight text-balance`}>{name}</Title>

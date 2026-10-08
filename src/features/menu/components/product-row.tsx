@@ -1,10 +1,11 @@
-import Image from "next/image";
+
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/cn";
 import { tagLabel } from "@/lib/menu-attributes";
 import type { PublicProduct } from "../types";
 import { searchText } from "../sheet-data";
 import { Price } from "./price";
+import { MenuImage } from "./menu-image";
 
 /** Whole row opens the detail sheet: the name button is stretched over the row. */
 export const stretchedButtonClass =
@@ -52,7 +53,7 @@ export function ProductRow({
 
       {product.imageUrl && (
         <div className="relative size-24 shrink-0 self-start overflow-hidden rounded-lg bg-surface-muted">
-          <Image
+          <MenuImage
             src={product.imageUrl}
             alt=""
             fill

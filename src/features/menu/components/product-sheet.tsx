@@ -1,12 +1,13 @@
 "use client";
 
 import { Clock, Flame, X, type LucideIcon } from "lucide-react";
-import Image from "next/image";
+
 import { useEffect, useId, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog";
 import type { SheetProduct } from "../sheet-data";
 import { MENU_CONTENT_SELECTOR, MENU_ROOT_SELECTOR, type MenuMode } from "./menu-mode";
+import { MenuImage } from "./menu-image";
 
 /**
  * Detail sheet for the product rows. Rows are plain server-rendered buttons carrying
@@ -222,7 +223,7 @@ function ProductDetails({ product, imageSizes }: { product: SheetProduct; imageS
     <>
       {product.imageUrl && (
         <div className="relative aspect-[4/3] w-full shrink-0 bg-surface-muted">
-          <Image
+          <MenuImage
             src={product.imageUrl}
             alt={product.name}
             fill
