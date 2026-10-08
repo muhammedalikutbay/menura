@@ -1,23 +1,17 @@
 import type { Metadata, Route } from "next";
 import Link from "next/link";
-import {
-  ArrowRight,
-  ChartColumn,
-  ChevronDown,
-  Leaf,
-  ListPlus,
-  Printer,
-  QrCode,
-  Receipt,
-  Smartphone,
-  UserPlus,
-  Zap,
-  type LucideIcon,
-} from "lucide-react";
+import { ArrowRight, Leaf, Palette, Plus, Receipt, type LucideIcon } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { StatsBand } from "@/components/ui/stats-band";
+import { StepList } from "@/components/ui/step-list";
+import { cn } from "@/lib/cn";
 import { hasDemoMenu } from "@/features/menu/demo";
+import { serializeJsonLd } from "@/features/menu/json-ld";
 import { getSession } from "@/server/session";
+import { BuilderVisual, QrVisual, StatsVisual } from "./_components/feature-visuals";
 import { Hero } from "./_components/hero";
+import { Reveal } from "./_components/reveal";
 
 const TITLE = "Menura — Restoran ve kafeler için QR menü";
 const DESCRIPTION =
@@ -26,6 +20,7 @@ const DESCRIPTION =
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESCRIPTION,
+  keywords: ["QR menü", "dijital menü", "restoran menüsü", "kafe menüsü", "QR kod menü"],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -38,54 +33,46 @@ export const metadata: Metadata = {
   twitter: { card: "summary", title: TITLE, description: DESCRIPTION },
 };
 
-const FEATURES: Array<{ icon: LucideIcon; title: string; text: string }> = [
-  {
-    icon: Zap,
-    title: "Anında güncelleme",
-    text: "Fiyatı değiştirin, ürünü tükendi olarak işaretleyin; menünüz saniyeler içinde güncellenir. Yeniden baskıya gerek kalmaz.",
-  },
-  {
-    icon: QrCode,
-    title: "QR kod tasarımı",
-    text: "Renkleri, nokta ve köşe stilini seçin, logonuzu ortaya ekleyin. PNG veya SVG olarak indirin, hazır masa kartlarını yazdırın.",
-  },
+const FACTS = [
+  { value: "14", label: "yasal alerjen" },
+  { value: "Saniyeler", label: "içinde güncelleme" },
+  { value: "Uygulama", label: "gerekmez" },
+];
+
+const GRID_FEATURES: Array<{ icon: LucideIcon; title: string; text: string }> = [
   {
     icon: Leaf,
     title: "Alerjen ve etiketler",
-    text: "Alerjenleri ve vegan, glutensiz gibi diyet etiketlerini ürün başına belirtin; misafirleriniz doğru seçimi kolayca yapsın.",
+    text: "Yasal 14 alerjeni ve vegan, glutensiz gibi diyet etiketlerini ürün başına belirtin; misafirleriniz doğru seçimi kolayca yapsın.",
   },
   {
-    icon: Smartphone,
-    title: "Çoklu cihaz uyumu",
-    text: "Menü telefonda, tablette ve bilgisayarda hızlı açılır ve ekran boyutuna uyum sağlar. Uygulama indirmek gerekmez.",
-  },
-  {
-    icon: ChartColumn,
-    title: "Görüntülenme istatistikleri",
-    text: "Menünüzün bugün, bu hafta ve toplamda kaç kez açıldığını gerçek verilerle takip edin.",
+    icon: Palette,
+    title: "Markanızın rengi",
+    text: "Menünün vurgu rengini markanıza uyarlayın. Kategori çubuğu, etiketler ve fiyatlar seçtiğiniz renge bürünür.",
   },
   {
     icon: Receipt,
     title: "KDV ve fiyat notu",
-    text: "Fiyatların altında “KDV dahildir” notunu isterseniz gösterin, isterseniz gizleyin. Fiyatlar seçtiğiniz para birimine uygun biçimde gösterilir.",
+    text: "Fiyatların altında “KDV dahildir” notunu isterseniz gösterin, isterseniz gizleyin. Fiyatlar seçtiğiniz para birimine uygun biçimde yazılır.",
   },
 ];
 
-const STEPS: Array<{ icon: LucideIcon; title: string; text: string }> = [
+const STEPS = [
   {
-    icon: UserPlus,
-    title: "Hesabınızı oluşturun",
-    text: "E-posta adresinizle kaydolun, restoranınızın adını ve menü adresinizi seçin.",
+    title: "Hesabını aç",
+    description: "E-posta adresi yeterli. Restoranın adı ve menü adresi birkaç dakikada hazır.",
   },
   {
-    icon: ListPlus,
-    title: "Menünüzü hazırlayın",
-    text: "Kategorilerinizi ve ürünlerinizi fotoğraf, fiyat ve açıklamalarıyla ekleyin. Hazır olunca yayınlayın.",
+    title: "Menünü kur",
+    description: "Kategoriler ve ürünler fotoğraf, fiyat ve açıklamalarıyla eklenir. Hazır olunca yayınlanır.",
   },
   {
-    icon: Printer,
-    title: "QR kodu masalara koyun",
-    text: "Tasarladığınız QR kodu indirin veya masa kartlarını yazdırın. Misafirler okutur, menü anında açılır.",
+    title: "QR'ı masalara koy",
+    description: "QR kod indirilir ya da masa kartları yazdırılır. Misafir okutur, menü anında açılır.",
+  },
+  {
+    title: "Güncelle, anında yansısın",
+    description: "Fiyat ya da ürün değişince QR aynı kalır; menü kaydedildiği anda güncellenir.",
   },
 ];
 
@@ -107,7 +94,7 @@ const FAQ: Array<{ question: string; answer: React.ReactNode }> = [
   {
     question: "Menüyü ne zaman misafirler görebilir?",
     answer:
-      "Menünüz siz yayınlayana kadar taslak olarak kalır. Taslak menüyü okutan kişi “Menü bulunamadı” sayfasını görür. Hazır olduğunuzda Ayarlar bölümünden yayınlayabilirsiniz.",
+      "Menünüz siz yayınlayana kadar taslak olarak kalır. Taslak menüyü okutan kişi “Menü bulunamadı” sayfasını görür. Hazır olduğunuzda panelden yayınlayabilirsiniz.",
   },
   {
     question: "Alerjen bilgilerini ve fiyatlardaki KDV notunu yönetebilir miyim?",
@@ -128,127 +115,188 @@ const FAQ: Array<{ question: string; answer: React.ReactNode }> = [
   },
 ];
 
-const primaryCta = buttonVariants({ size: "lg" });
+const CONTAINER = "mx-auto w-full max-w-[1120px] px-4 sm:px-6 lg:px-8";
+
+/** One feature: text on one side, a UI visual on the other; `reverse` swaps them from 768px up. */
+function Split({
+  id,
+  title,
+  text,
+  visual,
+  reverse = false,
+}: {
+  id: string;
+  title: string;
+  text: string;
+  visual: React.ReactNode;
+  reverse?: boolean;
+}) {
+  return (
+    <section aria-labelledby={id} className={cn(CONTAINER, "py-12 md:py-20")}>
+      <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
+        <Reveal className={cn(reverse && "md:order-2")}>
+          <h2 id={id} className="type-display text-balance">
+            {title}
+          </h2>
+          <p className="type-body-lg mt-5 max-w-[480px] text-pretty text-fg-muted">{text}</p>
+        </Reveal>
+        <Reveal delay={80} className={cn(reverse && "md:order-1")}>
+          {visual}
+        </Reveal>
+      </div>
+    </section>
+  );
+}
 
 export default async function LandingPage() {
   const showDemo = await hasDemoMenu();
   const session = await getSession().catch(() => null);
-  const ctaHref = (session ? "/dashboard" : "/register") as Route;
-  const ctaLabel = session ? "Panele git" : "Ücretsiz başla";
+  const signedIn = Boolean(session);
+  const ctaHref = (signedIn ? "/dashboard" : "/register") as Route;
+  const ctaLabel = signedIn ? "Panele git" : "Ücretsiz başla";
 
   return (
     <>
-      <Hero showDemo={showDemo} signedIn={Boolean(session)} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: "Menura",
+            applicationCategory: "BusinessApplication",
+            operatingSystem: "Web",
+            inLanguage: "tr",
+            description: DESCRIPTION,
+          }),
+        }}
+      />
 
-      {/* Features */}
-      <section id="ozellikler" aria-labelledby="features-title" className="scroll-mt-20 bg-surface-muted">
-        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-          <div className="mx-auto flex max-w-2xl flex-col gap-3 text-center">
-            <h2 id="features-title" className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-              İhtiyacınız olan her şey, sade bir panelde.
-            </h2>
-            <p className="text-lg text-fg-muted">
-              Menünüzü yönetmek için teknik bilgiye gerek yok. Her özellik, günlük işleyişinizi hızlandırmak için
-              tasarlandı.
-            </p>
-          </div>
-          <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map(({ icon: Icon, title, text }) => (
-              <li key={title} className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-6 shadow-xs">
-                <span className="flex size-11 items-center justify-center rounded-md bg-accent-soft text-accent-text">
-                  <Icon aria-hidden="true" className="size-5" />
-                </span>
-                <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
-                <p className="text-base text-fg-muted">{text}</p>
-              </li>
-            ))}
-          </ul>
+      <Hero showDemo={showDemo} signedIn={signedIn} />
+
+      {/* Facts: honest product facts only, no customer counts or growth claims. */}
+      <section aria-label="Menura kısaca" className="relative z-10 -mt-10">
+        <div className={CONTAINER}>
+          <Reveal>
+            <StatsBand items={FACTS} />
+          </Reveal>
         </div>
       </section>
 
-      {/* How it works */}
-      <section id="nasil-calisir" aria-labelledby="steps-title" className="scroll-mt-20">
-        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-          <div className="mx-auto flex max-w-2xl flex-col gap-3 text-center">
-            <h2 id="steps-title" className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-              Üç adımda yayında.
-            </h2>
-            <p className="text-lg text-fg-muted">Kurulum için tasarımcıya veya yazılımcıya ihtiyacınız yok.</p>
-          </div>
-          <ol className="mt-12 grid gap-8 md:grid-cols-3">
-            {STEPS.map(({ icon: Icon, title, text }, index) => (
-              <li key={title} className="flex flex-col items-center gap-4 text-center">
-                <span className="relative flex size-16 items-center justify-center rounded-full bg-accent-soft text-accent-text">
-                  <Icon aria-hidden="true" className="size-7" />
-                  <span
-                    aria-hidden="true"
-                    className="absolute -top-1 -right-1 flex size-7 items-center justify-center rounded-full bg-accent text-sm font-semibold text-accent-fg"
-                  >
-                    {index + 1}
+      {/* Features */}
+      <div id="ozellikler" className="scroll-mt-24 pt-20 pb-6 md:pt-32 md:pb-10">
+        <Split
+          id="split-builder"
+          title="Menünüzü tek ekranda kurun"
+          text="Kategorileri ve ürünleri tek ekrandan yönetin: sürükleyerek sıralayın, fiyatı değiştirin, biten ürünü tek dokunuşla kapatın."
+          visual={<BuilderVisual />}
+        />
+        <Split
+          id="split-qr"
+          title="Markanıza uyan QR kod"
+          text="Renkleri, nokta ve köşe stilini seçin, logonuzu ortaya ekleyin. PNG veya SVG olarak indirin, hazır masa kartlarını yazdırın."
+          visual={<QrVisual />}
+          reverse
+        />
+        <Split
+          id="split-stats"
+          title="Ne kadar ilgi gördüğünüzü bilin"
+          text="Menünüzün bugün, bu hafta ve toplamda kaç kez açıldığını gerçek verilerle takip edin. Ziyaretçileri tanımlayan hiçbir bilgi tutulmaz."
+          visual={<StatsVisual />}
+        />
+      </div>
+
+      {/* Feature grid */}
+      <section aria-labelledby="grid-title" className={cn(CONTAINER, "py-20 md:py-28")}>
+        <Reveal>
+          <h2 id="grid-title" className="type-display mx-auto max-w-[720px] text-center text-balance">
+            Ayrıntılar da düşünüldü
+          </h2>
+        </Reveal>
+        <ul className="mt-12 grid gap-4 md:grid-cols-3">
+          {GRID_FEATURES.map(({ icon: Icon, title, text }, index) => (
+            <li key={title} className="flex">
+              <Reveal delay={index * 60} className="flex w-full">
+                <Card className="w-full gap-4 px-5 py-6 sm:px-6 sm:py-8">
+                  <span className="flex size-11 items-center justify-center rounded-md bg-surface-muted text-fg">
+                    <Icon aria-hidden="true" className="size-5" strokeWidth={1.75} />
                   </span>
-                </span>
-                <h3 className="text-lg font-semibold tracking-tight">
-                  <span className="sr-only">{index + 1}. adım: </span>
-                  {title}
-                </h3>
-                <p className="max-w-xs text-base text-fg-muted">{text}</p>
-              </li>
-            ))}
-          </ol>
+                  <h3 className="type-title">{title}</h3>
+                  <p className="type-body text-fg-muted">{text}</p>
+                </Card>
+              </Reveal>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* How it works */}
+      <section id="nasil-calisir" aria-labelledby="steps-title" className="scroll-mt-24 py-12 md:py-20">
+        <div className={cn(CONTAINER, "grid items-start gap-10 md:grid-cols-2 md:gap-16")}>
+          <Reveal className="md:sticky md:top-28">
+            <h2 id="steps-title" className="type-display text-balance">
+              Dört adımda yayında
+            </h2>
+            <p className="type-body-lg mt-5 max-w-[480px] text-pretty text-fg-muted">
+              Kurulum için tasarımcıya ya da yazılımcıya ihtiyaç yok.
+            </p>
+          </Reveal>
+          <Reveal delay={80}>
+            <Card className="px-6 py-8 sm:px-8 sm:py-10">
+              <StepList steps={STEPS} />
+            </Card>
+          </Reveal>
         </div>
       </section>
 
       {/* FAQ */}
-      <section id="sss" aria-labelledby="faq-title" className="scroll-mt-20 bg-surface-muted">
-        <div className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-          <h2
-            id="faq-title"
-            className="text-center text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
-          >
-            Sık sorulan sorular
-          </h2>
-          <div className="mt-10 flex flex-col gap-3">
-            {FAQ.map(({ question, answer }) => (
-              <details
-                key={question}
-                className="group rounded-lg border border-border bg-surface shadow-xs open:shadow-sm"
-              >
-                <summary className="flex min-h-14 list-none items-center justify-between gap-4 rounded-lg px-5 py-3 text-left text-base font-medium [&::-webkit-details-marker]:hidden">
-                  {question}
-                  <ChevronDown
-                    aria-hidden="true"
-                    className="size-5 shrink-0 text-fg-muted transition-transform group-open:rotate-180"
-                  />
-                </summary>
-                <div className="px-5 pb-5 text-base text-fg-muted">{answer}</div>
-              </details>
-            ))}
-          </div>
+      <section id="sss" aria-labelledby="faq-title" className="scroll-mt-24 py-20 md:py-28">
+        <div className="mx-auto w-full max-w-[760px] px-4 sm:px-6">
+          <Reveal>
+            <h2 id="faq-title" className="type-display text-center text-balance">
+              Sık sorulan sorular
+            </h2>
+          </Reveal>
+          <Reveal delay={80} className="mt-10">
+            <div className="divide-y divide-border overflow-hidden rounded-lg bg-surface shadow-hairline">
+              {FAQ.map(({ question, answer }) => (
+                <details key={question} className="group">
+                  <summary className="type-body flex min-h-14 list-none items-center justify-between gap-4 px-5 py-3 text-left font-medium transition-colors hover:bg-surface-muted/60 sm:px-6 [&::-webkit-details-marker]:hidden">
+                    {question}
+                    <Plus
+                      aria-hidden="true"
+                      className="size-5 shrink-0 text-fg-muted transition-transform duration-200 group-open:rotate-45"
+                    />
+                  </summary>
+                  <div className="type-body px-5 pt-1 pb-5 text-fg-muted sm:px-6">{answer}</div>
+                </details>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Final CTA */}
-      <section aria-labelledby="cta-title">
-        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-          <div className="flex flex-col items-center gap-6 rounded-xl bg-accent-soft px-6 py-14 text-center sm:px-12">
-            <h2 id="cta-title" className="max-w-xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-              Menünüzü bugün hazırlamaya başlayın.
-            </h2>
-            <p className="max-w-lg text-lg text-fg-muted">
-              İlk menünüzü dakikalar içinde oluşturun, QR kodunuzu indirip masalarınıza yerleştirin.
-            </p>
-            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-              <Link href={ctaHref} className={primaryCta}>
+      <section aria-labelledby="cta-title" className="bg-canvas py-20 md:py-28">
+        <div className={CONTAINER}>
+          <Reveal>
+            <Card className="relative isolate items-center overflow-hidden px-6 py-16 text-center sm:px-12 sm:py-24">
+              <div
+                aria-hidden="true"
+                className="gradient-brand absolute bottom-0 left-1/2 -z-10 h-[360px] w-[640px] max-w-[160%] -translate-x-1/2 translate-y-1/2 rounded-full opacity-45 blur-3xl"
+              />
+              <h2 id="cta-title" className="type-display max-w-[640px] text-balance">
+                İlk menünüzü bugün yayınlayın.
+              </h2>
+              <p className="type-body-lg max-w-[480px] text-pretty text-fg-muted">
+                Dakikalar içinde hazırlayın, QR kodunuzu masalara koyun.
+              </p>
+              <Link href={ctaHref} className={buttonVariants({ size: "lg", className: "mt-2" })}>
                 {ctaLabel}
                 <ArrowRight aria-hidden="true" />
               </Link>
-              {showDemo && (
-                <Link href={"/m/demo" as Route} className={buttonVariants({ variant: "outline", size: "lg", className: "bg-surface" })}>
-                  Demo menüyü gör
-                </Link>
-              )}
-            </div>
-          </div>
+            </Card>
+          </Reveal>
         </div>
       </section>
     </>
