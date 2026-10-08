@@ -16,7 +16,12 @@ export const LOCAL_PGLITE_DIR = ".data/pglite";
  */
 export function createDatabase(url: string | undefined): Database {
   if (url && /^postgres(ql)?:\/\//.test(url)) {
-    const client = postgres(url, { max: Number(process.env.DATABASE_POOL_MAX ?? 5), prepare: false });
+    const client = postgres(url, {
+      max: Number(process.env.DATABASE_POOL_MAX ?? 5),
+      prepare: false,
+      // NOTICEs such as "relation already exists, skipping" from migrations are not errors.
+      onnotice: () => {},
+    });
     return drizzlePostgres(client, { schema, casing: "snake_case" });
   }
   if (process.env.NEXT_PHASE === "phase-production-build") {
