@@ -59,19 +59,19 @@ const GRID_FEATURES: Array<{ icon: LucideIcon; title: string; text: string }> = 
 
 const STEPS = [
   {
-    title: "Hesabını aç",
+    title: "Hesabınızı açın",
     description: "E-posta adresi yeterli. Restoranın adı ve menü adresi birkaç dakikada hazır.",
   },
   {
-    title: "Menünü kur",
+    title: "Menünüzü kurun",
     description: "Kategoriler ve ürünler fotoğraf, fiyat ve açıklamalarıyla eklenir. Hazır olunca yayınlanır.",
   },
   {
-    title: "QR'ı masalara koy",
+    title: "QR kodu masalara koyun",
     description: "QR kod indirilir ya da masa kartları yazdırılır. Misafir okutur, menü anında açılır.",
   },
   {
-    title: "Güncelle, anında yansısın",
+    title: "Güncelleyin, anında yansısın",
     description: "Fiyat ya da ürün değişince QR aynı kalır; menü kaydedildiği anda güncellenir.",
   },
 ];

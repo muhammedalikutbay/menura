@@ -67,7 +67,7 @@ Sections top to bottom (one idea each):
    - "Markanıza uyan QR kod" — QR card with color dots and "PNG / SVG" chips.
    - "Ne kadar ilgi gördüğünüzü bilin" — 14-day bars card.
 5. **Feature grid** — 3 cards: "Alerjen ve etiketler", "Markanızın rengi", "KDV ve fiyat notu".
-6. **Nasıl çalışır** — StepList: 1 Hesabını aç · 2 Menünü kur · 3 QR'ı masalara koy · 4 Güncelle, anında yansısın.
+6. **Nasıl çalışır** — StepList: 1 Hesabınızı açın · 2 Menünüzü kurun · 3 QR kodu masalara koyun · 4 Güncelleyin, anında yansısın (formal "siz", like the rest of the site).
 7. **SSS** — `<details>` accordion, 5 questions (existing copy).
 8. **Final CTA** — card on canvas with glow: "İlk menünüzü bugün yayınlayın." + primary CTA.
 9. **Footer** — ink background, radius-xl top corners; left tagline "Daha iyi menüler, daha az
