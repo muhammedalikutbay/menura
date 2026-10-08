@@ -27,25 +27,35 @@ test("owner builds and publishes a menu that guests can open", async ({ page, br
   const guest = await browser.newPage();
   expect((await guest.goto(`/m/${slug}`))?.status()).toBe(404);
 
-  // Category
+  // Category: the empty builder asks for the first one inline.
   await page.goto("/dashboard/menu");
-  await page.getByRole("button", { name: "Yeni kategori" }).first().click();
+  await expect(page.getByRole("heading", { name: "İlk kategorinizi oluşturun" })).toBeVisible();
   await page.getByLabel("Kategori adı").fill("Çorbalar");
   await page.getByRole("button", { name: "Kategori ekle" }).click();
-  await expect(page.getByText("Çorbalar").first()).toBeVisible();
+  const section = page.getByRole("region", { name: "Çorbalar" });
+  await expect(section).toBeVisible();
+  await expect(section.getByText("0 ürün")).toBeVisible();
 
-  // Product
-  await page.goto("/dashboard/products/new");
-  await page.getByLabel("Ürün adı").fill("Mercimek Çorbası");
-  const category = page.getByRole("combobox", { name: "Kategori" });
-  if ((await category.textContent())?.includes("Kategori seçin")) {
-    await category.click();
-    await page.getByRole("option", { name: "Çorbalar" }).click();
-  }
-  await page.getByLabel(/^Fiyat/).fill("120,50");
-  await page.getByRole("button", { name: "Ürünü ekle" }).click();
-  await expect(page).toHaveURL(/\/dashboard\/menu/);
-  await expect(page.getByText("Mercimek Çorbası").first()).toBeVisible();
+  // Product: "+ Ürün ekle" opens the editor sheet with the category preset.
+  await section.getByRole("button", { name: "Ürün ekle" }).click();
+  await expect(page).toHaveURL(/new=product&category=/);
+  const sheet = page.getByRole("dialog");
+  await expect(sheet.getByRole("heading", { name: "Yeni ürün" })).toBeVisible();
+  await expect(sheet.getByRole("combobox", { name: "Kategori" })).toContainText("Çorbalar");
+  await sheet.getByLabel("Ürün adı").fill("Mercimek Çorbası");
+  await sheet.getByLabel(/^Fiyat/).fill("120,50");
+  await sheet.getByRole("button", { name: "Kaydet" }).click();
+  await expect(sheet).toBeHidden();
+  await expect(page).not.toHaveURL(/new=product/);
+  await expect(section.getByRole("button", { name: "Mercimek Çorbası", exact: true })).toBeVisible();
+  await expect(section.getByText("1 ürün")).toBeVisible();
+
+  // The row opens the editor via ?product=<id>; the back button closes it again.
+  await section.getByRole("button", { name: "Mercimek Çorbası", exact: true }).click();
+  await expect(page).toHaveURL(/[?&]product=/);
+  await expect(sheet.getByLabel("Ürün adı")).toHaveValue("Mercimek Çorbası");
+  await page.goBack();
+  await expect(sheet).toBeHidden();
 
   // Publish
   await page.goto("/dashboard/appearance");
