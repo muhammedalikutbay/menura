@@ -43,11 +43,14 @@ const REDUCED_OR_COARSE = "(prefers-reduced-motion: reduce), (pointer: coarse)";
 export function MenuPhonePreview({
   menu,
   tilt = true,
+  pose = "hero",
   size = "lg",
   className,
 }: {
   menu: PublicMenu;
   tilt?: boolean;
+  /** "hero" is the angled marketing pose; "flat" faces the viewer (settings preview). */
+  pose?: "hero" | "flat";
   size?: PhoneSize;
   className?: string;
 }) {
@@ -64,7 +67,7 @@ export function MenuPhonePreview({
   }
 
   function tiltAllowed(event: React.PointerEvent) {
-    return tilt && event.pointerType !== "touch" && !window.matchMedia(REDUCED_OR_COARSE).matches;
+    return tilt && pose === "hero" && event.pointerType !== "touch" && !window.matchMedia(REDUCED_OR_COARSE).matches;
   }
 
   function onPointerMove(event: React.PointerEvent<HTMLDivElement>) {
@@ -102,7 +105,10 @@ export function MenuPhonePreview({
           height: BODY_HEIGHT,
           marginLeft: -BODY_WIDTH / 2,
           marginTop: -BODY_HEIGHT / 2,
-          transform: `scale(${scale}) rotateX(var(--tilt-x, ${REST_X}deg)) rotateY(var(--tilt-y, ${REST_Y}deg)) rotateZ(${REST_Z}deg)`,
+          transform:
+            pose === "flat"
+              ? `scale(${scale})`
+              : `scale(${scale}) rotateX(var(--tilt-x, ${REST_X}deg)) rotateY(var(--tilt-y, ${REST_Y}deg)) rotateZ(${REST_Z}deg)`,
         }}
       >
         {/* Titanium frame */}

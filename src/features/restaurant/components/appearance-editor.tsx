@@ -278,7 +278,7 @@ export function AppearanceEditor({
               </p>
             </Card>
           ) : (
-            <MenuPhonePreview menu={previewMenu} size="md" tilt={false} />
+            <MenuPhonePreview menu={previewMenu} size="md" tilt={false} pose="flat" />
           )}
         </div>
       </aside>

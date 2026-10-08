@@ -58,7 +58,7 @@ export function Hero({ showDemo, signedIn }: { showDemo: boolean; signedIn: bool
         >
           <span className="block">Menünüz,</span>
           <span className="block">
-            <span className="font-display-accent">tek bir QR kod</span> uzağında.
+            <span className="font-display-accent">tek bir QR&nbsp;kod</span> uzağında.
           </span>
         </h1>
         <p
