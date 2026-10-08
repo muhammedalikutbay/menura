@@ -96,6 +96,11 @@ export default async function Image({ params }: { params: Promise<{ slug: string
         </div>
       </div>
     ),
-    { ...size },
+    {
+      ...size,
+      // Rendering runs sharp + satori; let browsers and the CDN reuse it (menus change rarely,
+      // and social networks cache share images on their side anyway).
+      headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400" },
+    },
   );
 }

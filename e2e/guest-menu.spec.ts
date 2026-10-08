@@ -2,7 +2,12 @@ import { expect, test } from "@playwright/test";
 
 test.describe("guest menu", () => {
   test("shows the demo menu with categories, search and product details", async ({ page }) => {
-    await page.goto("/m/demo");
+    const cspViolations: string[] = [];
+    page.on("console", (message) => {
+      if (message.text().includes("Content Security Policy")) cspViolations.push(message.text());
+    });
+    const response = await page.goto("/m/demo");
+    expect(response?.headers()["content-security-policy"]).toMatch(/script-src 'self' 'nonce-[^']+' 'strict-dynamic'/);
     await expect(page.getByRole("heading", { level: 1, name: "Lezzet Durağı" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Başlangıçlar" })).toBeVisible();
     // Guests never see dashboard navigation.
@@ -17,6 +22,7 @@ test.describe("guest menu", () => {
     const sheet = page.getByRole("dialog", { name: "Izgara Kuşkonmaz" });
     await expect(sheet).toBeVisible();
     await expect(sheet.getByText("Alerjen bilgisi")).toBeVisible();
+    expect(cspViolations).toEqual([]);
   });
 
   test("returns 404 for unknown menus", async ({ page }) => {
