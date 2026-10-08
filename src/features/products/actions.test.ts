@@ -12,6 +12,7 @@ const {
   deleteProducts,
   duplicateProduct,
   moveProducts,
+  moveProductToCategory,
   reorderProducts,
   setProductAvailability,
   setProductsAvailability,
@@ -450,6 +451,61 @@ describe("product actions", () => {
     });
   });
 
+  describe("moveProductToCategory", () => {
+    it("moves a product into another category at the given position", async () => {
+      const other = await addCategory(a, "Diğer", 1);
+      const p1 = await addProduct(a, catA.id, "P1", 0);
+      const p2 = await addProduct(a, catA.id, "P2", 1);
+      const o1 = await addProduct(a, other.id, "O1", 0);
+      const o2 = await addProduct(a, other.id, "O2", 1);
+
+      expect((await moveProductToCategory(p1.id, other.id, [o1.id, p1.id, o2.id])).ok).toBe(true);
+      expect(await namesIn(other.id)).toEqual(["O1", "P1", "O2"]);
+      expect(await namesIn(catA.id)).toEqual(["P2"]);
+      expect((await getProduct(a.restaurant.id, p1.id))?.categoryId).toBe(other.id);
+
+      // Into an empty category.
+      const empty = await addCategory(a, "Boş", 2);
+      expect((await moveProductToCategory(p2.id, empty.id, [p2.id])).ok).toBe(true);
+      expect(await namesIn(empty.id)).toEqual(["P2"]);
+    });
+
+    it("reorders when dropped inside its own category", async () => {
+      const p1 = await addProduct(a, catA.id, "P1", 0);
+      const p2 = await addProduct(a, catA.id, "P2", 1);
+      expect((await moveProductToCategory(p1.id, catA.id, [p2.id, p1.id])).ok).toBe(true);
+      expect(await namesIn(catA.id)).toEqual(["P2", "P1"]);
+    });
+
+    it("rejects an order that is not the target's products plus the moved one", async () => {
+      const other = await addCategory(a, "Diğer", 1);
+      const p1 = await addProduct(a, catA.id, "P1", 0);
+      const o1 = await addProduct(a, other.id, "O1", 0);
+      const foreign = await addProduct(b, catB.id, "B1", 0);
+
+      expect((await moveProductToCategory(p1.id, other.id, [p1.id])).ok).toBe(false);
+      expect((await moveProductToCategory(p1.id, other.id, [o1.id])).ok).toBe(false);
+      expect((await moveProductToCategory(p1.id, other.id, [o1.id, p1.id, p1.id])).ok).toBe(false);
+      expect((await moveProductToCategory(p1.id, other.id, [o1.id, p1.id, foreign.id])).ok).toBe(false);
+      expect((await moveProductToCategory(p1.id, other.id, "nope")).ok).toBe(false);
+      expect(await namesIn(catA.id)).toEqual(["P1"]);
+      expect(await namesIn(other.id)).toEqual(["O1"]);
+    });
+
+    it("never crosses tenants", async () => {
+      const mine = await addProduct(a, catA.id, "A1", 0);
+      const foreign = await addProduct(b, catB.id, "B1", 0);
+
+      // Tenant A cannot move its product into tenant B's category.
+      expect((await moveProductToCategory(mine.id, catB.id, [foreign.id, mine.id])).ok).toBe(false);
+      // Tenant A cannot move tenant B's product into its own category.
+      expect((await moveProductToCategory(foreign.id, catA.id, [mine.id, foreign.id])).ok).toBe(false);
+      expect(await namesIn(catA.id)).toEqual(["A1"]);
+      expect(await namesIn(catB.id)).toEqual(["B1"]);
+      expect((await getProduct(b.restaurant.id, foreign.id))?.categoryId).toBe(catB.id);
+    });
+  });
+
   describe("listProducts", () => {
     it("returns the tenant's products in menu order", async () => {
       const second = await addCategory(a, "İkinci", 1);
@@ -460,6 +516,17 @@ describe("product actions", () => {
 
       const list = await listProducts(a.restaurant.id);
       expect(list.map((p) => p.name)).toEqual(["A1", "A2", "S1"]);
+    });
+
+    it("includes the fields the editor needs", async () => {
+      await addProduct(a, catA.id, "Detaylı", 0, {
+        prepTime: "10 dk",
+        calories: 320,
+        allergens: ["milk"],
+        tags: ["vegan"],
+      });
+      const [item] = await listProducts(a.restaurant.id);
+      expect(item).toMatchObject({ prepTime: "10 dk", calories: 320, allergens: ["milk"], tags: ["vegan"] });
     });
   });
 });

@@ -13,6 +13,10 @@ export type ProductListItem = {
   discountPriceMinor: number | null;
   isAvailable: boolean;
   isFeatured: boolean;
+  prepTime: string | null;
+  calories: number | null;
+  allergens: string[];
+  tags: string[];
 };
 
 export type CategoryOption = { id: string; name: string; isActive: boolean };
@@ -39,6 +43,10 @@ export async function listProducts(restaurantId: string): Promise<ProductListIte
       discountPriceMinor: product.discountPriceMinor,
       isAvailable: product.isAvailable,
       isFeatured: product.isFeatured,
+      prepTime: product.prepTime,
+      calories: product.calories,
+      allergens: product.allergens,
+      tags: product.tags,
     })
     .from(product)
     .innerJoin(category, eq(category.id, product.categoryId))

@@ -1,13 +1,7 @@
 "use client";
 
-import type { Route } from "next";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,8 +11,9 @@ import { ImageUpload } from "@/features/media/components/image-upload";
 import { fromZodError, type FieldErrors } from "@/lib/action-result";
 import { cn } from "@/lib/cn";
 import { ALLERGENS, DIETARY_TAGS } from "@/lib/menu-attributes";
+import { toMoneyInput } from "@/lib/money";
 import { createProduct, updateProduct } from "../actions";
-import type { CategoryOption } from "../queries";
+import type { CategoryOption, ProductListItem } from "../queries";
 import { PRODUCT_DESCRIPTION_MAX, productSchema } from "../schema";
 
 /** Form state; money fields are text exactly as typed. */
@@ -37,16 +32,39 @@ export type ProductFormValues = {
   tags: string[];
 };
 
-type ProductFormProps = {
-  categories: CategoryOption[];
-  /** ISO currency code of the restaurant; only used for the input suffix. */
-  currency: string;
-  /** Present when editing. */
-  productId?: string;
-  initialValues: ProductFormValues;
-  /** Where to go after saving or cancelling (the product list, keeping the category filter). */
-  returnHref: string;
-};
+export function emptyProductValues(categoryId: string): ProductFormValues {
+  return {
+    name: "",
+    categoryId,
+    description: "",
+    price: "",
+    discountPrice: "",
+    imageMediaId: null,
+    isAvailable: true,
+    isFeatured: false,
+    prepTime: "",
+    calories: "",
+    allergens: [],
+    tags: [],
+  };
+}
+
+export function valuesFromProduct(item: ProductListItem): ProductFormValues {
+  return {
+    name: item.name,
+    categoryId: item.categoryId,
+    description: item.description ?? "",
+    price: toMoneyInput(item.priceMinor),
+    discountPrice: toMoneyInput(item.discountPriceMinor),
+    imageMediaId: item.imageMediaId,
+    isAvailable: item.isAvailable,
+    isFeatured: item.isFeatured,
+    prepTime: item.prepTime ?? "",
+    calories: item.calories === null ? "" : String(item.calories),
+    allergens: item.allergens,
+    tags: item.tags,
+  };
+}
 
 function currencySymbol(currency: string): string {
   try {
@@ -57,16 +75,25 @@ function currencySymbol(currency: string): string {
   }
 }
 
-export function ProductForm({ categories, currency, productId, initialValues, returnHref }: ProductFormProps) {
-  const router = useRouter();
+type UseProductFormOptions = {
+  /** Present when editing. */
+  productId?: string;
+  initialValues: ProductFormValues;
+  /** Called after the server accepted the product, with the row as the builder shows it. */
+  onSaved: (item: ProductListItem) => void;
+};
+
+/** State and submit logic of the product form; the sheet owns the footer buttons, so it owns this hook. */
+export function useProductForm({ productId, initialValues, onSaved }: UseProductFormOptions) {
   const formRef = useRef<HTMLFormElement>(null);
+  // The values the form started with; later prop refreshes must not make it look dirty.
+  const [initial] = useState(initialValues);
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isSaved, setIsSaved] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  const symbol = currencySymbol(currency);
-  const isDirty = !isSaved && JSON.stringify(values) !== JSON.stringify(initialValues);
+  const isDirty = !isSaved && JSON.stringify(values) !== JSON.stringify(initial);
 
   // Warn before a reload or tab close discards edits.
   useEffect(() => {
@@ -96,258 +123,323 @@ export function ProductForm({ categories, currency, productId, initialValues, re
     });
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  function submit() {
     const input: unknown = values;
     const parsed = productSchema.safeParse(input);
     if (!parsed.success) {
       showErrors(fromZodError(parsed.error).fieldErrors);
       return;
     }
+    const data = parsed.data;
     setErrors({});
     startTransition(async () => {
-      const result = productId ? await updateProduct(productId, input) : await createProduct(input);
-      if (result.ok) {
-        setIsSaved(true);
-        toast.success(productId ? "Ürün güncellendi." : "Ürün eklendi.");
-        router.push(returnHref as Route);
+      let id = productId ?? "";
+      let failure: { error: string; fieldErrors?: FieldErrors } | null = null;
+      if (productId) {
+        const result = await updateProduct(productId, input);
+        if (!result.ok) failure = result;
       } else {
-        showErrors(result.fieldErrors ?? {});
-        toast.error(result.error);
+        const result = await createProduct(input);
+        if (result.ok) id = result.data.id;
+        else failure = result;
       }
+      if (failure) {
+        showErrors(failure.fieldErrors ?? {});
+        toast.error(failure.error);
+        return;
+      }
+      setIsSaved(true);
+      toast.success(productId ? "Ürün güncellendi." : "Ürün eklendi.");
+      onSaved({
+        id,
+        categoryId: data.categoryId,
+        name: data.name,
+        description: data.description,
+        imageMediaId: data.imageMediaId,
+        priceMinor: data.price,
+        discountPriceMinor: data.discountPrice,
+        isAvailable: data.isAvailable,
+        isFeatured: data.isFeatured,
+        prepTime: data.prepTime,
+        calories: data.calories,
+        allergens: data.allergens,
+        tags: data.tags,
+      });
     });
   }
 
+  return { formRef, values, errors, isPending, isDirty, set, toggle, submit };
+}
+
+export type ProductFormState = ReturnType<typeof useProductForm>;
+
+type ProductFormProps = {
+  form: ProductFormState;
+  /** Id of the `<form>`, so a footer button outside it can submit with `form={formId}`. */
+  formId: string;
+  categories: CategoryOption[];
+  /** ISO currency code of the restaurant; only used for the input suffix. */
+  currency: string;
+};
+
+/** The product fields in five groups. Rendered inside the editor sheet. */
+export function ProductForm({ form, formId, categories, currency }: ProductFormProps) {
+  const { formRef, values, errors, isPending, set, toggle, submit } = form;
+  const symbol = currencySymbol(currency);
   const noCategories = categories.length === 0;
 
-  return (
-    <form ref={formRef} onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Temel bilgiler</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <Field label="Ürün adı" required error={errors.name}>
-            <Input
-              value={values.name}
-              onChange={(event) => set("name", event.target.value)}
-              autoComplete="off"
-              placeholder="Örn. Mercimek çorbası"
-              disabled={isPending}
-              autoFocus={!productId}
-            />
-          </Field>
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    submit();
+  }
 
-          <Field label="Kategori" required error={errors.categoryId}>
+  // Enter in a single-line field saves, like a submit button inside the form would.
+  function handleKeyDown(event: React.KeyboardEvent<HTMLFormElement>) {
+    if (event.key !== "Enter" || event.nativeEvent.isComposing) return;
+    const target = event.target;
+    if (target instanceof HTMLInputElement && target.type === "text") {
+      event.preventDefault();
+      submit();
+    }
+  }
+
+  return (
+    <form
+      id={formId}
+      ref={formRef}
+      onSubmit={handleSubmit}
+      onKeyDown={handleKeyDown}
+      noValidate
+      className="flex flex-col gap-8"
+    >
+      <FormSection title="Temel bilgiler">
+        <Field label="Ürün adı" required error={errors.name}>
+          <Input
+            value={values.name}
+            onChange={(event) => set("name", event.target.value)}
+            autoComplete="off"
+            placeholder="Örn. Mercimek çorbası"
+            disabled={isPending}
+          />
+        </Field>
+
+        <Field label="Kategori" required error={errors.categoryId}>
+          {(controlProps) => (
+            <Select
+              value={values.categoryId}
+              onValueChange={(value) => set("categoryId", value)}
+              disabled={isPending || noCategories}
+            >
+              <SelectTrigger {...controlProps}>
+                <SelectValue placeholder="Kategori seçin" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((item) => (
+                  <SelectItem key={item.id} value={item.id}>
+                    {item.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </Field>
+
+        <Field
+          label="Açıklama"
+          optional
+          error={errors.description}
+          hint={`${values.description.trim().length}/${PRODUCT_DESCRIPTION_MAX}`}
+        >
+          <Textarea
+            value={values.description}
+            onChange={(event) => set("description", event.target.value)}
+            rows={3}
+            placeholder="İçindekiler, porsiyon bilgisi, servis şekli…"
+            disabled={isPending}
+          />
+        </Field>
+      </FormSection>
+
+      <FormSection title="Fiyat">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Fiyat" required error={errors.price}>
             {(controlProps) => (
-              <Select
-                value={values.categoryId}
-                onValueChange={(value) => set("categoryId", value)}
-                disabled={isPending || noCategories}
-              >
-                <SelectTrigger {...controlProps}>
-                  <SelectValue placeholder="Kategori seçin" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((item) => (
-                    <SelectItem key={item.id} value={item.id}>
-                      {item.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <PriceInput
+                {...controlProps}
+                symbol={symbol}
+                value={values.price}
+                onChange={(value) => set("price", value)}
+                disabled={isPending}
+                placeholder="0"
+              />
             )}
           </Field>
-
           <Field
-            label="Açıklama"
+            label="İndirimli fiyat"
             optional
-            error={errors.description}
-            hint={`${values.description.trim().length}/${PRODUCT_DESCRIPTION_MAX}`}
+            error={errors.discountPrice}
+            hint="Doluysa fiyat üstü çizili gösterilir."
           >
-            <Textarea
-              value={values.description}
-              onChange={(event) => set("description", event.target.value)}
-              rows={3}
-              placeholder="İçindekiler, porsiyon bilgisi, servis şekli…"
+            {(controlProps) => (
+              <PriceInput
+                {...controlProps}
+                symbol={symbol}
+                value={values.discountPrice}
+                onChange={(value) => set("discountPrice", value)}
+                disabled={isPending}
+                placeholder="0"
+              />
+            )}
+          </Field>
+        </div>
+      </FormSection>
+
+      <FormSection title="Görsel">
+        <ImageUpload
+          value={values.imageMediaId}
+          onChange={(id) => set("imageMediaId", id)}
+          label="Ürün görseli"
+          aspect="wide"
+          disabled={isPending}
+        />
+        {errors.imageMediaId?.[0] && (
+          <p role="alert" className="text-sm font-medium text-danger-text">
+            {errors.imageMediaId[0]}
+          </p>
+        )}
+      </FormSection>
+
+      <FormSection
+        title="Alerjen ve etiketler"
+        description="Alerjen bilgisi yasal bir beyandır. Üründe bulunan tüm alerjenleri eksiksiz işaretlediğinizden emin olun."
+      >
+        <div role="group" aria-label="Üründe bulunan alerjenler" className="flex flex-wrap gap-2">
+          {ALLERGENS.map((allergen) => (
+            <ToggleChip
+              key={allergen.code}
+              id={`allergen-${allergen.code}`}
+              pressed={values.allergens.includes(allergen.code)}
+              disabled={isPending}
+              onToggle={(on) => toggle("allergens", allergen.code, on)}
+            >
+              {allergen.label}
+            </ToggleChip>
+          ))}
+        </div>
+        {errors.allergens?.[0] && (
+          <p role="alert" className="text-sm font-medium text-danger-text">
+            {errors.allergens[0]}
+          </p>
+        )}
+        <p className="type-caption mt-2 text-fg-muted">Etiketler — misafirlerin menüde görebileceği özellikler</p>
+        <div role="group" aria-label="Ürün etiketleri" className="flex flex-wrap gap-2">
+          {DIETARY_TAGS.map((tag) => (
+            <ToggleChip
+              key={tag.code}
+              id={`tag-${tag.code}`}
+              pressed={values.tags.includes(tag.code)}
+              disabled={isPending}
+              onToggle={(on) => toggle("tags", tag.code, on)}
+            >
+              {tag.label}
+            </ToggleChip>
+          ))}
+        </div>
+      </FormSection>
+
+      <FormSection title="Detaylar">
+        <SwitchRow
+          id={`${formId}-available`}
+          label="Stokta var"
+          description="Kapalıysa menüde “Tükendi” olarak görünür."
+          checked={values.isAvailable}
+          onCheckedChange={(checked) => set("isAvailable", checked)}
+          disabled={isPending}
+        />
+        <SwitchRow
+          id={`${formId}-featured`}
+          label="Öne çıkan ürün"
+          description="Menüde öne çıkarılır."
+          checked={values.isFeatured}
+          onCheckedChange={(checked) => set("isFeatured", checked)}
+          disabled={isPending}
+        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Hazırlık süresi" optional error={errors.prepTime}>
+            <Input
+              value={values.prepTime}
+              onChange={(event) => set("prepTime", event.target.value)}
+              placeholder="15-20 dk"
+              autoComplete="off"
               disabled={isPending}
             />
           </Field>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Fiyat" required error={errors.price}>
-              {(controlProps) => (
-                <PriceInput
-                  {...controlProps}
-                  symbol={symbol}
-                  value={values.price}
-                  onChange={(value) => set("price", value)}
-                  disabled={isPending}
-                  placeholder="0"
-                />
-              )}
-            </Field>
-            <Field
-              label="İndirimli fiyat"
-              optional
-              error={errors.discountPrice}
-              hint="Doluysa fiyat üstü çizili gösterilir."
-            >
-              {(controlProps) => (
-                <PriceInput
-                  {...controlProps}
-                  symbol={symbol}
-                  value={values.discountPrice}
-                  onChange={(value) => set("discountPrice", value)}
-                  disabled={isPending}
-                  placeholder="0"
-                />
-              )}
-            </Field>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Görsel</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-1.5">
-          <ImageUpload
-            className="max-w-md"
-            value={values.imageMediaId}
-            onChange={(id) => set("imageMediaId", id)}
-            label="Ürün görseli"
-            aspect="wide"
-            disabled={isPending}
-          />
-          {errors.imageMediaId?.[0] && (
-            <p role="alert" className="text-sm font-medium text-danger">
-              {errors.imageMediaId[0]}
-            </p>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Durum ve detaylar</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <SwitchRow
-            id="product-available"
-            label="Stokta var"
-            description="Kapalıysa menüde “Tükendi” olarak görünür."
-            checked={values.isAvailable}
-            onCheckedChange={(checked) => set("isAvailable", checked)}
-            disabled={isPending}
-          />
-          <SwitchRow
-            id="product-featured"
-            label="Öne çıkan ürün"
-            description="Menüde öne çıkarılır."
-            checked={values.isFeatured}
-            onCheckedChange={(checked) => set("isFeatured", checked)}
-            disabled={isPending}
-          />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Hazırlık süresi" optional error={errors.prepTime}>
-              <Input
-                value={values.prepTime}
-                onChange={(event) => set("prepTime", event.target.value)}
-                placeholder="15-20 dk"
-                autoComplete="off"
-                disabled={isPending}
-              />
-            </Field>
-            <Field label="Kalori (kcal)" optional error={errors.calories}>
-              <Input
-                value={values.calories}
-                onChange={(event) => set("calories", event.target.value)}
-                inputMode="numeric"
-                placeholder="0"
-                autoComplete="off"
-                disabled={isPending}
-              />
-            </Field>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Alerjenler</CardTitle>
-          <CardDescription>
-            Alerjen bilgisi yasal bir beyandır. Üründe bulunan tüm alerjenleri eksiksiz işaretlediğinizden emin olun.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <fieldset className="grid gap-x-4 sm:grid-cols-2" disabled={isPending}>
-            <legend className="sr-only">Üründe bulunan alerjenler</legend>
-            {ALLERGENS.map((allergen) => {
-              const id = `allergen-${allergen.code}`;
-              return (
-                <div key={allergen.code} className="flex min-h-11 items-center gap-3">
-                  <Checkbox
-                    id={id}
-                    checked={values.allergens.includes(allergen.code)}
-                    onCheckedChange={(checked) => toggle("allergens", allergen.code, checked === true)}
-                  />
-                  <label htmlFor={id} className="flex-1 cursor-pointer py-2 text-base select-none">
-                    {allergen.label}
-                  </label>
-                </div>
-              );
-            })}
-          </fieldset>
-          {errors.allergens?.[0] && (
-            <p role="alert" className="mt-2 text-sm font-medium text-danger">
-              {errors.allergens[0]}
-            </p>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Etiketler</CardTitle>
-          <CardDescription>Misafirlerin menüde filtreleyip görebileceği özellikler.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div role="group" aria-label="Ürün etiketleri" className="flex flex-wrap gap-2">
-            {DIETARY_TAGS.map((tag) => {
-              const pressed = values.tags.includes(tag.code);
-              return (
-                <button
-                  key={tag.code}
-                  type="button"
-                  aria-pressed={pressed}
-                  disabled={isPending}
-                  onClick={() => toggle("tags", tag.code, !pressed)}
-                  className={cn(
-                    "inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-medium transition-colors disabled:opacity-50",
-                    pressed
-                      ? "border-accent bg-accent-soft text-accent-text"
-                      : "border-border-strong bg-surface text-fg hover:bg-surface-muted",
-                  )}
-                >
-                  {tag.label}
-                </button>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="sticky bottom-0 z-10 -mx-4 flex flex-col-reverse gap-2 border-t border-border bg-surface/90 px-4 py-3 backdrop-blur sm:mx-0 sm:flex-row sm:justify-end sm:rounded-lg sm:border sm:px-5">
-        <Link href={returnHref as Route} className={buttonVariants({ variant: "secondary" })}>
-          Vazgeç
-        </Link>
-        <Button type="submit" loading={isPending} disabled={noCategories}>
-          {productId ? "Değişiklikleri kaydet" : "Ürünü ekle"}
-        </Button>
-      </div>
+          <Field label="Kalori (kcal)" optional error={errors.calories}>
+            <Input
+              value={values.calories}
+              onChange={(event) => set("calories", event.target.value)}
+              inputMode="numeric"
+              placeholder="0"
+              autoComplete="off"
+              disabled={isPending}
+            />
+          </Field>
+        </div>
+      </FormSection>
     </form>
+  );
+}
+
+function FormSection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  // No accessible name on the section on purpose: five landmarks inside a dialog are noise.
+  return (
+    <section className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1">
+        <h3 className="type-body font-semibold">{title}</h3>
+        {description && <p className="text-sm text-fg-muted">{description}</p>}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function ToggleChip({
+  id,
+  pressed,
+  disabled,
+  onToggle,
+  children,
+}: {
+  id: string;
+  pressed: boolean;
+  disabled: boolean;
+  onToggle: (on: boolean) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      id={id}
+      type="button"
+      aria-pressed={pressed}
+      disabled={disabled}
+      onClick={() => onToggle(!pressed)}
+      className={cn(
+        "type-caption inline-flex min-h-10 items-center rounded-full px-3.5 ring-1 ring-inset transition-colors disabled:opacity-50",
+        pressed
+          ? "bg-ink text-ink-fg ring-ink"
+          : "bg-surface text-fg ring-border-strong hover:bg-surface-muted",
+      )}
+    >
+      {children}
+    </button>
   );
 }
 

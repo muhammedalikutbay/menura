@@ -14,12 +14,12 @@ import { idListSchema, idSchema, MAX_PRODUCTS, PRODUCT_NAME_MAX, productSchema, 
 type Tx = Parameters<Parameters<Database["transaction"]>[0]>[0];
 
 const COPY_SUFFIX = " (kopya)";
+const reorderSchema = z.object({ categoryId: idSchema, orderedIds: z.array(idSchema).max(MAX_PRODUCTS) });
 const LIMIT_MESSAGE = `En fazla ${MAX_PRODUCTS} ürün ekleyebilirsiniz.`;
 
 function revalidateMenu(slug: string) {
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/menu");
-  revalidatePath("/dashboard/products/[id]", "page");
   revalidatePath(`/m/${slug}`);
 }
 
@@ -249,6 +249,51 @@ export async function moveProducts(ids: unknown, categoryId: string): Promise<Ac
   return ok({ moved });
 }
 
+/**
+ * Moves one product into another category at a given position (drag and drop). `orderedIds` is the
+ * target category's complete new order and must contain exactly its current products plus the
+ * moved one. Dropping inside its own category behaves like `reorderProducts`.
+ */
+export async function moveProductToCategory(
+  productId: string,
+  categoryId: string,
+  orderedIds: unknown,
+): Promise<ActionResult> {
+  const { restaurant } = await requireRestaurant();
+  const parsed = reorderSchema.safeParse({ categoryId, orderedIds });
+  if (!parsed.success || !idSchema.safeParse(productId).success) return fail("Geçersiz sıralama.");
+  const ids = parsed.data.orderedIds;
+
+  if (!(await ownsCategory(restaurant.id, categoryId))) return fail("Kategori bulunamadı.");
+  const [moving] = await db
+    .select({ id: product.id })
+    .from(product)
+    .where(and(eq(product.id, productId), eq(product.restaurantId, restaurant.id)))
+    .limit(1);
+  if (!moving) return fail("Ürün bulunamadı.");
+
+  const result = await db.transaction(async (tx) => {
+    const siblings = await tx
+      .select({ id: product.id })
+      .from(product)
+      .where(and(eq(product.categoryId, categoryId), eq(product.restaurantId, restaurant.id)));
+    const expected = new Set([...siblings.map((row) => row.id), productId]);
+    if (ids.length !== expected.size || new Set(ids).size !== ids.length || !ids.every((id) => expected.has(id))) {
+      return false;
+    }
+    await tx
+      .update(product)
+      .set({ categoryId })
+      .where(and(eq(product.id, productId), eq(product.restaurantId, restaurant.id)));
+    await writePositions(tx, restaurant.id, ids);
+    return true;
+  });
+  if (!result) return fail("Sıralama geçersiz. Sayfayı yenileyip tekrar deneyin.");
+
+  revalidateMenu(restaurant.slug);
+  return ok();
+}
+
 /** Creates "<name> (kopya)" right after the original in the same category. */
 export async function duplicateProduct(id: string): Promise<ActionResult<{ id: string }>> {
   const { restaurant } = await requireRestaurant();
@@ -300,8 +345,6 @@ export async function duplicateProduct(id: string): Promise<ActionResult<{ id: s
   revalidateMenu(restaurant.slug);
   return ok({ id: copyId });
 }
-
-const reorderSchema = z.object({ categoryId: idSchema, orderedIds: z.array(idSchema).max(MAX_PRODUCTS) });
 
 /** Persists the order of one category's products. `orderedIds` must be exactly that category's product ids. */
 export async function reorderProducts(categoryId: string, orderedIds: unknown): Promise<ActionResult> {
