@@ -63,3 +63,6 @@ drizzle/            generated SQL migrations (commit them; never edit applied on
 ## Task tracking
 Beads (`bd`), see the `beads-workflow` skill. Only the main session writes to `bd`;
 subagents report results back instead.
+Everything in Beads (titles, descriptions, board comments) is exported to `.beads/issues.jsonl`
+and committed to a public repo: never write secrets, connection strings or passwords there.
+Netlify's secret scanning fails the deploy if a configured secret appears in the repo (mnr-58i.12).
