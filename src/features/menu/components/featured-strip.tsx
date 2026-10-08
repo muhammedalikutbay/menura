@@ -20,7 +20,7 @@ export function FeaturedStrip({ products, currency }: { products: PublicProduct[
         {products.map((product) => (
           <li key={product.id} className="relative flex w-40 shrink-0 scroll-ml-4 snap-start flex-col gap-2">
             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-surface-muted">
-              {product.imageUrl && (
+              {product.imageUrl ? (
                 <MenuImage
                   src={product.imageUrl}
                   alt=""
@@ -29,6 +29,14 @@ export function FeaturedStrip({ products, currency }: { products: PublicProduct[
                   sizes="160px"
                   className="object-cover"
                 />
+              ) : (
+                // No photo: a soft accent tile with the dish's initial instead of an empty grey box.
+                <div
+                  aria-hidden="true"
+                  className="flex size-full items-center justify-center bg-[color-mix(in_oklab,var(--color-accent)_14%,var(--color-surface))] text-3xl font-semibold text-(--menu-accent-text)"
+                >
+                  {product.name.trim().charAt(0).toLocaleUpperCase("tr-TR")}
+                </div>
               )}
             </div>
             <h3 className="line-clamp-2 text-[15px] leading-snug font-semibold">

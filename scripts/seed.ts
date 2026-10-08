@@ -127,7 +127,10 @@ for (const [categoryIndex, seedCategory] of seedData.entries()) {
   if (!created) continue;
 
   const attributes = CATEGORY_ATTRIBUTES[seedCategory.name] ?? { allergens: [], tags: [] };
-  for (const [productIndex, seedProduct] of (seedCategory.products as SeedProduct[]).entries()) {
+  const seedProducts = seedCategory.products as SeedProduct[];
+  // Feature the first product that has a photo, so the "Öne çıkanlar" strip looks complete.
+  const featuredIndex = seedProducts.findIndex((p) => p.image);
+  for (const [productIndex, seedProduct] of seedProducts.entries()) {
     const imageMediaId = await storeImage(demo.id, seedProduct.image);
     if (imageMediaId) imageCount++;
     await db.insert(s.product).values({
@@ -139,7 +142,7 @@ for (const [categoryIndex, seedCategory] of seedData.entries()) {
       priceMinor: Math.round(seedProduct.price * 100),
       // A couple of discounted and featured items to exercise those states.
       discountPriceMinor: productIndex === 1 ? Math.round(seedProduct.price * 0.85) * 100 : null,
-      isFeatured: productIndex === 0,
+      isFeatured: productIndex === featuredIndex,
       position: productIndex,
       allergens: attributes.allergens,
       tags: attributes.tags,
