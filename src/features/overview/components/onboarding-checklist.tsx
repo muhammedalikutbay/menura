@@ -29,7 +29,7 @@ export function OnboardingChecklist({ progress }: { progress: ChecklistProgress 
       id: "category",
       label: "Kategori ekle",
       hint: "Menünüzü Çorbalar, Tatlılar gibi bölümlere ayırın.",
-      href: "/dashboard/categories",
+      href: "/dashboard/menu",
       done: progress.hasCategory,
     },
     {
@@ -43,14 +43,14 @@ export function OnboardingChecklist({ progress }: { progress: ChecklistProgress 
       id: "logo",
       label: "Logo yükle",
       hint: "Menünüzün üstünde ve QR kodun ortasında görünür.",
-      href: "/dashboard/settings",
+      href: "/dashboard/restaurant",
       done: progress.hasLogo,
     },
     {
       id: "publish",
       label: "Menüyü yayınla",
       hint: "Yayınlanana kadar misafirler menünüzü göremez.",
-      href: "/dashboard/settings",
+      href: "/dashboard/appearance",
       done: progress.isPublished,
     },
     {

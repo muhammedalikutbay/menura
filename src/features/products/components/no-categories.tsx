@@ -12,7 +12,7 @@ export function NoCategories() {
       title="Önce bir kategori ekleyin"
       description="Ürünler bir kategoriye bağlıdır. Ürün eklemeden önce en az bir kategori oluşturmanız gerekir."
       action={
-        <Link href={"/dashboard/categories" as Route} className={buttonVariants()}>
+        <Link href={"/dashboard/menu" as Route} className={buttonVariants()}>
           Kategorilere git
         </Link>
       }

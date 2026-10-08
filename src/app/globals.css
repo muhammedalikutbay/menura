@@ -1,62 +1,92 @@
 @import "tailwindcss";
 
 /*
- * Menura design tokens.
+ * Menura design tokens (docs/design/design-language.md §2). Light only.
  *
  * Semantic names only: components use `bg-surface`, `text-fg-muted`, `bg-accent`, ...
- * never raw hex. Dark values live in the `prefers-color-scheme` block below.
+ * never raw hex.
  *
  * Per-restaurant theming: set `--color-accent` inline on a wrapper element
  * (`style={{ "--color-accent": restaurant.themeColor }}`). Every accent variant is derived
  * with color-mix() at the element that uses it, so the override cascades to all of them.
  */
 
-/* Base tokens. `static` keeps every variable in the output (the dark block and wrappers rely on them). */
+/* Base tokens. `static` keeps every variable in the output (wrappers rely on them). */
 @theme static {
   /* Surfaces */
-  --color-bg: #ffffff;
-  --color-canvas: #f5f5f7; /* dashboard page background behind cards */
-  --color-surface: #ffffff;
-  --color-surface-muted: #f5f5f7;
-  --color-overlay: rgb(0 0 0 / 0.4);
+  --color-canvas: #f7f7f9; /* app/page background behind cards */
+  --color-bg: #ffffff; /* marketing and guest menu background */
+  --color-surface: #ffffff; /* cards, header, sheets */
+  --color-surface-muted: #f2f2f5; /* inset areas, chips, hover fill */
+  --color-overlay: rgb(17 17 20 / 0.4);
 
   /* Text */
-  --color-fg: #1d1d1f;
-  --color-fg-muted: #6e6e73; /* 5:1 on white, 4.6:1 on surface-muted */
+  --color-fg: #0b0b0f;
+  --color-fg-muted: #62626c; /* 6.0:1 on white, 5.4:1 on surface-muted */
+  --color-fg-subtle: #8e8e98; /* 3.2:1: large text and non-essential meta only */
 
-  /* Lines. `border` is decorative; `border-strong` meets 3:1 for form controls. */
-  --color-border: #d2d2d7;
-  --color-border-strong: #8e8e93;
+  /* Lines. `border` is a decorative hairline; `border-strong` is a visible outline. */
+  --color-border: #e9e9ee;
+  --color-border-strong: #c9c9d2;
+  /* Form control outlines (inputs, checkboxes, switch off-state) need 3:1 against the surface
+     (WCAG 1.4.11); border-strong is only ~1.6:1, so controls use this one. */
+  --color-border-control: #8e8e98;
 
-  /* Accent (overridable per restaurant) */
-  --color-accent: #0071e3;
+  /* Ink: primary pill buttons, stats band, tooltips */
+  --color-ink: #111114;
+  --color-ink-fg: #ffffff;
+
+  /* Accent: brand violet (overridable per restaurant) */
+  --color-accent: #6e56cf;
   --color-accent-fg: #ffffff;
 
-  /* Semantic. Strong enough for text on white and on their own soft tint. */
-  --color-success: #1e7b34;
-  --color-warning: #b25000;
-  --color-danger: #d70015;
+  /* Dark text on the brand gradient */
+  --color-brand-fg: #1b1027;
+
+  /* Semantic */
+  --color-success: #1f9d55;
+  --color-warning: #b45309;
+  --color-danger: #d92d20;
   --color-danger-fg: #ffffff; /* text on a solid danger background */
 
   /* Radii */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-sm: 10px; /* chips, small buttons */
+  --radius-md: 14px; /* inputs, menu items */
+  --radius-lg: 20px; /* cards */
+  --radius-xl: 28px; /* sections, sheets, hero frames */
+  --radius-pill: 9999px;
 
-  /* Soft shadows */
+  /* Elevation. Prefer the hairline for resting cards. */
+  --shadow-hairline: 0 0 0 1px var(--color-border);
+  --shadow-float:
+    0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -6px rgb(17 17 20 / 0.1), 0 24px 48px -12px rgb(17 17 20 / 0.08);
+  --shadow-sheet:
+    0 2px 4px rgb(0 0 0 / 0.05), 0 16px 40px -8px rgb(17 17 20 / 0.16), 0 40px 80px -16px rgb(17 17 20 / 0.16);
+  /* Legacy scale, still used by older call sites. */
   --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.04);
   --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.04);
-  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.07), 0 2px 4px rgb(0 0 0 / 0.04);
-  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.12), 0 4px 8px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 4px 12px rgb(17 17 20 / 0.07), 0 2px 4px rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 12px 32px rgb(17 17 20 / 0.12), 0 4px 8px rgb(0 0 0 / 0.04);
 
-  /* Motion */
+  /* Brand gradient: decorative only (glows, step dots, highlight CTA). Never behind body text. */
+  --gradient-brand: linear-gradient(120deg, #b9a6ff 0%, #f3a8dc 50%, #ffc79a 100%);
+
+  /* Motion: 180 ms default, 260 ms sheets */
+  --default-transition-duration: 180ms;
+  --default-transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+
   --animate-fade-in: fade-in 150ms ease-out;
   --animate-fade-out: fade-out 120ms ease-in;
-  --animate-pop-in: pop-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-pop-in: pop-in 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
   --animate-pop-out: pop-out 120ms ease-in;
-  --animate-sheet-in: sheet-in 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-sheet-in: sheet-in 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
   --animate-sheet-out: sheet-out 180ms ease-in;
+  --animate-panel-in: panel-in 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-panel-out: panel-out 180ms ease-in;
+  /* Reveal: fade + 12px rise, once. Stagger with `style={{ "--reveal-delay": "60ms" }}`. */
+  --animate-reveal: reveal 600ms cubic-bezier(0.2, 0.8, 0.2, 1) var(--reveal-delay, 0ms) both;
+  /* Floating cards bob +-4px over 6s. */
+  --animate-bob: bob 6s ease-in-out infinite;
 
   @keyframes fade-in {
     from { opacity: 0; }
@@ -82,6 +112,22 @@
     from { transform: translateY(0); }
     to { transform: translateY(100%); }
   }
+  @keyframes panel-in {
+    from { opacity: 0; transform: translateX(calc(100% + 16px)); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes panel-out {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(calc(100% + 16px)); }
+  }
+  @keyframes reveal {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
 }
 
 /*
@@ -92,51 +138,30 @@
   --font-sans:
     var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
     sans-serif;
+  --font-serif-accent: var(--font-instrument-serif), ui-serif, Georgia, "Times New Roman", serif;
 
   --color-accent-hover: color-mix(in oklab, var(--color-accent), var(--shift-target) 14%);
   --color-accent-soft: color-mix(in oklab, var(--color-accent) 12%, transparent);
-  /* Accent for text and icons on surfaces: darker on light, lighter on dark. */
+  /* Accent for text and icons on light surfaces: shifted toward black. */
   --color-accent-text: color-mix(in oklab, var(--color-accent), var(--shift-target) var(--accent-text-shift));
+
+  --color-ink-hover: color-mix(in oklab, var(--color-ink), white 16%);
 
   --color-success-soft: color-mix(in oklab, var(--color-success) 12%, transparent);
   --color-warning-soft: color-mix(in oklab, var(--color-warning) 12%, transparent);
   --color-danger-soft: color-mix(in oklab, var(--color-danger) 10%, transparent);
   --color-danger-hover: color-mix(in oklab, var(--color-danger), var(--shift-target) 14%);
+
+  /* Status colors for small text (AA on white and on their own soft tint). */
+  --color-success-text: color-mix(in oklab, var(--color-success), black 28%);
+  --color-warning-text: color-mix(in oklab, var(--color-warning), black 12%);
+  --color-danger-text: color-mix(in oklab, var(--color-danger), black 12%);
 }
 
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   --shift-target: black;
   --accent-text-shift: 15%;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --shift-target: white;
-    --accent-text-shift: 45%;
-
-    --color-bg: #000000;
-    --color-canvas: #000000;
-    --color-surface: #1c1c1e;
-    --color-surface-muted: #2c2c2e;
-    --color-overlay: rgb(0 0 0 / 0.6);
-
-    --color-fg: #f5f5f7;
-    --color-fg-muted: #a1a1a6;
-
-    --color-border: #38383a;
-    --color-border-strong: #7c7c80;
-
-    --color-success: #30d158;
-    --color-warning: #ff9f0a;
-    --color-danger: #ff453a;
-    --color-danger-fg: #000000;
-
-    --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.4);
-    --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.5);
-    --shadow-md: 0 4px 12px rgb(0 0 0 / 0.5);
-    --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.65);
-  }
 }
 
 @layer base {
@@ -150,6 +175,7 @@
     background-color: var(--color-bg);
     color: var(--color-fg);
     font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
     font-size: 1rem;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
@@ -189,6 +215,86 @@
       transition-duration: 0.01ms !important;
     }
   }
+}
+
+/* Reveal and bob are purely decorative: skip them entirely for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-reveal,
+  .animate-bob {
+    animation: none !important;
+  }
+}
+
+/*
+ * Typography scale (design-language §2). Prefixed `type-` on purpose: tailwind-merge (used by
+ * `cn`) treats unknown `text-*` classes as colors and would drop them next to `text-fg`.
+ */
+@utility type-display-xl {
+  font-size: clamp(44px, 7vw, 88px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+}
+@utility type-display {
+  font-size: clamp(36px, 5vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  font-weight: 600;
+}
+@utility type-title-lg {
+  font-size: 32px;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  font-weight: 600;
+}
+@utility type-title {
+  font-size: 20px;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+}
+@utility type-body-lg {
+  font-size: 18px;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  font-weight: 400;
+}
+@utility type-body {
+  font-size: 15px;
+  line-height: 1.55;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+@utility type-caption {
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+/* Sentence case, never ALL CAPS. */
+@utility type-overline {
+  font-size: 12px;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+/* Italic serif accent: at most one word or phrase per headline, never body text. */
+@utility font-display-accent {
+  font-family: var(--font-serif-accent);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+/* Prices and stats. */
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Brand gradient as a background image (glows, step dots, highlight CTA). */
+@utility gradient-brand {
+  background-image: var(--gradient-brand);
 }
 
 @utility no-scrollbar {

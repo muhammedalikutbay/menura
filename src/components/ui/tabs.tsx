@@ -7,11 +7,11 @@ export function Tabs({ className, ...props }: React.ComponentProps<typeof TabsPr
   return <TabsPrimitive.Root className={cn("flex flex-col gap-4", className)} {...props} />;
 }
 
-/** Segmented-control style tab bar. */
+/** Pill-shaped segmented tab bar. */
 export function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
   return (
     <TabsPrimitive.List
-      className={cn("inline-flex w-fit max-w-full items-center gap-1 rounded-md bg-surface-muted p-1", className)}
+      className={cn("inline-flex w-fit max-w-full items-center gap-1 rounded-full bg-surface-muted p-1", className)}
       {...props}
     />
   );
@@ -21,8 +21,8 @@ export function TabsTrigger({ className, ...props }: React.ComponentProps<typeof
   return (
     <TabsPrimitive.Trigger
       className={cn(
-        "inline-flex h-9 items-center justify-center gap-2 rounded-sm px-4 text-sm font-medium whitespace-nowrap text-fg-muted transition-colors",
-        "hover:text-fg data-[state=active]:bg-surface data-[state=active]:text-fg data-[state=active]:shadow-xs",
+        "inline-flex h-9 items-center justify-center gap-2 rounded-full px-4 text-sm font-medium whitespace-nowrap text-fg-muted transition-colors",
+        "hover:text-fg data-[state=active]:bg-surface data-[state=active]:text-fg data-[state=active]:shadow-sm",
         "disabled:pointer-events-none disabled:opacity-50",
         className,
       )}

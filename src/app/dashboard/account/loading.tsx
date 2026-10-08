@@ -1,11 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function SettingsLoading() {
+export default function AccountLoading() {
   return (
     <div aria-busy="true" className="flex flex-col gap-6">
       <span className="sr-only" role="status">
-        Ayarlar yükleniyor
+        Hesap ayarları yükleniyor
       </span>
       <div className="flex flex-col gap-2">
         <Skeleton className="h-9 w-40" />

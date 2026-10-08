@@ -161,7 +161,7 @@ export function QrCustomizer({ menuUrl, restaurantName, slug, logoUrl }: QrCusto
             <Label htmlFor="qr-logo">Ortada logo göster</Label>
             {!logoUrl && (
               <Link
-                href={"/dashboard/settings" as Route}
+                href={"/dashboard/restaurant" as Route}
                 className="text-sm font-medium text-accent-text underline-offset-4 hover:underline"
               >
                 Logo yükle

@@ -102,7 +102,8 @@ Kategorileri ve ürünleri tek ekrandan yönetin.
   `components/ui/sortable.tsx`).
 - "+ Ürün ekle" at the bottom of each category opens the editor sheet with that category preset.
 - Editor sheet: a **floating** right panel (480 px, 16 px inset from the viewport edges and below the
-  header, radius-xl, shadow-float; the page stays visible and scrollable) / bottom sheet on mobile.
+  header, radius-xl, shadow-float; the page stays visible behind a faint tint, scroll is locked while open
+  because the panel is modal for focus trapping) / bottom sheet on mobile.
   The existing ProductForm fields, grouped:
   Temel bilgiler · Fiyat · Görsel · Alerjen ve etiketler · Detaylar; sticky footer
   "Vazgeç" / "Kaydet". Unsaved-changes confirm on close. URL reflects state: `?product=<id>`,

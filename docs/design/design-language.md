@@ -37,7 +37,8 @@ Defined in `src/app/globals.css` (`@theme`). Components use tokens only — neve
 | `--color-fg-muted` | `#62626C` | Secondary text (≥ 4.5:1 on white) |
 | `--color-fg-subtle` | `#8E8E98` | Placeholders, meta (large/≥14px medium only) |
 | `--color-border` | `#E9E9EE` | Hairlines |
-| `--color-border-strong` | `#C9C9D2` | Inputs, focusable outlines (≥ 3:1) |
+| `--color-border-strong` | `#C9C9D2` | Stronger hairlines (decorative) |
+| `--color-border-control` | `#8E8E98` | Input, checkbox and switch outlines (3.2:1) |
 | `--color-ink` | `#111114` | Primary pill buttons (bg), stats band |
 | `--color-ink-fg` | `#FFFFFF` | Text on ink |
 | `--color-accent` | `#6E56CF` | Brand violet: links, focus, selected states |
@@ -68,7 +69,9 @@ The restaurant's `themeColor` keeps working exactly as today (`menuThemeVars` �
 | caption | 13px / 1.45 / 0 / 500 |
 | overline | 12px / 1.3 / 0.04em / 600, sentence case (no ALL CAPS) |
 
-Numbers in prices and stats use `font-variant-numeric: tabular-nums`.
+Implemented as utilities `type-display-xl`, `type-display`, `type-title-lg`, `type-title`, `type-body-lg`,
+`type-body`, `type-caption`, `type-overline` (not `text-*`: tailwind-merge would treat those as colors and
+drop them). Numbers in prices and stats use the `tabular` utility.
 
 ### Radius
 `--radius-sm 10px` (chips, small buttons) · `--radius-md 14px` (inputs, menu items) ·

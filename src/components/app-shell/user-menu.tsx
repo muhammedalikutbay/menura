@@ -1,9 +1,10 @@
 "use client";
 
 import type { Route } from "next";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ChevronsUpDown, LogOut } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import {
@@ -15,16 +16,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-type UserMenuProps = { user: { name: string; email: string } };
+type User = { name: string; email: string };
 
-function initials(name: string) {
+export function initials(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   const first = parts[0]?.[0] ?? "?";
   const last = parts.length > 1 ? (parts[parts.length - 1]?.[0] ?? "") : "";
   return (first + last).toLocaleUpperCase("tr-TR");
 }
 
-export function UserMenu({ user }: UserMenuProps) {
+/** Signs out and returns to the login page. Shared by the avatar menu and the mobile sheet. */
+export function useSignOut() {
   const router = useRouter();
   const [pending, setPending] = useState(false);
 
@@ -41,33 +43,35 @@ export function UserMenu({ user }: UserMenuProps) {
     }
   }
 
+  return { pending, signOut };
+}
+
+export function UserMenu({ user }: { user: User }) {
+  const { pending, signOut } = useSignOut();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="flex min-h-12 w-full items-center gap-3 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-surface-muted data-[state=open]:bg-surface-muted"
+          aria-label="Hesap menüsü"
+          className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent-soft text-sm font-semibold text-accent-text transition-colors hover:bg-accent-soft/80 data-[state=open]:ring-2 data-[state=open]:ring-accent/40"
         >
-          <span
-            aria-hidden="true"
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent-soft text-sm font-semibold text-accent-text"
-          >
-            {initials(user.name)}
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-medium">{user.name}</span>
-            <span className="block truncate text-xs text-fg-muted">{user.email}</span>
-          </span>
-          <ChevronsUpDown aria-hidden="true" className="size-4 shrink-0 text-fg-muted" />
-          <span className="sr-only">Hesap menüsü</span>
+          <span aria-hidden="true">{initials(user.name)}</span>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" side="top" className="w-(--radix-dropdown-menu-trigger-width) min-w-56">
+      <DropdownMenuContent align="end" sideOffset={10} className="min-w-60">
         <DropdownMenuLabel>
           <span className="block truncate font-medium">{user.name}</span>
           <span className="block truncate text-xs font-normal text-fg-muted">{user.email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href={"/dashboard/account" as Route}>
+            <Settings aria-hidden="true" />
+            Hesap ayarları
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem
           disabled={pending}
           onSelect={(event) => {

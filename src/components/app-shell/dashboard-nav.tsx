@@ -3,28 +3,39 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, QrCode, Settings, Tags, UtensilsCrossed, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/cn";
 
-type NavItem = { href: Route; label: string; icon: LucideIcon; exact?: boolean };
+type NavItem = { href: Route; label: string; exact?: boolean };
 
-// Cast to Route: not every target page exists yet while the dashboard is being built.
-const NAV_ITEMS: NavItem[] = [
-  { href: "/dashboard" as Route, label: "Genel bakış", icon: LayoutDashboard, exact: true },
-  { href: "/dashboard/categories" as Route, label: "Kategoriler", icon: Tags },
-  { href: "/dashboard/products" as Route, label: "Ürünler", icon: UtensilsCrossed },
-  { href: "/dashboard/qr" as Route, label: "QR kod", icon: QrCode },
-  { href: "/dashboard/settings" as Route, label: "Ayarlar", icon: Settings },
+// Cast to Route: typed routes are generated at build time.
+export const NAV_ITEMS: NavItem[] = [
+  { href: "/dashboard" as Route, label: "Genel bakış", exact: true },
+  { href: "/dashboard/menu" as Route, label: "Menü" },
+  { href: "/dashboard/restaurant" as Route, label: "Restoran" },
+  { href: "/dashboard/appearance" as Route, label: "Görünüm" },
+  { href: "/dashboard/qr" as Route, label: "QR kod" },
 ];
 
-export function DashboardNav({ onNavigate }: { onNavigate?: () => void }) {
+export function isNavActive(pathname: string, href: string, exact?: boolean) {
+  return exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
+}
+
+/** Horizontal pill links (desktop header) or a vertical list (bottom sheet). */
+export function DashboardNav({
+  orientation = "horizontal",
+  onNavigate,
+}: {
+  orientation?: "horizontal" | "vertical";
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
+  const vertical = orientation === "vertical";
 
   return (
     <nav aria-label="Ana menü">
-      <ul className="flex flex-col gap-1">
-        {NAV_ITEMS.map(({ href, label, icon: Icon, exact }) => {
-          const active = exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
+      <ul className={cn("flex", vertical ? "flex-col gap-1" : "items-center gap-1")}>
+        {NAV_ITEMS.map(({ href, label, exact }) => {
+          const active = isNavActive(pathname, href, exact);
           return (
             <li key={href}>
               <Link
@@ -32,11 +43,15 @@ export function DashboardNav({ onNavigate }: { onNavigate?: () => void }) {
                 onClick={onNavigate}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex min-h-11 items-center gap-3 rounded-md px-3 text-[15px] font-medium transition-colors",
-                  active ? "bg-accent-soft text-accent-text" : "text-fg-muted hover:bg-surface-muted hover:text-fg",
+                  "relative inline-flex items-center text-[15px] font-medium transition-colors",
+                  vertical ? "min-h-11 w-full rounded-md px-3" : "h-10 rounded-full px-3.5",
+                  active ? "text-fg" : "text-fg-muted hover:text-fg",
+                  vertical && active && "bg-surface-muted",
+                  !vertical &&
+                    active &&
+                    "after:absolute after:inset-x-3.5 after:bottom-1 after:h-0.5 after:rounded-full after:bg-fg",
                 )}
               >
-                <Icon aria-hidden="true" className="size-5 shrink-0" />
                 {label}
               </Link>
             </li>

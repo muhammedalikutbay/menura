@@ -18,8 +18,7 @@ const LIMIT_MESSAGE = `En fazla ${MAX_PRODUCTS} ürün ekleyebilirsiniz.`;
 
 function revalidateMenu(slug: string) {
   revalidatePath("/dashboard");
-  revalidatePath("/dashboard/categories");
-  revalidatePath("/dashboard/products");
+  revalidatePath("/dashboard/menu");
   revalidatePath("/dashboard/products/[id]", "page");
   revalidatePath(`/m/${slug}`);
 }

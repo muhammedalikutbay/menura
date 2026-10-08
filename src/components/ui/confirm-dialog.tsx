@@ -55,9 +55,9 @@ export function ConfirmDialog({
           {...(description ? {} : { "aria-describedby": undefined })}
         >
           <div className="flex flex-col gap-1.5">
-            <AlertDialog.Title className="text-lg font-semibold tracking-tight">{title}</AlertDialog.Title>
+            <AlertDialog.Title className="type-title">{title}</AlertDialog.Title>
             {description && (
-              <AlertDialog.Description className="text-sm text-fg-muted">{description}</AlertDialog.Description>
+              <AlertDialog.Description className="type-body text-fg-muted">{description}</AlertDialog.Description>
             )}
           </div>
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">

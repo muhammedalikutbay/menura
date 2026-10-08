@@ -11,8 +11,7 @@ import { categorySchema, idSchema, MAX_CATEGORIES, orderedIdsSchema } from "./sc
 
 function revalidateMenu(slug: string) {
   revalidatePath("/dashboard");
-  revalidatePath("/dashboard/categories");
-  revalidatePath("/dashboard/products");
+  revalidatePath("/dashboard/menu");
   revalidatePath(`/m/${slug}`);
 }
 

@@ -14,8 +14,8 @@ export function PageHeader({ title, description, actions, className, ...props }:
       {...props}
     >
       <div className="flex min-w-0 flex-col gap-1">
-        <h1 className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl">{title}</h1>
-        {description && <p className="max-w-2xl text-base text-fg-muted">{description}</p>}
+        <h1 className="type-title-lg text-balance">{title}</h1>
+        {description && <p className="type-body max-w-2xl text-fg-muted">{description}</p>}
       </div>
       {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
     </header>

@@ -18,7 +18,7 @@ export default async function NewProductPage({
 
   const filterId =
     typeof category === "string" && categories.some((item) => item.id === category) ? category : null;
-  const returnHref = filterId ? `/dashboard/products?category=${filterId}` : "/dashboard/products";
+  const returnHref = filterId ? `/dashboard/menu?category=${filterId}` : "/dashboard/menu";
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">

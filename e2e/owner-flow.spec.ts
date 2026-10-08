@@ -28,7 +28,7 @@ test("owner builds and publishes a menu that guests can open", async ({ page, br
   expect((await guest.goto(`/m/${slug}`))?.status()).toBe(404);
 
   // Category
-  await page.goto("/dashboard/categories");
+  await page.goto("/dashboard/menu");
   await page.getByRole("button", { name: "Yeni kategori" }).first().click();
   await page.getByLabel("Kategori adı").fill("Çorbalar");
   await page.getByRole("button", { name: "Kategori ekle" }).click();
@@ -44,11 +44,11 @@ test("owner builds and publishes a menu that guests can open", async ({ page, br
   }
   await page.getByLabel(/^Fiyat/).fill("120,50");
   await page.getByRole("button", { name: "Ürünü ekle" }).click();
-  await expect(page).toHaveURL(/\/dashboard\/products/);
+  await expect(page).toHaveURL(/\/dashboard\/menu/);
   await expect(page.getByText("Mercimek Çorbası").first()).toBeVisible();
 
   // Publish
-  await page.goto("/dashboard/settings");
+  await page.goto("/dashboard/appearance");
   await page.getByRole("switch", { name: "Menüyü yayınla" }).click();
   await expect(page.getByRole("switch", { name: "Menüyü yayınla" })).toBeChecked();
 

@@ -2,28 +2,33 @@ import { Slot } from "radix-ui";
 import { cn } from "@/lib/cn";
 import { Spinner } from "./spinner";
 
-export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "destructive" | "link";
+/** `outline` is kept as an alias of `secondary` for older call sites. `brand` is for the landing hero CTA only. */
+export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "destructive" | "link" | "brand";
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const base =
-  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium " +
-  "transition-colors select-none disabled:pointer-events-none disabled:opacity-50 " +
+  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium " +
+  "transition-[background-color,color,box-shadow,filter] select-none disabled:pointer-events-none disabled:opacity-50 " +
   "aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:shrink-0";
 
 const sizes: Record<ButtonSize, string> = {
-  sm: "h-9 px-3.5 text-sm [&_svg]:size-4",
-  md: "h-11 px-5 text-base [&_svg]:size-5", // 44px: meets the touch target rule
-  lg: "h-12 px-6 text-base [&_svg]:size-5",
-  icon: "size-11 [&_svg]:size-5",
+  sm: "h-9 px-4 text-sm [&_svg]:size-4", // 36px
+  md: "h-11 px-5 text-[15px] [&_svg]:size-5", // 44px: meets the touch target rule
+  lg: "h-13 px-7 text-base [&_svg]:size-5", // 52px
+  // 40px circle; the pseudo-element extends the hit area to 44px.
+  icon: "relative size-10 after:absolute after:-inset-0.5 after:rounded-full after:content-[''] [&_svg]:size-5",
 };
 
+const secondary = "bg-surface text-fg ring-1 ring-inset ring-border-strong hover:bg-surface-muted";
+
 const variants: Record<ButtonVariant, string> = {
-  primary: "bg-accent text-accent-fg hover:bg-accent-hover",
-  secondary: "bg-surface-muted text-fg hover:bg-border",
-  outline: "border border-border-strong bg-surface text-fg hover:bg-surface-muted",
+  primary: "bg-ink text-ink-fg hover:bg-ink-hover",
+  secondary,
+  outline: secondary,
   ghost: "text-fg hover:bg-surface-muted",
   destructive: "bg-danger text-danger-fg hover:bg-danger-hover",
   link: "h-auto rounded-sm p-0 text-accent-text underline-offset-4 hover:underline",
+  brand: "gradient-brand text-brand-fg shadow-float hover:brightness-[0.97]",
 };
 
 /** Class names for a button; use it to style links (`<Link className={buttonVariants()}>`). */
@@ -83,4 +88,13 @@ export function Button({
       {children}
     </button>
   );
+}
+
+/** 40px circular ghost button for icon-only actions. `aria-label` is required (Turkish). */
+export function IconButton({
+  variant = "ghost",
+  className,
+  ...props
+}: Omit<ButtonProps, "size" | "aria-label"> & { "aria-label": string }) {
+  return <Button variant={variant} size="icon" className={className} {...props} />;
 }

@@ -61,7 +61,7 @@ export function Field({ label, hint, error, required, optional, className, child
       <Label htmlFor={controlId}>
         {label}
         {required && (
-          <span aria-hidden="true" className="ml-0.5 text-danger">
+          <span aria-hidden="true" className="ml-0.5 text-danger-text">
             *
           </span>
         )}
@@ -74,7 +74,7 @@ export function Field({ label, hint, error, required, optional, className, child
         </p>
       )}
       {hasError && (
-        <div id={errorId} role="alert" className="flex flex-col gap-0.5 text-sm font-medium text-danger">
+        <div id={errorId} role="alert" className="flex flex-col gap-0.5 text-sm font-medium text-danger-text">
           {messages.map((message) => (
             <p key={message}>{message}</p>
           ))}

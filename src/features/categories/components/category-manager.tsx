@@ -148,7 +148,7 @@ export function CategoryManager({ categories }: { categories: CategoryListItem[]
                           Düzenle
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link href={`/dashboard/products?category=${item.id}` as Route}>
+                          <Link href={`/dashboard/menu?category=${item.id}` as Route}>
                             <UtensilsCrossed aria-hidden="true" />
                             Ürünleri gör
                           </Link>

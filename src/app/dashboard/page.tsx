@@ -51,14 +51,14 @@ export default async function DashboardOverviewPage() {
             </p>
           </div>
           <Link
-            href={"/dashboard/settings" as Route}
+            href={"/dashboard/appearance" as Route}
             className={buttonVariants({
               variant: "outline",
               size: "sm",
               className: "shrink-0 self-start sm:self-auto",
             })}
           >
-            Ayarlara git
+            Görünüme git
           </Link>
         </div>
       )}
@@ -156,7 +156,7 @@ export default async function DashboardOverviewPage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href={"/dashboard/categories" as Route} className={quickActionClass}>
+                  <Link href={"/dashboard/menu" as Route} className={quickActionClass}>
                     <FolderPlus aria-hidden="true" />
                     Kategori ekle
                   </Link>

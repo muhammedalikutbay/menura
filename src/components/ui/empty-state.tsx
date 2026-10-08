@@ -13,7 +13,7 @@ export function EmptyState({ icon, title, description, action, className, ...pro
   return (
     <div
       className={cn(
-        "flex flex-col items-center gap-3 rounded-lg border border-dashed border-border-strong/60 bg-surface px-6 py-12 text-center",
+        "flex flex-col items-center gap-3 rounded-lg border border-dashed border-border-strong bg-surface px-6 py-12 text-center",
         className,
       )}
       {...props}
@@ -27,8 +27,8 @@ export function EmptyState({ icon, title, description, action, className, ...pro
         </div>
       )}
       <div className="flex max-w-sm flex-col gap-1">
-        <h3 className="text-base font-semibold tracking-tight">{title}</h3>
-        {description && <p className="text-sm text-fg-muted">{description}</p>}
+        <h3 className="type-title">{title}</h3>
+        {description && <p className="type-body text-fg-muted">{description}</p>}
       </div>
       {action && <div className="mt-2">{action}</div>}
     </div>

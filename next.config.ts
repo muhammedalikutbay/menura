@@ -23,6 +23,13 @@ const nextConfig: NextConfig = {
   images: {
     localPatterns: [{ pathname: "/media/**" }],
   },
+  async redirects() {
+    return [
+      { source: "/dashboard/categories", destination: "/dashboard/menu", permanent: true },
+      { source: "/dashboard/products", destination: "/dashboard/menu", permanent: true },
+      { source: "/dashboard/settings", destination: "/dashboard/restaurant", permanent: true },
+    ];
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

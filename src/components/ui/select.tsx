@@ -41,7 +41,7 @@ export function SelectContent({
         position={position}
         sideOffset={6}
         className={cn(
-          "relative z-50 max-h-(--radix-select-content-available-height) min-w-32 overflow-hidden rounded-md border border-border bg-surface text-fg shadow-lg",
+          "relative z-50 max-h-(--radix-select-content-available-height) min-w-32 overflow-hidden rounded-md bg-surface text-fg shadow-float ring-1 ring-border",
           "data-[state=open]:animate-pop-in data-[state=closed]:animate-pop-out",
           position === "popper" && "w-(--radix-select-trigger-width)",
           className,
@@ -51,7 +51,7 @@ export function SelectContent({
         <SelectPrimitive.ScrollUpButton className="flex h-6 items-center justify-center text-fg-muted">
           <ChevronUp aria-hidden="true" className="size-4" />
         </SelectPrimitive.ScrollUpButton>
-        <SelectPrimitive.Viewport className="p-1">{children}</SelectPrimitive.Viewport>
+        <SelectPrimitive.Viewport className="p-1.5">{children}</SelectPrimitive.Viewport>
         <SelectPrimitive.ScrollDownButton className="flex h-6 items-center justify-center text-fg-muted">
           <ChevronDown aria-hidden="true" className="size-4" />
         </SelectPrimitive.ScrollDownButton>

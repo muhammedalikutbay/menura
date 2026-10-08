@@ -1,19 +1,16 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
-import { AccountSection } from "@/features/auth/components/account-section";
 import { ProfileForm, type ProfileValues } from "@/features/restaurant/components/profile-form";
-import { PublishCard } from "@/features/restaurant/components/publish-card";
-import { SlugCard } from "@/features/restaurant/components/slug-card";
-import { displayHost } from "@/features/restaurant/slug-input";
 import type { Currency } from "@/lib/money";
-import { env } from "@/server/env";
 import { requireRestaurant } from "@/server/session";
 
-export const metadata: Metadata = { title: "Ayarlar" };
+export const metadata: Metadata = { title: "Restoran" };
 
-export default async function SettingsPage() {
+export default async function RestaurantPage() {
   const { restaurant } = await requireRestaurant();
 
+  // The profile form still carries the appearance fields (theme, currency, VAT note,
+  // hide unavailable); mnr-s8p.8 splits them onto /dashboard/appearance.
   const profile: ProfileValues = {
     name: restaurant.name,
     description: restaurant.description ?? "",
@@ -33,12 +30,9 @@ export default async function SettingsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title="Ayarlar" description="Restoran bilgilerinizi, menü adresinizi ve hesabınızı yönetin." />
+      <PageHeader title="Restoran" description="Restoranınızın kimliği, iletişim ve Wi-Fi bilgileri." />
       <div className="flex max-w-3xl flex-col gap-6">
-        <PublishCard isPublished={restaurant.isPublished} slug={restaurant.slug} />
         <ProfileForm initial={profile} />
-        <SlugCard slug={restaurant.slug} host={displayHost(env.APP_URL)} />
-        <AccountSection restaurantName={restaurant.name} />
       </div>
     </div>
   );

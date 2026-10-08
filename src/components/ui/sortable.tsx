@@ -116,7 +116,7 @@ export function SortableItem({ id, label, className, children }: SortableItemPro
     <li
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform ? { ...transform, x: 0 } : null), transition }}
-      className={cn(className, isDragging && "relative z-10 opacity-90 shadow-lg")}
+      className={cn(className, isDragging && "relative z-10 opacity-95 shadow-float")}
     >
       {children(handle)}
     </li>

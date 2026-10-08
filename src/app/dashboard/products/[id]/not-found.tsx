@@ -11,8 +11,8 @@ export default function ProductNotFound() {
       title="Ürün bulunamadı"
       description="Bu ürün silinmiş olabilir ya da size ait değil."
       action={
-        <Link href={"/dashboard/products" as Route} className={buttonVariants()}>
-          Ürünlere dön
+        <Link href={"/dashboard/menu" as Route} className={buttonVariants()}>
+          Menüye dön
         </Link>
       }
     />
