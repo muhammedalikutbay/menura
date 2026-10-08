@@ -95,8 +95,17 @@ export async function keyboardDrag(page: Page, handle: Locator, keys: string[]):
   await expect(live).not.toBeEmpty();
   for (const key of keys) {
     const before = await live.textContent();
-    await page.keyboard.press(key);
-    await expect.poll(async () => live.textContent()).not.toBe(before);
+    // dnd-kit measures droppables lazily; the first arrow can land on the item itself and repeat
+    // the same announcement. Retry the key (up to 3 times) until the drop target actually changes.
+    for (let attempt = 0; attempt < 3; attempt++) {
+      await page.keyboard.press(key);
+      const moved = await expect
+        .poll(async () => live.textContent(), { timeout: 1500 })
+        .not.toBe(before)
+        .then(() => true)
+        .catch(() => false);
+      if (moved) break;
+    }
   }
   await page.keyboard.press("Space");
   await expect(live).toContainText(/bırakıldı/);
