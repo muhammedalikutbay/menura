@@ -8,20 +8,26 @@ menüsünü yönetir; misafir masadaki QR kodu okuttuğunda menüyü `/m/<restor
 
 ## Özellikler
 
-**İşletme paneli**
-- E-posta/şifre ile hesap, şifre sıfırlama (e-posta servisi tanımlıysa), hesap silme
-- Restoran profili: logo, kapak görseli, iletişim, Instagram, Wi-Fi bilgisi, tema rengi, para birimi
-- Kategoriler: ekleme/düzenleme/silme, sürükle-bırak sıralama, aktif/pasif
-- Ürünler: fiyat ve indirimli fiyat, görsel, 14 yasal alerjen, diyet etiketleri (vegan, glutensiz…),
-  kalori, hazırlanma süresi, öne çıkarma, tükendi durumu, toplu işlemler, kopyalama, sıralama
-- QR kod tasarımı (renk, desen, logo), PNG/SVG indirme, A4 masa kartı baskısı
-- Gerçek menü görüntülenme istatistikleri, kurulum kontrol listesi
-- Yayın durumu: hazır olana kadar menü taslakta kalır
+**İşletme paneli** (üstte yüzen gezinme çubuğu; açık tema)
+- **Genel bakış** (`/dashboard`): menü görüntülenme istatistikleri, kurulum kontrol listesi, yayın durumu
+- **Menü** (`/dashboard/menu`): kategoriler ve ürünler tek sayfada; sürükle-bırak ile sıralama ve
+  ürünleri kategoriler arasında taşıma; ürün düzenleyici yan panelde açılır (fiyat ve indirimli fiyat,
+  görsel, 14 yasal alerjen, diyet etiketleri, kalori, hazırlanma süresi, öne çıkarma, tükendi durumu)
+- **Restoran** (`/dashboard/restaurant`): profil, logo, kapak görseli, iletişim, Instagram, web sitesi, Wi-Fi bilgisi
+- **Görünüm** (`/dashboard/appearance`): menüyü yayınlama, menü adresi, tema rengi, para birimi,
+  "Fiyatlara KDV dahildir" notu, tükenen ürünleri gizleme; canlı telefon önizlemesi
+- **QR kod** (`/dashboard/qr`): renk, desen ve logo ile QR tasarımı, PNG/SVG indirme, A4 masa kartı baskısı (`/print`)
+- **Hesap** (`/dashboard/account`, avatar menüsünden): e-posta/şifre hesabı, şifre sıfırlama ve e-posta
+  doğrulama (e-posta servisi tanımlıysa), hesap silme
+- Yayın durumu: menü hazır olana kadar taslakta kalır
 
-**Misafir menüsü**
-- Mobil öncelikli, hızlı, sunucuda üretilen sayfa; açık/koyu tema
+**Misafir menüsü** (`/m/<restoran>`)
+- Mobil öncelikli, hızlı, sunucuda üretilen sayfa; açık tema, restoranın tema rengiyle
 - Yapışkan kategori gezinmesi, Türkçe karakter duyarlı arama, ürün detay penceresi
 - Alerjen bilgisi, "Fiyatlarımıza KDV dahildir" notu, SEO ve paylaşım görselleri
+
+**Tanıtım sayfası** (`/`)
+- Menü bileşenlerinin gerçek misafir görünümüyle çalışan 3D telefon önizlemesi (örnek veriyle)
 
 ## Teknoloji
 

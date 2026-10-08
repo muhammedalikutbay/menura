@@ -7,6 +7,7 @@ Architecture and decisions: `docs/architecture.md`. Read it before structural ch
 ## Stack (do not swap without a recorded decision)
 - Next.js 16 App Router, React 19 (React Compiler on), TypeScript strict
 - Tailwind CSS 4 (tokens in `src/app/globals.css`), `radix-ui` primitives, `lucide-react` icons, `sonner` toasts
+- Design language: `docs/design/design-language.md` (authoritative; light only, `type-*` typography utilities, tokens only)
 - PostgreSQL + Drizzle ORM. No `DATABASE_URL` → embedded PGlite at `.data/pglite` (dev) / `memory://` (tests)
 - Better Auth (email + password), config in `src/server/auth.ts`
 - Zod 4 for every input; Vitest for unit/integration; Playwright for e2e
@@ -36,6 +37,20 @@ src/lib/            pure helpers usable on both sides (money, text, cn, menu-att
 drizzle/            generated SQL migrations (commit them; never edit applied ones)
 ```
 
+### Routes
+```
+/dashboard              Genel bakış (overview)
+/dashboard/menu         Menü: categories and products on one page; editor sheet via
+                        ?product=<id> or ?new=product&category=<id>
+/dashboard/restaurant   Restoran: profile, contact, Wi-Fi
+/dashboard/appearance   Görünüm: publish, menu address, theme color, currency, VAT note, live preview
+/dashboard/qr           QR kod (+ /print)
+/dashboard/account      Hesap (from the avatar menu)
+/m/[slug]               Guest menu (MenuView mode="page")
+```
+Old `/dashboard/categories`, `/dashboard/products` (`/new`, `/:id`) and `/dashboard/settings` are
+permanent redirects in `next.config.ts`. Do not recreate pages at those paths.
+
 ## Hard rules
 1. **Code is English, UI is Turkish.** All identifiers, file names and comments in English;
    every user-visible string in Turkish (proper Turkish characters, sentence case).
@@ -61,6 +76,8 @@ drizzle/            generated SQL migrations (commit them; never edit applied on
     environment: production builds evaluate a module once per server chunk (see mnr-58i.9).
 11. Do not add dependencies without a reason written in the task result. Do not edit
     `package.json`, `src/db/schema.ts` or `drizzle/` unless the task says so.
+12. UI work follows `docs/design/*.md`. Reuse `MenuView` for any menu rendering (page or embedded)
+    instead of duplicating guest menu markup.
 
 ## Task tracking
 Beads (`bd`), see the `beads-workflow` skill. Only the main session writes to `bd`;
