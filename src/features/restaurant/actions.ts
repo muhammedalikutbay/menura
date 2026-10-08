@@ -11,6 +11,7 @@ import { getRestaurantForUser, requireRestaurant, requireUser } from "@/server/s
 import {
   createRestaurantSchema,
   setPublishedSchema,
+  updateAppearanceSchema,
   updateRestaurantProfileSchema,
   updateSlugSchema,
 } from "./schema";
@@ -44,7 +45,7 @@ export async function createRestaurant(input: unknown): Promise<ActionResult<{ s
 }
 
 /**
- * Saves the restaurant profile (everything except the slug). Text fields are replaced as a whole
+ * Saves the restaurant profile (identity, contact, Wi-Fi, images). Text fields are replaced as a whole
  * (empty clears them); an undefined logo/cover id leaves the image unchanged, null removes it.
  */
 export async function updateRestaurantProfile(input: unknown): Promise<ActionResult> {
@@ -76,10 +77,6 @@ export async function updateRestaurantProfile(input: unknown): Promise<ActionRes
       website: data.website ?? null,
       wifiName: data.wifiName ?? null,
       wifiPassword: data.wifiPassword ?? null,
-      currency: data.currency,
-      themeColor: data.themeColor,
-      showVatNote: data.showVatNote,
-      hideUnavailable: data.hideUnavailable,
       logoMediaId: nextLogo,
       coverMediaId: nextCover,
     })
@@ -87,6 +84,23 @@ export async function updateRestaurantProfile(input: unknown): Promise<ActionRes
 
   if (current.logoMediaId && current.logoMediaId !== nextLogo) await releaseMedia(current.id, current.logoMediaId);
   if (current.coverMediaId && current.coverMediaId !== nextCover) await releaseMedia(current.id, current.coverMediaId);
+
+  revalidatePath("/dashboard", "layout");
+  revalidatePath(`/m/${current.slug}`);
+  return ok();
+}
+
+/** Saves theme color, currency and the menu content preferences. */
+export async function updateAppearance(input: unknown): Promise<ActionResult> {
+  const { user, restaurant: current } = await requireRestaurant();
+
+  const parsed = updateAppearanceSchema.safeParse(input);
+  if (!parsed.success) return fromZodError(parsed.error);
+
+  await db
+    .update(restaurant)
+    .set(parsed.data)
+    .where(and(eq(restaurant.id, current.id), eq(restaurant.ownerId, user.id)));
 
   revalidatePath("/dashboard", "layout");
   revalidatePath(`/m/${current.slug}`);

@@ -6,7 +6,7 @@ import { createTenant, createUser, currentTenant, sessionMock, signInAs } from "
 
 vi.mock("@/server/session", () => sessionMock());
 
-const { createRestaurant, setPublished, updateRestaurantProfile, updateSlug } = await import("./actions");
+const { createRestaurant, setPublished, updateAppearance, updateRestaurantProfile, updateSlug } = await import("./actions");
 
 function resetTenant() {
   currentTenant.user = null;
@@ -65,8 +65,11 @@ const validProfile = {
   website: "https://example.com",
   wifiName: "Misafir",
   wifiPassword: "12345678",
-  currency: "EUR" as const,
+};
+
+const validAppearance = {
   themeColor: "#1e7b34",
+  currency: "EUR" as const,
   showVatNote: false,
   hideUnavailable: true,
 };
@@ -87,10 +90,6 @@ describe("updateRestaurantProfile", () => {
       address: null,
       instagram: "yeniad",
       website: "https://example.com",
-      currency: "EUR",
-      themeColor: "#1e7b34",
-      showVatNote: false,
-      hideUnavailable: true,
       slug: tenant.restaurant.slug,
     });
   });
@@ -104,13 +103,11 @@ describe("updateRestaurantProfile", () => {
       name: "A",
       website: "javascript:alert(1)",
       instagram: "bad/handle",
-      themeColor: "red",
-      currency: "XXX",
     });
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(Object.keys(result.fieldErrors ?? {})).toEqual(
-        expect.arrayContaining(["name", "website", "instagram", "themeColor", "currency"]),
+        expect.arrayContaining(["name", "website", "instagram"]),
       );
     }
     expect((await loadRestaurant(tenant.restaurant.id)).name).toBe(tenant.restaurant.name);
@@ -176,6 +173,57 @@ describe("updateRestaurantProfile", () => {
 
     expect((await loadRestaurant(tenantA.restaurant.id)).name).toBe("A Restoran");
     expect((await loadRestaurant(tenantB.restaurant.id)).name).toBe("B Yeni");
+  });
+});
+
+describe("updateAppearance", () => {
+  beforeEach(resetTenant);
+
+  it("saves appearance settings without touching the profile", async () => {
+    const tenant = await createTenant({ name: "Aynı Ad" });
+    signInAs(tenant);
+
+    expect(await updateAppearance(validAppearance)).toEqual({ ok: true, data: undefined });
+
+    expect(await loadRestaurant(tenant.restaurant.id)).toMatchObject({
+      ...validAppearance,
+      name: "Aynı Ad",
+      slug: tenant.restaurant.slug,
+    });
+  });
+
+  it("profile saves leave appearance settings alone", async () => {
+    const tenant = await createTenant();
+    signInAs(tenant);
+    await updateAppearance(validAppearance);
+    await updateRestaurantProfile({ ...validProfile, ...{ currency: "USD", themeColor: "#000000" } });
+    expect(await loadRestaurant(tenant.restaurant.id)).toMatchObject(validAppearance);
+  });
+
+  it("rejects an invalid color or currency and writes nothing", async () => {
+    const tenant = await createTenant();
+    signInAs(tenant);
+
+    const result = await updateAppearance({ ...validAppearance, themeColor: "red", currency: "XXX" });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(Object.keys(result.fieldErrors ?? {})).toEqual(expect.arrayContaining(["themeColor", "currency"]));
+    expect((await updateAppearance({ ...validAppearance, themeColor: "#12345" })).ok).toBe(false);
+    expect((await updateAppearance({ ...validAppearance, showVatNote: "yes" })).ok).toBe(false);
+
+    expect(await loadRestaurant(tenant.restaurant.id)).toMatchObject({
+      themeColor: tenant.restaurant.themeColor,
+      currency: tenant.restaurant.currency,
+    });
+  });
+
+  it("only ever touches the caller's restaurant", async () => {
+    const tenantA = await createTenant();
+    const tenantB = await createTenant();
+    signInAs(tenantB);
+    expect((await updateAppearance(validAppearance)).ok).toBe(true);
+
+    expect((await loadRestaurant(tenantA.restaurant.id)).themeColor).toBe(tenantA.restaurant.themeColor);
+    expect((await loadRestaurant(tenantB.restaurant.id)).themeColor).toBe("#1e7b34");
   });
 });
 

@@ -65,9 +65,9 @@ const websiteSchema = z
   .nullable()
   .optional();
 
-export const updateRestaurantSchema = z.object({
+/** Identity, contact and Wi-Fi. The slug and the appearance settings are saved separately. */
+export const updateRestaurantProfileSchema = z.object({
   name: restaurantNameSchema,
-  slug: slugSchema,
   description: optionalText(300),
   phone: optionalText(30),
   address: optionalText(200),
@@ -75,23 +75,24 @@ export const updateRestaurantSchema = z.object({
   website: websiteSchema,
   wifiName: optionalText(64),
   wifiPassword: optionalText(64),
-  currency: z.enum(SUPPORTED_CURRENCIES),
-  themeColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Geçerli bir renk seçin."),
-  showVatNote: z.boolean(),
-  hideUnavailable: z.boolean(),
   /** undefined leaves the image unchanged, null removes it. */
   logoMediaId: z.string().nullable().optional(),
   coverMediaId: z.string().nullable().optional(),
 });
 
-/** Profile settings without the slug: the public address is changed separately (it breaks QR codes). */
-export const updateRestaurantProfileSchema = updateRestaurantSchema.omit({ slug: true });
+/** Theme, currency and menu content preferences. */
+export const updateAppearanceSchema = z.object({
+  themeColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Geçerli bir renk seçin."),
+  currency: z.enum(SUPPORTED_CURRENCIES),
+  showVatNote: z.boolean(),
+  hideUnavailable: z.boolean(),
+});
 
 export const updateSlugSchema = z.object({ slug: slugSchema });
 
 export const setPublishedSchema = z.object({ isPublished: z.boolean() });
 
 export type CreateRestaurantInput = z.input<typeof createRestaurantSchema>;
-export type UpdateRestaurantInput = z.input<typeof updateRestaurantSchema>;
 export type UpdateRestaurantProfileInput = z.input<typeof updateRestaurantProfileSchema>;
+export type UpdateAppearanceInput = z.input<typeof updateAppearanceSchema>;
 export type UpdateSlugInput = z.input<typeof updateSlugSchema>;
