@@ -27,6 +27,9 @@ const nextConfig: NextConfig = {
     return [
       { source: "/dashboard/categories", destination: "/dashboard/menu", permanent: true },
       { source: "/dashboard/products", destination: "/dashboard/menu", permanent: true },
+      // The product pages moved into the menu builder's editor sheet; query strings are forwarded.
+      { source: "/dashboard/products/new", destination: "/dashboard/menu?new=product", permanent: true },
+      { source: "/dashboard/products/:id", destination: "/dashboard/menu?product=:id", permanent: true },
       { source: "/dashboard/settings", destination: "/dashboard/restaurant", permanent: true },
     ];
   },
