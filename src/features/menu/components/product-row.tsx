@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/cn";
 import { tagLabel } from "@/lib/menu-attributes";
-import type { PublicProduct } from "../queries";
+import type { PublicProduct } from "../types";
 import { searchText } from "../sheet-data";
 import { Price } from "./price";
 

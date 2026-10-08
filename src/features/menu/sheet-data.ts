@@ -1,7 +1,7 @@
 import { formatMoney } from "@/lib/money";
 import { allergenLabel, tagLabel } from "@/lib/menu-attributes";
 import { normalizeForSearch } from "@/lib/text";
-import type { PublicProduct } from "./queries";
+import type { PublicProduct } from "./types";
 
 /** Everything the detail sheet shows, already formatted so the client needs no domain logic. */
 export type SheetProduct = {

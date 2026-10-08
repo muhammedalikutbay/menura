@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildMenuJsonLd, decimalPrice, serializeJsonLd } from "./json-ld";
-import type { PublicMenu, PublicProduct } from "./queries";
+import type { PublicMenu, PublicProduct } from "./types";
 
 const product = (overrides: Partial<PublicProduct> = {}): PublicProduct => ({
   id: "p1",

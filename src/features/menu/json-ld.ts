@@ -1,4 +1,4 @@
-import type { PublicMenu, PublicProduct } from "./queries";
+import type { PublicMenu, PublicProduct } from "./types";
 import { instagramHandle, instagramUrl, safeHttpUrl } from "./links";
 
 const DIET_URLS: Record<string, string> = {

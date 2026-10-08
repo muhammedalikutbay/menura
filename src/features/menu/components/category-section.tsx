@@ -1,4 +1,4 @@
-import type { PublicCategory } from "../queries";
+import type { PublicCategory } from "../types";
 import { ProductRow } from "./product-row";
 
 export function CategorySection({ category, currency }: { category: PublicCategory; currency: string }) {

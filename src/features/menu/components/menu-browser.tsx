@@ -1,9 +1,10 @@
 "use client";
 
 import { Search, SearchX, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { normalizeForSearch } from "@/lib/text";
+import { MENU_ROOT_SELECTOR, offsetWithin, type MenuMode } from "./menu-mode";
 
 export type NavSection = { id: string; label: string };
 
@@ -16,8 +17,21 @@ const SPY_OFFSET = 96;
  * The sections are plain HTML marked with `data-menu-section` (and `data-search` on each product
  * row). Searching and scroll-spy only toggle `hidden`/active state on that existing markup, so the
  * menu itself stays server-rendered and works before this island hydrates.
+ *
+ * In `embedded` mode the nearest `[data-menu-root]` is the scroll container instead of the window:
+ * scroll-spy, "scroll to section" and "jump to menu top" all use it, and no window listener is added.
  */
-export function MenuBrowser({ sections, children }: { sections: NavSection[]; children: React.ReactNode }) {
+export function MenuBrowser({
+  sections,
+  mode = "page",
+  children,
+}: {
+  sections: NavSection[];
+  mode?: MenuMode;
+  children: React.ReactNode;
+}) {
+  const embedded = mode === "embedded";
+  const searchId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const chipsRef = useRef<HTMLElement>(null);
@@ -39,23 +53,35 @@ export function MenuBrowser({ sections, children }: { sections: NavSection[]; ch
     setActive(id);
   }
 
+  /** The embedded menu's own scroll container; `null` in page mode (the window scrolls). */
+  function findScroller(): HTMLElement | null {
+    return embedded ? (rootRef.current?.closest<HTMLElement>(MENU_ROOT_SELECTOR) ?? null) : null;
+  }
+
   /* Scroll-spy: the current section is the last one whose top has passed the sticky bar. */
   useEffect(() => {
     const content = contentRef.current;
     if (!content || searching) return;
+    const scroller = findScroller();
+    if (embedded && !scroller) return;
     const elements = Array.from(content.querySelectorAll<HTMLElement>("[data-menu-section]"));
     if (elements.length === 0) return;
 
     let frame = 0;
+    function sectionTop(element: HTMLElement) {
+      return scroller ? offsetWithin(element, scroller) - scroller.scrollTop : element.getBoundingClientRect().top;
+    }
     function compute() {
       frame = 0;
       if (lockedRef.current) return;
       let current = elements[0]!;
       for (const element of elements) {
-        if (element.getBoundingClientRect().top <= SPY_OFFSET) current = element;
+        if (sectionTop(element) <= SPY_OFFSET) current = element;
         else break;
       }
-      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      const atBottom = scroller
+        ? scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2
+        : window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
       if (atBottom) current = elements[elements.length - 1]!;
       updateActive(current.dataset.menuSection ?? "");
     }
@@ -66,20 +92,34 @@ export function MenuBrowser({ sections, children }: { sections: NavSection[]; ch
     // IntersectionObserver wakes the computation when a section enters/leaves the top band;
     // the scroll listener covers the rest (page end, resize).
     const observer = new IntersectionObserver(schedule, {
+      root: scroller,
       rootMargin: `-${SPY_OFFSET}px 0px -50% 0px`,
       threshold: [0, 1],
     });
     elements.forEach((element) => observer.observe(element));
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
+    const resizeObserver = scroller ? new ResizeObserver(schedule) : null;
+    if (scroller) {
+      scroller.addEventListener("scroll", schedule, { passive: true });
+      resizeObserver?.observe(scroller);
+    } else {
+      window.addEventListener("scroll", schedule, { passive: true });
+      window.addEventListener("resize", schedule);
+    }
     schedule();
 
     return () => {
       observer.disconnect();
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
+      resizeObserver?.disconnect();
+      if (scroller) {
+        scroller.removeEventListener("scroll", schedule);
+      } else {
+        window.removeEventListener("scroll", schedule);
+        window.removeEventListener("resize", schedule);
+      }
       if (frame) window.cancelAnimationFrame(frame);
     };
+    // `embedded` never changes for a mounted menu.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searching]);
 
   /* Keep the active chip visible inside the horizontal chip strip (never scrolls the page). */
@@ -102,18 +142,27 @@ export function MenuBrowser({ sections, children }: { sections: NavSection[]; ch
     const target = contentRef.current?.querySelector<HTMLElement>(`[data-menu-section="${CSS.escape(id)}"]`);
     if (!target) return;
     updateActive(id);
+    const scroller = findScroller();
     // Ignore spy updates while the smooth scroll runs, so the chip doesn't flicker through sections.
     lockedRef.current = true;
+    const scrollEvents: Window | HTMLElement = scroller ?? window;
     const unlock = () => {
       lockedRef.current = false;
-      window.removeEventListener("scrollend", unlock);
+      scrollEvents.removeEventListener("scrollend", unlock);
       if (lockTimer.current) window.clearTimeout(lockTimer.current);
     };
-    window.addEventListener("scrollend", unlock, { once: true });
+    scrollEvents.addEventListener("scrollend", unlock, { once: true });
     if (lockTimer.current) window.clearTimeout(lockTimer.current);
     lockTimer.current = window.setTimeout(unlock, 1200);
-    // scroll-margin-top on the section accounts for the sticky bar; CSS decides smooth vs instant.
-    target.scrollIntoView({ block: "start" });
+    if (scroller) {
+      // scrollIntoView would also move the host page; scroll only our own container. The section's
+      // scroll-margin-top accounts for the sticky bar, `scroll-smooth` on the root decides smooth vs instant.
+      const margin = Number.parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+      scroller.scrollTo({ top: Math.max(0, offsetWithin(target, scroller) - margin) });
+    } else {
+      // scroll-margin-top on the section accounts for the sticky bar; CSS decides smooth vs instant.
+      target.scrollIntoView({ block: "start" });
+    }
   }
 
   function applyFilter(value: string): number | null {
@@ -140,6 +189,12 @@ export function MenuBrowser({ sections, children }: { sections: NavSection[]; ch
 
   function jumpToMenuTop() {
     const root = rootRef.current;
+    const scroller = findScroller();
+    if (root && scroller) {
+      const top = offsetWithin(root, scroller);
+      if (scroller.scrollTop > top) scroller.scrollTo({ top, behavior: "instant" });
+      return;
+    }
     if (root && root.getBoundingClientRect().top < 0) {
       window.scrollTo({ top: root.getBoundingClientRect().top + window.scrollY, behavior: "instant" });
     }
@@ -177,7 +232,7 @@ export function MenuBrowser({ sections, children }: { sections: NavSection[]; ch
                 inputRef.current?.blur();
               }}
             >
-              <label htmlFor="menu-search" className="sr-only">
+              <label htmlFor={searchId} className="sr-only">
                 Menüde ara
               </label>
               <div className="relative min-w-0 flex-1">
@@ -187,7 +242,7 @@ export function MenuBrowser({ sections, children }: { sections: NavSection[]; ch
                 />
                 <input
                   ref={inputRef}
-                  id="menu-search"
+                  id={searchId}
                   type="search"
                   inputMode="search"
                   enterKeyHint="search"
@@ -227,24 +282,32 @@ export function MenuBrowser({ sections, children }: { sections: NavSection[]; ch
               >
                 {sections.map((section) => {
                   const isActive = section.id === active;
-                  return (
+                  const chipProps = {
+                    "data-chip": section.id,
+                    "aria-current": isActive ? ("true" as const) : undefined,
+                    className: cn(
+                      "relative inline-flex h-9 shrink-0 items-center rounded-full px-4 text-sm whitespace-nowrap transition-colors",
+                      // Invisible 44px hit area around the 36px pill.
+                      "before:absolute before:-inset-y-1 before:inset-x-0 before:content-['']",
+                      isActive
+                        ? "bg-accent font-semibold text-accent-fg ring-1 ring-fg/15"
+                        : "bg-surface-muted font-medium text-fg hover:bg-border",
+                    ),
+                  };
+                  // Embedded chips are buttons: a `#hash` link could move the host page.
+                  return embedded ? (
+                    <button key={section.id} type="button" onClick={() => goToSection(section.id)} {...chipProps}>
+                      {section.label}
+                    </button>
+                  ) : (
                     <a
                       key={section.id}
                       href={`#s-${section.id}`}
-                      data-chip={section.id}
-                      aria-current={isActive ? "true" : undefined}
                       onClick={(event) => {
                         event.preventDefault();
                         goToSection(section.id);
                       }}
-                      className={cn(
-                        "relative inline-flex h-9 shrink-0 items-center rounded-full px-4 text-sm whitespace-nowrap transition-colors",
-                        // Invisible 44px hit area around the 36px pill.
-                        "before:absolute before:-inset-y-1 before:inset-x-0 before:content-['']",
-                        isActive
-                          ? "bg-accent font-semibold text-accent-fg ring-1 ring-fg/15"
-                          : "bg-surface-muted font-medium text-fg hover:bg-border",
-                      )}
+                      {...chipProps}
                     >
                       {section.label}
                     </a>

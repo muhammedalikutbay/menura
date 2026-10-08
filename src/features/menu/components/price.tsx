@@ -1,6 +1,6 @@
 import { cn } from "@/lib/cn";
 import { formatMoney } from "@/lib/money";
-import type { PublicProduct } from "../queries";
+import type { PublicProduct } from "../types";
 
 /** Price with an optional struck-through old price. `muted` is used for unavailable products. */
 export function Price({

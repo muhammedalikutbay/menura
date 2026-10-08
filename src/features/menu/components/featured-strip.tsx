@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { cn } from "@/lib/cn";
-import type { PublicProduct } from "../queries";
+import type { PublicProduct } from "../types";
 import { Price } from "./price";
 import { stretchedButtonClass } from "./product-row";
 
