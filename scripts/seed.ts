@@ -14,6 +14,7 @@ import seedData from "./seed-data.json" with { type: "json" };
 
 const DEMO_SLUG = "demo";
 const IMAGE_CACHE_DIR = ".data/seed-images";
+const DEMO_COVER = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=1600";
 
 type SeedProduct = { name: string; description: string | null; price: number; image: string | null };
 
@@ -108,6 +109,9 @@ const [demo] = await db
   .returning();
 if (!demo) throw new Error("Demo restaurant could not be created.");
 
+const coverMediaId = await storeImage(demo.id, DEMO_COVER);
+if (coverMediaId) await db.update(s.restaurant).set({ coverMediaId }).where(eq(s.restaurant.id, demo.id));
+
 let imageCount = 0;
 for (const [categoryIndex, seedCategory] of seedData.entries()) {
   const [created] = await db
@@ -134,7 +138,7 @@ for (const [categoryIndex, seedCategory] of seedData.entries()) {
       imageMediaId,
       priceMinor: Math.round(seedProduct.price * 100),
       // A couple of discounted and featured items to exercise those states.
-      discountPriceMinor: productIndex === 1 ? Math.round(seedProduct.price * 85) : null,
+      discountPriceMinor: productIndex === 1 ? Math.round(seedProduct.price * 0.85) * 100 : null,
       isFeatured: productIndex === 0,
       position: productIndex,
       allergens: attributes.allergens,

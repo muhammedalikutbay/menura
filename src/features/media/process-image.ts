@@ -2,7 +2,8 @@ import sharp from "sharp";
 
 export const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
 export const MAX_IMAGE_EDGE = 1600;
-const MAX_INPUT_PIXELS = 50_000_000;
+/** ~16 MP; browsers downscale to 2000 px before upload, this bounds decode memory. */
+const MAX_INPUT_PIXELS = 16_000_000;
 
 export type ProcessedImage = {
   data: Buffer;

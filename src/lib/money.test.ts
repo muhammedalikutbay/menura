@@ -31,7 +31,7 @@ describe("toMoneyInput", () => {
 
 describe("formatMoney", () => {
   it("formats Turkish lira", () => {
-    expect(formatMoney(12050).replace(/\s/g, " ")).toBe("₺120,5");
+    expect(formatMoney(12050).replace(/\s/g, " ")).toBe("₺120,50");
     expect(formatMoney(12000).replace(/\s/g, " ")).toBe("₺120");
   });
 });

@@ -23,7 +23,7 @@ const SECTIONS: LegalSection[] = [
   {
     title: "Hesap ve güvenlik",
     body: [
-      "Hesap oluştururken doğru ve güncel bilgi vermekle yükümlüsünüz. Parolanızın gizliliğinden ve hesabınız üzerinden yapılan işlemlerden siz sorumlusunuz. Hesabınızın yetkisiz kullanıldığından şüphelenirseniz derhal bize bildirmelisiniz.",
+      "Hesap oluştururken doğru ve güncel bilgi vermekle yükümlüsünüz. Şifrenizin gizliliğinden ve hesabınız üzerinden yapılan işlemlerden siz sorumlusunuz. Hesabınızın yetkisiz kullanıldığından şüphelenirseniz derhal bize bildirmelisiniz.",
     ],
   },
   {

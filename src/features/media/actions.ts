@@ -5,7 +5,7 @@ import { media } from "@/db/schema";
 import { fail, ok, type ActionResult } from "@/lib/action-result";
 import { requireRestaurant } from "@/server/session";
 import { InvalidImageError, processImage } from "./process-image";
-import { pruneOrphanMedia } from "./server";
+import { countMedia, MAX_MEDIA_PER_RESTAURANT, pruneOrphanMedia } from "./server";
 import { mediaUrl } from "./url";
 
 /**
@@ -17,6 +17,12 @@ export async function uploadImage(formData: FormData): Promise<ActionResult<{ id
   const { restaurant } = await requireRestaurant();
   const file = formData.get("file");
   if (!(file instanceof File)) return fail("Görsel seçilmedi.");
+  if ((await countMedia(restaurant.id)) >= MAX_MEDIA_PER_RESTAURANT) {
+    await pruneOrphanMedia(restaurant.id);
+    if ((await countMedia(restaurant.id)) >= MAX_MEDIA_PER_RESTAURANT) {
+      return fail("Görsel sınırına ulaştınız. Kullanılmayan görselleri kaldırıp tekrar deneyin.");
+    }
+  }
 
   try {
     const image = await processImage(Buffer.from(await file.arrayBuffer()));

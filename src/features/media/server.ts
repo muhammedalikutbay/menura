@@ -41,18 +41,29 @@ export async function releaseMedia(restaurantId: string, mediaId: string | null 
 }
 
 /**
- * Removes this restaurant's uploads that are older than a day and referenced by nothing
+ * Removes this restaurant's uploads that are older than an hour and referenced by nothing
  * (e.g. an image uploaded in a form that was then cancelled). Runs opportunistically on upload.
  */
 export async function pruneOrphanMedia(restaurantId: string): Promise<void> {
   await db.execute(sql`
     DELETE FROM ${media} m
     WHERE m.restaurant_id = ${restaurantId}
-      AND m.created_at < now() - interval '1 day'
+      AND m.created_at < now() - interval '1 hour'
       AND NOT EXISTS (SELECT 1 FROM ${product} p WHERE p.image_media_id = m.id)
       AND NOT EXISTS (SELECT 1 FROM ${category} c WHERE c.image_media_id = m.id)
       AND NOT EXISTS (
         SELECT 1 FROM ${restaurant} r WHERE r.logo_media_id = m.id OR r.cover_media_id = m.id
       )
   `);
+}
+
+/** Upper bound of stored images per restaurant (products + categories + logo/cover + headroom). */
+export const MAX_MEDIA_PER_RESTAURANT = 1200;
+
+export async function countMedia(restaurantId: string): Promise<number> {
+  const [row] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(media)
+    .where(eq(media.restaurantId, restaurantId));
+  return row?.count ?? 0;
 }

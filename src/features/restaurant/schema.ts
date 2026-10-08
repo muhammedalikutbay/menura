@@ -15,10 +15,10 @@ export const slugSchema = z
   .string()
   .trim()
   .toLowerCase()
-  .min(SLUG_MIN, `Adres en az ${SLUG_MIN} karakter olmalı.`)
-  .max(SLUG_MAX, `Adres en fazla ${SLUG_MAX} karakter olabilir.`)
+  .min(SLUG_MIN, `Menü adresi en az ${SLUG_MIN} karakter olmalı.`)
+  .max(SLUG_MAX, `Menü adresi en fazla ${SLUG_MAX} karakter olabilir.`)
   .regex(SLUG_PATTERN, "Yalnızca küçük harf, rakam ve tire kullanın.")
-  .refine((slug) => !RESERVED_SLUGS.has(slug), "Bu adres kullanılamaz.");
+  .refine((slug) => !RESERVED_SLUGS.has(slug), "Bu menü adresi kullanılamaz.");
 
 export const restaurantNameSchema = z
   .string()

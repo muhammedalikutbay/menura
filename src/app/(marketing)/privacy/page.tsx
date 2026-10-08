@@ -20,7 +20,7 @@ const SECTIONS: LegalSection[] = [
     body: ["Hizmeti kullanırken aşağıdaki veri kategorileri işlenebilir:"],
     items: [
       "Kimlik ve iletişim bilgileri: ad soyad, e-posta adresi.",
-      "Hesap güvenliği bilgileri: parola (yalnızca geri döndürülemez biçimde şifrelenmiş olarak), oturum bilgileri.",
+      "Hesap güvenliği bilgileri: şifre (yalnızca geri döndürülemez biçimde özetlenmiş olarak), oturum bilgileri.",
       "İşletme bilgileri: restoran adı, menü adresi, açıklama, telefon, adres, sosyal medya ve internet sitesi bilgileri, yüklediğiniz logo ve görseller, menü içerikleri.",
       "İşlem ve teknik güvenlik kayıtları: IP adresi, tarayıcı ve cihaz bilgisi, oturum ve hız sınırlama kayıtları.",
       "Menü görüntülenme sayaçları: yayındaki menünüzün günlük toplam açılış sayısı. Bu sayaçlar menüyü açan ziyaretçileri tanımlayan bilgi içermez.",

@@ -6,6 +6,10 @@ type Email = { to: string; subject: string; text: string; html?: string };
 /** Sends a transactional email through Resend; logs to the console when no key is configured. */
 export async function sendEmail(email: Email): Promise<void> {
   if (!env.RESEND_API_KEY) {
+    if (env.NODE_ENV === "production") {
+      // Bodies can contain password-reset links; never write them to production logs.
+      throw new Error("Email delivery is not configured (RESEND_API_KEY is missing).");
+    }
     console.info(`[email:dev] to=${email.to} subject="${email.subject}"\n${email.text}`);
     return;
   }

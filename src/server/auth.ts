@@ -43,6 +43,8 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 30,
     updateAge: 60 * 60 * 24,
     cookieCache: { enabled: true, maxAge: 5 * 60 },
+    // Deleting the account without re-entering the password needs a session younger than this.
+    freshAge: 10 * 60,
   },
   rateLimit: {
     // E2E runs a production build and signs up repeatedly; it opts out explicitly.
@@ -58,6 +60,8 @@ export const auth = betterAuth({
   },
   advanced: {
     useSecureCookies: env.APP_URL.startsWith("https://"),
+    // Netlify sets x-nf-client-connection-ip to the real client; fall back to common proxies.
+    ipAddress: { ipAddressHeaders: ["x-nf-client-connection-ip", "x-real-ip", "x-forwarded-for"] },
   },
   plugins: [nextCookies()],
 });

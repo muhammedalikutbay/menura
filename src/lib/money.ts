@@ -5,16 +5,19 @@ export type Currency = (typeof SUPPORTED_CURRENCIES)[number];
 
 const formatters = new Map<string, Intl.NumberFormat>();
 
+/** Whole amounts without decimals ("₺120"), others with exactly two ("₺120,50"). */
 export function formatMoney(minor: number, currency: string = "TRY"): string {
-  let formatter = formatters.get(currency);
+  const digits = minor % 100 === 0 ? 0 : 2;
+  const key = `${currency}:${digits}`;
+  let formatter = formatters.get(key);
   if (!formatter) {
     formatter = new Intl.NumberFormat("tr-TR", {
       style: "currency",
       currency,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
     });
-    formatters.set(currency, formatter);
+    formatters.set(key, formatter);
   }
   return formatter.format(minor / 100);
 }

@@ -99,16 +99,20 @@ export function RegisterForm() {
             onCheckedChange={(value) => setConsent(value === true)}
             aria-invalid={consentError ? true : undefined}
             aria-required="true"
+            // Links inside the label are dropped from the computed name of a role="checkbox" button.
+            aria-label="Gizlilik Politikası'nı ve Kullanım Koşulları'nı okudum; kişisel verilerimin KVKK kapsamında işlenmesini kabul ediyorum."
             aria-describedby={consentError ? "consent-error" : undefined}
             className="mt-0.5"
           />
           <Label htmlFor="consent" className="text-sm leading-6 font-normal text-fg-muted">
-            <Link href={"/privacy" as Route} target="_blank" className={linkClass}>
+            <Link href={"/privacy" as Route} target="_blank" rel="noopener noreferrer" className={linkClass}>
               Gizlilik Politikası
+              <span className="sr-only"> (yeni sekmede açılır)</span>
             </Link>
             &apos;nı ve{" "}
-            <Link href={"/terms" as Route} target="_blank" className={linkClass}>
+            <Link href={"/terms" as Route} target="_blank" rel="noopener noreferrer" className={linkClass}>
               Kullanım Koşulları
+              <span className="sr-only"> (yeni sekmede açılır)</span>
             </Link>
             &apos;nı okudum; kişisel verilerimin KVKK kapsamında işlenmesini kabul ediyorum.
           </Label>

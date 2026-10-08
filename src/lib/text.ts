@@ -16,7 +16,7 @@ export const SLUG_MAX = 48;
 
 /** Reserved slugs that would clash with routes or look official. */
 export const RESERVED_SLUGS = new Set([
-  "admin", "api", "app", "dashboard", "demo-menu", "help", "login", "logout", "m", "media",
+  "admin", "api", "app", "dashboard", "demo", "demo-menu", "help", "login", "logout", "m", "media",
   "menura", "onboarding", "register", "settings", "support", "www",
 ]);
 

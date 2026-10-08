@@ -256,7 +256,7 @@ export function ProfileForm({ initial }: { initial: ProfileValues }) {
                   maxLength={64}
                 />
               </Field>
-              <Field label="Wi-Fi şifresi" error={errors.wifiPassword} optional>
+              <Field label="Wi-Fi şifresi" hint="Menüyü açan herkes görebilir; yalnız misafir ağının şifresini girin." error={errors.wifiPassword} optional>
                 <Input
                   value={values.wifiPassword}
                   onChange={(event) => set("wifiPassword", event.target.value)}
