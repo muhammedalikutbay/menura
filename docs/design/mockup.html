@@ -17,13 +17,6 @@
     --r-sm:10px; --r-md:14px; --r-lg:20px; --r-xl:28px;
     --menu-accent:#C2410C;
   }
-  [data-theme=dark] {
-    --canvas:#09090B; --bg:#0E0E11; --surface:#141418; --muted:#1C1C21;
-    --fg:#F4F4F6; --fg-muted:#A1A1AB; --fg-subtle:#71717A;
-    --border:#24242B; --border-strong:#3A3A44; --ink:#F4F4F6; --ink-fg:#0B0B0F; --accent:#9E8CFC;
-    --float: 0 0 0 1px var(--border);
-    --menu-accent:#FB923C;
-  }
   * { box-sizing:border-box; margin:0; }
   body { font-family:Inter,system-ui,sans-serif; background:var(--canvas); color:var(--fg); -webkit-font-smoothing:antialiased; font-feature-settings:"ss01","cv11"; }
   .label { font-size:12px; font-weight:600; letter-spacing:.04em; color:var(--fg-muted); margin:56px auto 16px; max-width:1200px; padding:0 24px; }
@@ -66,24 +59,18 @@
   .shadow { position:absolute; left:50%; bottom:-34px; width:260px; height:30px; transform:translateX(-46%); border-radius:50%; background:rgba(17,17,20,.22); filter:blur(16px); }
   /* Guest menu (used in phone and mobile frame) */
   .gm { height:100%; overflow:hidden; background:#fff; color:#0B0B0F; font-size:13px; }
-  [data-theme=dark] .gm.themed { background:#0E0E11; color:#F4F4F6; }
   .gm .cover { margin:44px 8px 0; height:118px; border-radius:20px; background:linear-gradient(135deg,#7c2d12,#c2410c 50%,#fdba74); position:relative; }
   .gm .cover .tt { position:absolute; right:8px; top:8px; width:30px; height:30px; border-radius:99px; background:rgba(255,255,255,.75); display:grid; place-items:center; font-size:13px; }
   .gm .logo-dot { width:46px; height:46px; border-radius:14px; background:#fff; box-shadow:var(--float); margin:-24px 0 0 18px; position:relative; display:grid; place-items:center; font-weight:700; color:var(--menu-accent); }
   .gm h3 { font-size:20px; letter-spacing:-.025em; margin:8px 16px 2px; }
   .gm .d { color:#62626C; margin:0 16px 10px; font-size:12px; line-height:1.45; }
-  [data-theme=dark] .gm.themed .d { color:#A1A1AB; }
   .gm .info { display:flex; gap:6px; margin:0 16px 12px; }
   .gm .info span { font-size:11px; padding:5px 9px; border-radius:99px; background:#F2F2F5; }
-  [data-theme=dark] .gm.themed .info span { background:#1C1C21; }
   .gm .bar { display:flex; gap:6px; padding:8px 12px; border-bottom:1px solid #E9E9EE; overflow:hidden; }
-  [data-theme=dark] .gm.themed .bar { border-color:#24242B; }
   .gm .bar span { flex:none; font-size:11.5px; font-weight:500; padding:6px 11px; border-radius:99px; background:#F2F2F5; }
-  [data-theme=dark] .gm.themed .bar span { background:#1C1C21; }
   .gm .bar span.on { background:var(--menu-accent); color:#fff; }
   .gm .sec { padding:14px 16px 4px; font-weight:600; font-size:15px; letter-spacing:-.015em; }
   .gm .row { display:flex; gap:10px; padding:10px 16px; border-bottom:1px solid #F0F0F3; }
-  [data-theme=dark] .gm.themed .row { border-color:#1C1C21; }
   .gm .row .t { flex:1; }
   .gm .row b { font-weight:600; display:block; margin-bottom:2px; }
   .gm .row small { color:#62626C; display:block; font-size:11px; line-height:1.4; }
@@ -148,8 +135,7 @@
   .toolbar { position:fixed; right:20px; bottom:20px; z-index:50; }
 </style>
 </head>
-<body data-theme="light">
-<div class="toolbar"><button class="pill primary" onclick="const b=document.body;b.dataset.theme=b.dataset.theme==='dark'?'light':'dark'">☾ Temayı değiştir</button></div>
+<body>
 
 <p class="label">1 · Tanıtım sayfası — hero (3B telefonda gerçek menü bileşenleri, etrafında örnek arayüz kartları)</p>
 <div class="frame">
@@ -157,7 +143,7 @@
     <div class="header">
       <div class="logo"><i></i>Menura</div>
       <nav class="nav"><a>Özellikler</a><a>Nasıl çalışır</a><a>SSS</a></nav>
-      <div class="right"><button class="icon-btn" aria-label="Koyu temaya geç">☾</button><button class="pill sm secondary">Giriş yap</button><button class="pill sm primary">Ücretsiz başla</button></div>
+      <div class="right"><button class="pill sm secondary">Giriş yap</button><button class="pill sm primary">Ücretsiz başla</button></div>
     </div>
   </div>
   <section class="hero">
@@ -175,7 +161,7 @@
       <div class="fc" style="right:12%;top:320px;animation-delay:-1s"><div class="k">Bugün <span style="opacity:.6">(örnek)</span></div><div class="v">128 görüntülenme</div><div class="bars"><i style="height:30%"></i><i style="height:45%"></i><i style="height:38%"></i><i style="height:60%"></i><i style="height:52%"></i><i style="height:80%"></i><i style="height:100%"></i></div></div>
       <div class="phone-wrap"><div class="phone"><div class="screen"><div class="island"></div>
         <div class="gm">
-          <div class="cover"><div class="tt">☾</div></div>
+          <div class="cover"></div>
           <div class="logo-dot">LD</div>
           <h3>Lezzet Durağı</h3>
           <p class="d">Mahallenin sıcak mutfağı: güne kahvaltıyla başlar, akşamı ızgarayla kapatır.</p>
@@ -198,7 +184,7 @@
     <div class="header" style="max-width:1168px">
       <div class="logo"><i></i>Menura <span style="color:var(--fg-muted);font-weight:500;margin-left:6px">Lezzet Durağı</span> <span class="badge" style="background:#ECFDF3;color:#1F7A45">● Yayında</span></div>
       <nav class="nav"><a>Genel bakış</a><a class="on">Menü</a><a>Restoran</a><a>Görünüm</a><a>QR kod</a></nav>
-      <div class="right"><button class="pill sm secondary">↗ Menüyü gör</button><button class="icon-btn" aria-label="Koyu temaya geç">☾</button><button class="icon-btn" style="background:var(--grad);color:#1b1027;font-weight:600;font-size:13px" aria-label="Hesap menüsü">MA</button></div>
+      <div class="right"><button class="pill sm secondary">↗ Menüyü gör</button><button class="icon-btn" style="background:var(--grad);color:#1b1027;font-weight:600;font-size:13px" aria-label="Hesap menüsü">MA</button></div>
     </div>
   </div>
   <div class="page" style="padding-right:440px">
@@ -228,10 +214,10 @@
   </aside>
 </div>
 
-<p class="label">3 · Misafir menüsü (mobil) — restoran tema rengi korunur; sağ üstte tema düğmesi</p>
+<p class="label">3 · Misafir menüsü (mobil) — restoran tema rengi vurgu olarak kullanılır</p>
 <div class="frame" style="max-width:400px;height:720px">
   <div class="gm themed" style="height:100%">
-    <div class="cover" style="margin-top:12px"><div class="tt" aria-label="Koyu temaya geç">☾</div></div>
+    <div class="cover" style="margin-top:12px"></div>
     <div class="logo-dot">LD</div>
     <h3 style="font-size:24px">Lezzet Durağı</h3>
     <p class="d" style="font-size:13px">Mahallenin sıcak mutfağı: güne kahvaltıyla başlar, akşamı ızgarayla kapatır.</p>
@@ -244,6 +230,6 @@
   </div>
 </div>
 
-<div class="notes">Statik taslaktır: renk, tipografi, düzen ve hiyerarşiyi göstermek içindir. Gerçek uygulamada telefonun içi gerçek menü bileşenleriyle render edilir, görseller gerçek ürün fotoğraflarıdır, kartlardaki değerler örnek arayüz olarak işaretlenir. Sağ alttaki düğme koyu temayı gösterir.</div>
+<div class="notes">Statik taslaktır: renk, tipografi, düzen ve hiyerarşiyi göstermek içindir. Gerçek uygulamada telefonun içi gerçek menü bileşenleriyle render edilir, görseller gerçek ürün fotoğraflarıdır, kartlardaki değerler örnek arayüz olarak işaretlenir.</div>
 </body>
 </html>

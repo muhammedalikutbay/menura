@@ -26,7 +26,7 @@ Rules that follow from this:
 
 Defined in `src/app/globals.css` (`@theme`). Components use tokens only — never raw hex.
 
-### Color — light (default)
+### Color (light only)
 | Token | Value | Use |
 |---|---|---|
 | `--color-canvas` | `#F7F7F9` | App/page background |
@@ -43,17 +43,6 @@ Defined in `src/app/globals.css` (`@theme`). Components use tokens only — neve
 | `--color-accent` | `#6E56CF` | Brand violet: links, focus, selected states |
 | `--color-success / warning / danger` | `#1F9D55 / #B45309 / #D92D20` | Status text; `-soft` variants for tints |
 
-### Color — dark (manual toggle only)
-| Token | Value |
-|---|---|
-| canvas | `#09090B` |
-| bg / surface | `#0E0E11` / `#141418` |
-| surface-muted | `#1C1C21` |
-| fg / fg-muted / fg-subtle | `#F4F4F6` / `#A1A1AB` / `#71717A` |
-| border / border-strong | `#24242B` / `#3A3A44` |
-| ink / ink-fg | `#F4F4F6` / `#0B0B0F` (primary pill inverts) |
-| accent | `#9E8CFC` |
-
 ### Brand gradient (decorative only)
 `--gradient-brand: linear-gradient(120deg, #B9A6FF 0%, #F3A8DC 50%, #FFC79A 100%)`
 Uses: hero glow (as blurred radial blobs at 25–35 % opacity), step-number dots, highlight CTA on
@@ -61,7 +50,7 @@ the landing hero, gauge rings, focus halo on the landing only. Never behind body
 
 ### Restaurant accent (guest menu and previews)
 The restaurant's `themeColor` keeps working exactly as today (`menuThemeVars` →
-`--color-accent`, `--color-accent-fg`, `--menu-accent-text`) in **both** themes.
+`--color-accent`, `--color-accent-fg`, `--menu-accent-text`).
 
 ### Typography
 - UI and body: **Inter** (already loaded, latin + latin-ext), `font-feature-settings: "ss01", "cv11"`.
@@ -89,7 +78,6 @@ Numbers in prices and stats use `font-variant-numeric: tabular-nums`.
 - `--shadow-hairline`: `0 0 0 1px var(--color-border)` — default card edge (prefer over shadows).
 - `--shadow-float`: `0 1px 2px rgb(0 0 0 / .04), 0 8px 24px -6px rgb(17 17 20 / .10), 0 24px 48px -12px rgb(17 17 20 / .08)` — floating cards, header, popovers.
 - `--shadow-sheet`: stronger float for drawers and dialogs.
-- Dark theme: shadows drop to near zero; edges come from `border`.
 
 ### Spacing & layout
 4 px base. Section rhythm: 96 px mobile / 144 px desktop between landing sections; 32 px between
@@ -103,17 +91,10 @@ app page blocks. Containers: marketing `max-w-[1120px]`, app `max-w-[1200px]`, r
 - No parallax on text, no auto-playing carousels.
 
 ## 3. Theme
-- Default **light**, regardless of OS setting. Dark only via the toggle; choice persisted.
-- Implementation: `next-themes` with `attribute="data-theme"`, `defaultTheme="light"`,
-  `enableSystem={false}`, `storageKey="menura-theme"`, `disableTransitionOnChange`, and the CSP
-  nonce from the `x-nonce` request header (set by `src/proxy.ts`) passed to `ThemeProvider`.
-- Tailwind: `@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));` and dark
-  tokens under `[data-theme="dark"]`. Remove the `prefers-color-scheme` block. `color-scheme`
-  follows the active theme.
-- `ThemeToggle` (`src/components/ui/theme-toggle.tsx`): icon button, sun/moon, `aria-label`
-  "Koyu temaya geç" / "Açık temaya geç", `aria-pressed`. Placed in: marketing header, dashboard
-  header, guest menu top bar.
-- Print views always render light.
+**Light only** (Muhammed, 2026-10-08: no dark mode, no theme toggle).
+- Remove the `prefers-color-scheme: dark` block and every `dark:` variant; `color-scheme: light`.
+- No `next-themes`, no toggle component, `viewport.themeColor` is a single light value.
+- Guest menus also render light; the restaurant accent is the only per-tenant color.
 
 ## 4. Components (inventory and look)
 
@@ -131,12 +112,11 @@ app page blocks. Containers: marketing `max-w-[1120px]`, app `max-w-[1200px]`, r
 | StatsBand | ink background, radius-xl, 3 columns divided by hairlines (white 12 %) |
 | StepList | Numbered rows with 28 px gradient dots |
 | Gauge | Dashed ring (used for honest numbers only, e.g. "14 alerjen") |
-| ThemeToggle | see §3 |
 | Toast | sonner, top-center, surface + shadow-float |
 
 Iconography: lucide, 1.75 stroke, 20 px in UI, 16 px inline.
 
 ## 5. Accessibility floor
-Contrast AA in both themes (body 4.5:1, large/UI 3:1); visible focus ring on every control;
+Contrast AA (body 4.5:1, large/UI 3:1); visible focus ring on every control;
 touch targets ≥ 44 px; every icon-only control has a Turkish `aria-label`; motion respects
 `prefers-reduced-motion`; no information by color alone.

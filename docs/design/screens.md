@@ -31,15 +31,14 @@ design language. UI copy below is final unless marked *(örnek)*.
 ```
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ [◎ Menura] · Şükrü'nün Çay Bahçesi ●Yayında   Genel bakış  Menü  Restoran   │
-│                                                Görünüm  QR kod   [↗ Menüyü gör] [☾] (MA)│
+│                                                Görünüm  QR kod      [↗ Menüyü gör] (MA)│
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ```
 - Floating pill header (design-language §4), sticky. Left: logo + restaurant name + status dot
   (green "Yayında" / grey "Taslak", links to `/dashboard/appearance`). Center: nav links, active =
-  ink text + 2 px underline pill. Right: "Menüyü gör" (opens `/m/<slug>` in a new tab), ThemeToggle,
-  avatar button.
+  ink text + 2 px underline pill. Right: "Menüyü gör" (opens `/m/<slug>` in a new tab), avatar button.
 - Avatar menu: name + email · "Hesap ayarları" → `/dashboard/account` · "Çıkış yap".
-- < 1024 px: logo + status + "Menüyü gör" icon + ThemeToggle + menu button → bottom sheet with
+- < 1024 px: logo + status + "Menüyü gör" icon + menu button → bottom sheet with
   the nav, then account links.
 - Page body: `canvas` background, container 1200 px, page title (title-lg) + one-line description
   + optional primary action on the right.
@@ -48,7 +47,7 @@ design language. UI copy below is final unless marked *(örnek)*.
 Sections top to bottom (one idea each):
 
 1. **Header** — floating pill: logo · center links (Özellikler, Nasıl çalışır, SSS) · right:
-   ThemeToggle, "Giriş yap" (ghost), "Ücretsiz başla" (primary). Signed in: "Panele git".
+   "Giriş yap" (ghost), "Ücretsiz başla" (primary). Signed in: "Panele git".
 2. **Hero** — centered:
    - Overline chip: "Restoran ve kafeler için QR menü"
    - H1 (display-xl, two lines): "Menünüz, *tek bir QR kod* uzağında." (*italic serif accent*)
@@ -67,7 +66,7 @@ Sections top to bottom (one idea each):
    - "Menünüzü tek ekranda kurun" — fragment of the menu builder (category card with 3 rows).
    - "Markanıza uyan QR kod" — QR card with color dots and "PNG / SVG" chips.
    - "Ne kadar ilgi gördüğünüzü bilin" — 14-day bars card.
-5. **Feature grid** — 3 cards: "Alerjen ve etiketler", "Açık ve koyu tema", "KDV ve fiyat notu".
+5. **Feature grid** — 3 cards: "Alerjen ve etiketler", "Markanızın rengi", "KDV ve fiyat notu".
 6. **Nasıl çalışır** — StepList: 1 Hesabını aç · 2 Menünü kur · 3 QR'ı masalara koy · 4 Güncelle, anında yansısın.
 7. **SSS** — `<details>` accordion, 5 questions (existing copy).
 8. **Final CTA** — card on canvas with glow: "İlk menünüzü bugün yayınlayın." + primary CTA.
@@ -133,7 +132,6 @@ Cards: **Profil** (ad; e-posta read-only) · **Şifre** (change password) · **T
 ## 5. Guest menu (`/m/[slug]`)
 ```
 ╭ cover image, radius-xl, inset 12 px from screen edges, 200 px ╮
-│                                               [☾]             │  ← ThemeToggle on the cover (blurred chip)
 ╰───────────────────────────────────────────────────────────────╯
  (logo) Lezzet Durağı                         ← title-lg, overlaps cover bottom by 24 px
  Mahallenin sıcak mutfağı…                     ← body, fg-muted
@@ -150,7 +148,6 @@ Cards: **Profil** (ad; e-posta read-only) · **Şifre** (change password) · **T
 - No cover → soft accent gradient block of the same shape.
 - Active chip uses the restaurant accent with `--color-accent-fg`; prices use `--menu-accent-text`.
 - Product sheet unchanged in behavior; restyled per kit.
-- ThemeToggle shares `menura-theme` with the rest of the site.
 
 ## 6. 3D phone preview (contract shared by landing, appearance page and future builder preview)
 
