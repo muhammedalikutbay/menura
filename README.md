@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Menura — Akıllı QR Menü
 
-## Getting Started
+Menura, restoran ve kafelerin dakikalar içinde dijital menü oluşturup QR kodla misafirleriyle
+paylaşmasını sağlayan çok kiracılı (multi-tenant) bir web uygulamasıdır. İşletme sahibi panelden
+menüsünü yönetir; misafir masadaki QR kodu okuttuğunda menüyü `/m/<restoran>` adresinde anında görür.
 
-First, run the development server:
+**Demo menü:** `/m/demo` · **Mimari:** [docs/architecture.md](docs/architecture.md) · **Yayınlama:** [docs/deployment.md](docs/deployment.md)
+
+## Özellikler
+
+**İşletme paneli** (üstte yüzen gezinme çubuğu; açık tema)
+- **Genel bakış** (`/dashboard`): menü görüntülenme istatistikleri, kurulum kontrol listesi, yayın durumu
+- **Menü** (`/dashboard/menu`): kategoriler ve ürünler tek sayfada; sürükle-bırak ile sıralama ve
+  ürünleri kategoriler arasında taşıma; ürün düzenleyici yan panelde açılır (fiyat ve indirimli fiyat,
+  görsel, 14 yasal alerjen, diyet etiketleri, kalori, hazırlanma süresi, öne çıkarma, tükendi durumu)
+- **Restoran** (`/dashboard/restaurant`): profil, logo, kapak görseli, iletişim, Instagram, web sitesi, Wi-Fi bilgisi
+- **Görünüm** (`/dashboard/appearance`): menüyü yayınlama, menü adresi, tema rengi, para birimi,
+  "Fiyatlara KDV dahildir" notu, tükenen ürünleri gizleme; canlı telefon önizlemesi
+- **QR kod** (`/dashboard/qr`): renk, desen ve logo ile QR tasarımı, PNG/SVG indirme, A4 masa kartı baskısı (`/print`)
+- **Hesap** (`/dashboard/account`, avatar menüsünden): e-posta/şifre hesabı, şifre sıfırlama ve e-posta
+  doğrulama (e-posta servisi tanımlıysa), hesap silme
+- Yayın durumu: menü hazır olana kadar taslakta kalır
+
+**Misafir menüsü** (`/m/<restoran>`)
+- Mobil öncelikli, hızlı, sunucuda üretilen sayfa; açık tema, restoranın tema rengiyle
+- Yapışkan kategori gezinmesi, Türkçe karakter duyarlı arama, ürün detay penceresi
+- Alerjen bilgisi, "Fiyatlarımıza KDV dahildir" notu, SEO ve paylaşım görselleri
+
+**Tanıtım sayfası** (`/`)
+- Menü bileşenlerinin gerçek misafir görünümüyle çalışan 3D telefon önizlemesi (örnek veriyle)
+
+## Teknoloji
+
+Next.js 16 (App Router, Server Actions) · React 19 · TypeScript · Tailwind CSS 4 · Radix UI ·
+PostgreSQL + Drizzle ORM · Better Auth · sharp · Zod · Vitest · Playwright
+
+## Yerelde çalıştırma
+
+Gereksinim: Node.js 22+. Veritabanı kurmanız gerekmez: `npm run dev`, gömülü PGlite'ı
+(`.data/pglite`) yerel bir Postgres sunucusu olarak (port 5433) başlatır ve Next.js'i ona bağlar.
+Kendi Postgres'inizi kullanmak için `.env.local` içine `DATABASE_URL` yazıp `npm run dev:next` çalıştırın.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run db:seed     # migration'ları uygular ve /m/demo restoranını oluşturur
+npm run dev         # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Kayıt olup restoranınızı oluşturun; panel `/dashboard` adresindedir. E-posta doğrulama ve şifre
+sıfırlamayı yerelde denemek için `.env.local` içine `EMAIL_TRANSPORT=console` yazın; e-postalar
+gönderilmez, bağlantılar sunucu konsoluna yazılır.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Komutlar
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Komut | Açıklama |
+|---|---|
+| `npm run dev` | Yerel veritabanı + geliştirme sunucusu |
+| `npm run dev:next` | Yalnız Next.js (kendi `DATABASE_URL`'iniz ile) |
+| `npm run check` | Lint + typecheck + birim/entegrasyon testleri + üretim derlemesi |
+| `npm test` | Vitest (bellek içi Postgres ile entegrasyon testleri dahil) |
+| `npm run test:e2e` | Playwright uçtan uca testleri (masaüstü + mobil) |
+| `npm run db:generate` | Şema değişikliğinden migration üretir |
+| `npm run db:migrate` | Migration'ları uygular |
+| `npm run db:seed` | Demo restoranı oluşturur (`-- --reset` ile yeniden) |
 
-## Learn More
+## Proje yapısı
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/app/          sayfalar ve route'lar (ince katman)
+src/features/     alan modülleri: schema (zod), queries, actions, components
+src/components/   tasarım sistemi (ui/) ve uygulama kabuğu
+src/db/           Drizzle şeması ve istemci
+src/server/       kimlik doğrulama, oturum, ortam değişkenleri, e-posta
+src/lib/          para, metin, alerjen gibi saf yardımcılar
+drizzle/          SQL migration'ları
+e2e/              Playwright testleri
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Geliştirme kuralları ve yapay zekâ ajanları için talimatlar: [AGENTS.md](AGENTS.md).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+İlk sürüm Software Persona 11. Dönem staj eğitimi kapsamında geliştirildi; v2 ile üretim
+kullanımına uygun, çok kiracılı bir mimariye taşındı.
