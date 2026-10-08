@@ -17,7 +17,7 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import { hasDemoMenu } from "@/features/menu/demo";
 import { getSession } from "@/server/session";
-import { PhoneMockup } from "./_components/phone-mockup";
+import { Hero } from "./_components/hero";
 
 const TITLE = "Menura — Restoran ve kafeler için QR menü";
 const DESCRIPTION =
@@ -129,7 +129,6 @@ const FAQ: Array<{ question: string; answer: React.ReactNode }> = [
 ];
 
 const primaryCta = buttonVariants({ size: "lg" });
-const secondaryCta = buttonVariants({ variant: "outline", size: "lg" });
 
 export default async function LandingPage() {
   const showDemo = await hasDemoMenu();
@@ -139,35 +138,7 @@ export default async function LandingPage() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="overflow-hidden">
-        <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:gap-8 lg:px-8 lg:py-28">
-          <div className="flex flex-col items-start gap-6">
-            <p className="rounded-full bg-accent-soft px-3.5 py-1.5 text-sm font-medium text-accent-text">
-              Restoranlar ve kafeler için QR menü
-            </p>
-            <h1 className="max-w-xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
-              Menünüz bir QR kod uzağınızda.
-            </h1>
-            <p className="max-w-xl text-lg text-pretty text-fg-muted">
-              Dakikalar içinde şık bir dijital menü hazırlayın, QR kodla masalara taşıyın ve fiyatları istediğiniz
-              anda güncelleyin. Baskı maliyeti yok, misafirleriniz için uygulama indirmek yok.
-            </p>
-            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-              <Link href={ctaHref} className={primaryCta}>
-                {ctaLabel}
-                <ArrowRight aria-hidden="true" />
-              </Link>
-              {showDemo && (
-                <Link href={"/m/demo" as Route} className={secondaryCta}>
-                  Demo menüyü gör
-                </Link>
-              )}
-            </div>
-          </div>
-          <PhoneMockup />
-        </div>
-      </section>
+      <Hero showDemo={showDemo} signedIn={Boolean(session)} />
 
       {/* Features */}
       <section id="ozellikler" aria-labelledby="features-title" className="scroll-mt-20 bg-surface-muted">
