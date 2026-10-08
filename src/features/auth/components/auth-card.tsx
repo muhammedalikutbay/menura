@@ -1,5 +1,18 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card";
 
+/** Surface shared by auth and onboarding cards: radius-xl, hairline edge, float shadow, 32px padding (24px on mobile). */
+export const authCardClassName = "gap-6 rounded-xl p-6 shadow-float ring-1 ring-border sm:p-8";
+
+/** Soft brand glow behind centered cards. Decorative only; the parent must be `relative` and `overflow-hidden`. */
+export function AuthGlow() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="gradient-brand absolute -top-28 left-1/2 size-[24rem] -translate-x-[78%] rounded-full opacity-30 blur-3xl sm:size-[36rem]" />
+      <div className="gradient-brand absolute top-1/3 left-1/2 size-[20rem] translate-x-[12%] rounded-full opacity-25 blur-3xl sm:size-[30rem]" />
+    </div>
+  );
+}
+
 type AuthCardProps = {
   title: string;
   description?: string;
@@ -10,14 +23,15 @@ type AuthCardProps = {
 
 export function AuthCard({ title, description, children, footer }: AuthCardProps) {
   return (
-    <Card className="gap-6 py-6 sm:py-8">
-      <CardHeader className="gap-1.5 sm:px-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-balance">{title}</h1>
-        {description && <CardDescription className="text-base">{description}</CardDescription>}
+    <Card className={authCardClassName}>
+      <CardHeader className="gap-1.5 px-0 sm:px-0">
+        <h1 className="type-title-lg text-balance">{title}</h1>
+        {description && <CardDescription className="text-base text-fg-muted">{description}</CardDescription>}
       </CardHeader>
-      <CardContent className="sm:px-8">{children}</CardContent>
+      {/* Primary submit buttons fill the card width on every auth form. */}
+      <CardContent className="px-0 sm:px-0 [&_button[type=submit]]:w-full">{children}</CardContent>
       {footer && (
-        <CardFooter className="flex-wrap justify-center gap-x-1.5 text-center text-sm text-fg-muted sm:px-8">
+        <CardFooter className="flex-wrap justify-center gap-x-1.5 px-0 text-center text-sm text-fg-muted sm:px-0">
           {footer}
         </CardFooter>
       )}

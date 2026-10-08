@@ -65,7 +65,13 @@ export function OnboardingForm({ appUrl }: { appUrl: string }) {
   }
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+    // The URL preview rendered by SlugField is styled as a subtle chip (styling only).
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      noValidate
+      className="flex flex-col gap-5 [&_[aria-live=polite]]:w-fit [&_[aria-live=polite]]:max-w-full [&_[aria-live=polite]]:rounded-sm [&_[aria-live=polite]]:bg-surface-muted [&_[aria-live=polite]]:px-3 [&_[aria-live=polite]]:py-1.5"
+    >
       <Field label="Restoran adı" error={errors.name} required>
         <Input
           value={name}
@@ -79,7 +85,7 @@ export function OnboardingForm({ appUrl }: { appUrl: string }) {
 
       <SlugField value={slug} onChange={handleSlugChange} host={displayHost(appUrl)} error={errors.slug} />
 
-      <Button type="submit" size="lg" loading={isPending || redirecting}>
+      <Button type="submit" size="lg" className="w-full" loading={isPending || redirecting}>
         Restoranı oluştur
       </Button>
     </form>
